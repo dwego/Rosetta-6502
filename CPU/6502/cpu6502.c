@@ -1,6 +1,30 @@
-#include "cpu6502.h"
-//#include "config/stack.h"
+#include "config/config.h"
 
+
+/* 
+   CPU6502 - 6502 Emulated CPU
+
+   This file implements the CPU (Central Processing Unit) functionality for the MOS Technology 6502.
+
+   The MOS Technology 6502 is a widely used 8-bit microprocessor, and this implementation provides
+   functions for initializing the CPU, fetching bytes and words from memory, and stack manipulation.
+
+   This file implement instructions for functions defined in cpu6502.h
+
+   Functions:
+   - resetCPU: This function resets the CPU state to its initial values.
+   - FetchByte: This function fetches a byte of data from the memory using the Program Counter (PC).
+   - FetchWord: This function fetches a 16-bit word of data from the memory using the program counter (PC).
+   - SPToAddress: This function converts the Stack Pointer (SP) value to a memory address.
+   - PushWordToStack: This function pushes a 16-bit word onto the stack.
+   - PushPCToStack: This function pushes the Program Counter (PC) onto the stack.
+   - PopWordFromStack: This function pops a 16-bit word from the stack.
+
+   For more information about the instructions and addressing modes, refer to Instructions.MD
+*/ 
+
+
+// This function resets the CPU state to its initial values.
 void resetCPU(Word ResetVector, CPU6502 *cpu, MEM6502 *memory) {
 
   cpu->A = cpu->X = cpu->Y = 0;
@@ -12,6 +36,7 @@ void resetCPU(Word ResetVector, CPU6502 *cpu, MEM6502 *memory) {
   initializeMem6502(memory); // Initialize Memory to allocate 64 kilobytes "RAM"
 }
 
+// This function fetches a byte of data from the memory using the program counter (PC).
 Byte FetchByte(Word *Cycles, const MEM6502* memory, CPU6502 *cpu) {
     // Fetch to Byte value in Address stored in register PC *Program counter
     Byte Data = memory->Data[cpu->PC];
@@ -20,6 +45,7 @@ Byte FetchByte(Word *Cycles, const MEM6502* memory, CPU6502 *cpu) {
     return Data;
 }
 
+// This function fetches a 16-bit word of data from the memory using the program counter (PC).
 Word FetchWord(Word *Cycles, const MEM6502* memory, CPU6502 *cpu) {
     Word Value = memory->Data[cpu->PC];
 	cpu->PC++;
@@ -31,11 +57,13 @@ Word FetchWord(Word *Cycles, const MEM6502* memory, CPU6502 *cpu) {
 	return Value;
 }
 
+// This function converts the Stack Pointer (SP) value to a memory address.
+
 Word SPToAddress(CPU6502 *cpu) {
     return 0x100 | cpu->SP;
 }
 
-
+// This function pushes a 16-bit word onto the stack.
 void PushWordToStack(Word *Cycles, MEM6502 *memory, Word Value, CPU6502 *cpu) {
     printf("Before Push - SP: %02X, Memory[%04X]: %02X\n", cpu->SP, SPToAddress(cpu), memory->Data[SPToAddress(cpu)]);
 
@@ -49,19 +77,19 @@ void PushWordToStack(Word *Cycles, MEM6502 *memory, Word Value, CPU6502 *cpu) {
     printf("After 2nd Write - SP: %02X, Memory[%04X]: %02X\n", cpu->SP, SPToAddress(cpu), memory->Data[SPToAddress(cpu)]);
 }
 
-
+// This function pushes the Program Counter (PC) onto the stack.
 void PushPCToStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     PushWordToStack(Cycles, memory, cpu->PC, cpu);
 }
 
+// This function pops a 16-bit word from the stack.
 Word PopWordFromStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     Word ValueFromStack = ReadWord(Cycles, SPToAddress(cpu), memory);
 
     return ValueFromStack;
 }
-
 
 // int main(void) {
 //   CPU6502 cpu;
