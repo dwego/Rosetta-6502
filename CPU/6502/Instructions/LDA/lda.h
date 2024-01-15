@@ -9,18 +9,6 @@
    For more information about the instructions, refer to Instructions.MD
 */ 
 
-
-/* 
-   This function sets the Flags for the Status register 
-   to identify what happened during the LDA instruction.
-*/ 
-
-
-void LDASetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
-}
-
 /* 
    LDA (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
    The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
@@ -114,5 +102,16 @@ void LDA_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     LDASetStatus(cpu);
 }
 
+
+/* 
+   This function sets the Flags for the Status register 
+   to identify what happened during the LDA instruction.
+*/ 
+
+
+void LDASetStatus(CPU6502 *cpu) {
+    cpu->Flag.Z = (cpu->A == 0);
+    cpu->Flag.N = (cpu->A & 0x80) > 0;
+}
 
 #endif // LDA_H
