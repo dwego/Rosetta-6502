@@ -64,7 +64,6 @@ typedef struct {
 void resetCPU(Word ResetVector, CPU6502 *cpu, MEM6502 *memory);
 
 
-
 // Fetch Data:
 
 
@@ -79,8 +78,8 @@ Word FetchWord(Word *Cycles, const MEM6502* memory, CPU6502 *cpu);
 Word SPToAddress(CPU6502 *cpu);
 
 
-
 //	Stacks: 
+
 
 // This function pushes a 16-bit word onto the stack.
 void PushWordToStack(Word *Cycles, MEM6502 *memory, Word Value, CPU6502 *cpu);
