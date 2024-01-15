@@ -78,7 +78,7 @@ Word FetchWord(Word *Cycles, const MEM6502* memory, CPU6502 *cpu);
 Word SPToAddress(CPU6502 *cpu);
 
 
-//	Stacks: 
+// Stacks: 
 
 
 // This function pushes a 16-bit word onto the stack.
