@@ -59,11 +59,14 @@ typedef struct {
 
 // Reset:
 
+
 // This function resets the CPU state to its initial values.
 void resetCPU(Word ResetVector, CPU6502 *cpu, MEM6502 *memory);
 
 
+
 // Fetch Data:
+
 
 // This function fetches a byte of data from the memory using the program counter (PC).
 Byte FetchByte(Word *Cycles, const MEM6502* memory, CPU6502 *cpu);
@@ -76,6 +79,7 @@ Word FetchWord(Word *Cycles, const MEM6502* memory, CPU6502 *cpu);
 Word SPToAddress(CPU6502 *cpu);
 
 
+
 //	Stacks: 
 
 // This function pushes a 16-bit word onto the stack.
@@ -86,5 +90,6 @@ void PushPCToStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu);
 
 // This function pops a 16-bit word from the stack.
 Word PopWordFromStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+
 
 #endif // CPU6502_H
