@@ -1,9 +1,10 @@
 
 # Rosetta 6502 Emulator and Compiler
-Overview
+
+# Overview
 This project combines a 6502 processor emulator with a compiler that translates 6502 assembly code into x64 or x86 assembly. The challenge is heightened by a 65KB RAM constraint.
 
-Features
+# Features
 6502 Processor Emulation:
 
 Precise 6502 processor emulator supporting original binary code.
