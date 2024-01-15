@@ -20,7 +20,7 @@ Smart adaptation to differences in instruction sets and features between 6502 an
 All operations comply with the 65KB RAM limit.
 Efficient memory management for optimal space utilization.
 How to Use
-# Compilation:
+# Compilation
 1- Compile 6502 Emulator:
 
 ```bash
@@ -31,7 +31,7 @@ gcc -o 6502_emulator 6502_emulator.c
 ```bash
 gcc -o 6502_compiler 6502_compiler.c
 ```
-# Execution:
+# Execution
 
 1- Run 6502 Emulator:
 
