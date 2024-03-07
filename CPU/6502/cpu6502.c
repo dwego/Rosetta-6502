@@ -105,7 +105,6 @@ Word PopByteFromStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 //   Word Cycles = 20;
 
 //   resetCPU(0xFFFC, &cpu, &mem);
-//   // start - inline a little program
 //   mem.Data[0xFFFC] = INS_JSR;
 //   mem.Data[0xFFFD] = 0x42;
 //   mem.Data[0xFFFE] = 0x42;
@@ -114,7 +113,6 @@ Word PopByteFromStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 //   mem.Data[0x4244] = INS_RTS;
 //   mem.Data[0xFFFF] = 0x42;
 
-//   // end - inline a little program
 //   execute(&Cycles, &mem, &cpu);
 //   freeMem6502(&mem);
 
