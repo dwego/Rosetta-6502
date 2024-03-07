@@ -51,3 +51,9 @@ gcc -o 6502_compiler 6502_compiler.c
 - GCC Compiler (or any C compiler)
 - Development environment supporting target architectures (x64/x86)
 
+## :warning: Note
+  
+**This software is currently in development and undergoing testing.**
+Please be aware that some features may not be fully implemented, and the software might contain bugs.
+Use it cautiously and avoid deploying it in production environments until thorough testing has been completed.
+
