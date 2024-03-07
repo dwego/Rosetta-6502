@@ -26,6 +26,8 @@ const DWord MAX_MEM = 1024 * 64;
    - ReadWord: Reads a 16-bit word of data from emulated memory at the specified address.
    - WriteByte: Writes a byte of data to emulated memory at the specified address.
    - WriteWord: Writes a 16-bit word of data to emulated memory at the specified address.
+
+   For more information about the instructions and addressing modes, refer to Instructions.MD.
 */
 
 

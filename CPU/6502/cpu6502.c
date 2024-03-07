@@ -1,5 +1,4 @@
-#include "config/config.h"
-
+#include "cpu6502.h"
 
 /* 
    CPU6502 - 6502 Emulated CPU
@@ -63,18 +62,18 @@ Word SPToAddress(CPU6502 *cpu) {
     return 0x100 | cpu->SP;
 }
 
+void PushByteToStack(Word *Cycles, MEM6502 *memory, Word Value, CPU6502 *cpu) {
+    WriteByte(Cycles, Value, memory, SPToAddress(cpu));
+    cpu->SP--;
+}
+
+
 // This function pushes a 16-bit word onto the stack.
 void PushWordToStack(Word *Cycles, MEM6502 *memory, Word Value, CPU6502 *cpu) {
-    printf("Before Push - SP: %02X, Memory[%04X]: %02X\n", cpu->SP, SPToAddress(cpu), memory->Data[SPToAddress(cpu)]);
-
     WriteByte(Cycles, Value >> 8, memory, SPToAddress(cpu));
 
-    printf("After 1st Write - SP: %02X, Memory[%04X]: %02X\n", cpu->SP, SPToAddress(cpu), memory->Data[SPToAddress(cpu)]);
-    cpu->SP--;
-
     WriteByte(Cycles, Value & 0xFF, memory, SPToAddress(cpu));
-
-    printf("After 2nd Write - SP: %02X, Memory[%04X]: %02X\n", cpu->SP, SPToAddress(cpu), memory->Data[SPToAddress(cpu)]);
+    cpu->SP--;
 }
 
 // This function pushes the Program Counter (PC) onto the stack.
@@ -87,6 +86,15 @@ void PushPCToStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 Word PopWordFromStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     Word ValueFromStack = ReadWord(Cycles, SPToAddress(cpu), memory);
+
+    return ValueFromStack;
+}
+
+Word PopByteFromStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+
+    Word ValueFromStack = ReadByte(Cycles, SPToAddress(cpu), memory);
+    WriteByte(Cycles, 0, memory, SPToAddress(cpu));
+    cpu->SP--;
 
     return ValueFromStack;
 }

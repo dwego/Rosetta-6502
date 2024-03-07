@@ -1,7 +1,8 @@
 #ifndef JSR_H
 #define JSR_H
 
-#include "../../../../../config/config.h"
+#include "config.h"
+#include "cpu6502.h"
 
 
 /* 
