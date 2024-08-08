@@ -28,7 +28,6 @@ typedef struct
     Byte *Data; // Emulates RAM to allocate 65 Kilobytes for storing data.
 } MEM6502;
 
-
 // Initializes memory to 65 Kilobytes (64 * 1024 Bytes).
 void initializeMem6502(MEM6502 *memory);
 
