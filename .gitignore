@@ -1,7 +1,7 @@
 .clang-format
 .git/
 .cache/
-.build/
+build/
 compile_commands.json
 layout.txt
 main
