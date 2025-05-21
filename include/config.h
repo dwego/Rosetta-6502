@@ -12,8 +12,9 @@ typedef uint8_t Byte;
 typedef uint16_t Word;
 typedef uint32_t DWord;
 typedef uint64_t QWord;
+typedef int8_t SignedByte;
 
-Byte get_bit(unsigned char byte, int position) {
+inline Byte get_bit(Byte byte, int position) {
     return (byte >> position) & 1;
 }
 

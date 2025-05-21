@@ -37,7 +37,7 @@ void XORSetStatus(CPU6502 *cpu) {
 
 
 void XOR_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte Value = FetchByte(Cycles, memory, cpu);;
+    Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A = Value ^ cpu->A;
     XORSetStatus(cpu);
 }
@@ -96,7 +96,15 @@ void XOR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
 void XOR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
+
+    Word OldPage = Absolute & 0xFF00;
     Absolute += cpu->X;
+    Word NewPage = Absolute & 0xFF00;
+
+    if (OldPage != NewPage) {
+        (*Cycles)++;
+    }
+
     cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
     XORSetStatus(cpu);
 }
@@ -111,7 +119,15 @@ void XOR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
 void XOR_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
+
+    Word OldPage = Absolute & 0xFF00;
     Absolute += cpu->Y;
+    Word NewPage = Absolute & 0xFF00;
+
+    if (OldPage != NewPage) {
+        (*Cycles)++;
+    }
+
     cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
     XORSetStatus(cpu);
 }

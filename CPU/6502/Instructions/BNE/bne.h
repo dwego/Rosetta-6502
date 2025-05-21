@@ -21,10 +21,16 @@
 
 
 void BNE(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    if (cpu->A != 0) {
-        Word Sub_Addr = FetchByte(Cycles, memory, cpu);
-        cpu->PC = Sub_Addr;
+    if (cpu->Flag.Z == 0) {
+        Byte Sub_Addr = FetchByte(Cycles, memory, cpu);
+        Word old_pc = cpu->PC;
+        cpu->PC += Sub_Addr;
+
         (*Cycles)--;
+
+        if ((old_pc & 0xFF00) != (cpu->PC & 0xFF00)) {
+            (*Cycles)--;
+        }
     }
 }
 

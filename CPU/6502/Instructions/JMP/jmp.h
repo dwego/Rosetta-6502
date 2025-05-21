@@ -23,7 +23,6 @@
 void JMP_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Sub_Addr = FetchWord(Cycles, memory, cpu);
     cpu->PC = Sub_Addr;
-    (*Cycles)--;
 }
 
 void JMP_IND(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {

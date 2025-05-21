@@ -23,9 +23,9 @@
 */
 
 
-void DECSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+void DECSetStatus(Byte Value, CPU6502 *cpu) {
+    cpu->Flag.Z = (Value == 0);
+    cpu->Flag.N = (Value & 0x80) > 0;
 }
 
 
@@ -41,9 +41,10 @@ void DEC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     Byte Value = ReadByte(Cycles, ZeroPageAddr, memory);
     Byte DecrementValue = Value - 1;
+    (*Cycles)--;
 
     WriteByte(Cycles, DecrementValue, memory, ZeroPageAddr);
-    DECSetStatus(cpu);
+    DECSetStatus(DecrementValue, cpu);
 }
 
 
@@ -57,12 +58,14 @@ void DEC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 void DEC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     ZeroPageAddr += cpu->X;
+    (*Cycles)--;
 
     Byte Value = ReadByte(Cycles, ZeroPageAddr, memory);
     Byte DecrementValue = Value - 1;
+    (*Cycles)--;
 
     WriteByte(Cycles, DecrementValue, memory, ZeroPageAddr);
-    DECSetStatus(cpu);
+    DECSetStatus(DecrementValue, cpu);
 }
 
 
@@ -78,9 +81,23 @@ void DEC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     Byte Value = ReadByte(Cycles, Absolute, memory);
     Byte DecrementValue = Value - 1;
+    (*Cycles)--;
 
     WriteByte(Cycles, DecrementValue, memory, Absolute);
-    DECSetStatus(cpu);
+    DECSetStatus(DecrementValue, cpu);
+}
+
+void DEC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+    Word Absolute = FetchWord(Cycles, memory, cpu);
+    Absolute += cpu->X;
+    (*Cycles)--;
+
+    Byte Value = ReadByte(Cycles, Absolute, memory);
+    Byte DecrementValue = Value - 1;
+    (*Cycles)--;
+
+    WriteByte(Cycles, DecrementValue, memory, Absolute);
+    DECSetStatus(DecrementValue, cpu);
 }
 
 

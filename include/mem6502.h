@@ -3,8 +3,14 @@
 
 #include "config.h"
 
+#define RAM_SIZE 65536
 
-/* 
+#define STACK_START 0x100
+#define STACK_END 0x1FF
+
+#define ROM_SIZE 4096
+
+/*
    MEM6502 - 6502 Emulated Memory
 
    This is a header file for the mem6502.c

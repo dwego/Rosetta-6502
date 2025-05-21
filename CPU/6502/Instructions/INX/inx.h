@@ -24,8 +24,8 @@
 
 
 void INXSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+    cpu->Flag.Z = (cpu->X == 0);
+    cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
 
 
@@ -38,6 +38,7 @@ void INXSetStatus(CPU6502 *cpu) {
 
 void INX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->X++;
+    (*Cycles)--;
 }
 
 
