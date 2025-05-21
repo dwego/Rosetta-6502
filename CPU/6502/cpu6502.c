@@ -31,18 +31,17 @@
 
 // This function resets the CPU state to its initial values.
 void
-resetCPU (Word ResetVector, CPU6502 *cpu, MEM6502 *memory)
+resetCPU (CPU6502 *cpu, MEM6502 *memory)
 {
   cpu->A = cpu->X = cpu->Y = 0;
-
-  cpu->PC = ResetVector; // Starting address, replace with your actual start
-                         // address
-  cpu->SP = 0xFF;        // Starting Stack Pointer to 0xFF
-
+  cpu->SP = 0xFD; // valor real após RESET
   cpu->Flag.C = cpu->Flag.Z = cpu->Flag.I = cpu->Flag.D = cpu->Flag.B
-      = cpu->Flag.V = cpu->Flag.N = 0; // set all flags to 0
-  initializeMem6502 (
-      memory); // Initialize Memory to allocate 64 kilobytes "RAM"
+      = cpu->Flag.V = cpu->Flag.N = 0;
+
+  /* Lê o vetor de reset (little-endian) */
+  Byte lo = memory->Data[0xFFFC];
+  Byte hi = memory->Data[0xFFFD];
+  cpu->PC = ((Word)hi << 8) | lo;
 }
 
 // This function fetches a byte of data from the memory using the program
