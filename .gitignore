@@ -1,2 +1,4 @@
 .clang-format
 ./.git
+./.cache
+layout
