@@ -1,5 +1,5 @@
-#ifndef BVS_H
-#define BVS_H
+#ifndef CLI_H
+#define CLI_H
 
 #include "config.h"
 #include "cpu6502.h"
@@ -26,10 +26,10 @@ CLISetStatus(CPU6502 *cpu)
 }
 
 void
-CLI(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CLI(Word *Cycles, CPU6502 *cpu)
 {
     CLISetStatus(cpu);
     (*Cycles)--;
 }
 
-#endif // BVS_H
+#endif // CLI_H

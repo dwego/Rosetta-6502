@@ -34,7 +34,7 @@ ROLSetStatus(Byte Value, CPU6502 *cpu)
    It then sets the status flags using ROLSetStatus.
 */
 void
-ROL_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+ROL_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A = (Value << 1) | (Value >> 7);

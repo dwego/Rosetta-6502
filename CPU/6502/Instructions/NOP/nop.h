@@ -1,9 +1,7 @@
-#ifndef BVS_H
-#define BVS_H
+#ifndef NOP_H
+#define NOP_H
 
 #include "config.h"
-#include "cpu6502.h"
-
 
 /*
    This is a header file for the BVS (Jump to Subroutine) and RTS (Return from Subroutine) instructions for MOS Technology 6502.
@@ -20,8 +18,8 @@
 */
 
 
-void NOP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void NOP(Word *Cycles) {
     (*Cycles)--;
 }
 
-#endif // BVS_H
+#endif // NOP_H

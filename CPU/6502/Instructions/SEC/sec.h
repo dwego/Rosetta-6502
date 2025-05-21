@@ -1,5 +1,5 @@
-#ifndef BVS_H
-#define BVS_H
+#ifndef SEC_H
+#define SEC_H
 
 #include "config.h"
 #include "cpu6502.h"
@@ -20,8 +20,9 @@
 */
 
 
-void SEC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void SEC(Word *Cycles, CPU6502 *cpu) {
     cpu->Flag.C = 1;
+    (*Cycles)--;
 }
 
-#endif // BVS_H
+#endif // SEC_H

@@ -36,9 +36,10 @@ void TYASetStatus(CPU6502 *cpu) {
 */
 
 
-void TYA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void TYA(Word *Cycles, CPU6502 *cpu) {
     cpu->A = cpu->Y;
     TYASetStatus(cpu);
+    (*Cycles)--;
 }
 
 
