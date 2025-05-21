@@ -14,7 +14,7 @@ typedef uint32_t DWord;
 typedef uint64_t QWord;
 typedef int8_t SignedByte;
 
-inline Byte get_bit(Byte byte, int position) {
+static inline Byte get_bit(Byte byte, int position) {
     return (byte >> position) & 1;
 }
 

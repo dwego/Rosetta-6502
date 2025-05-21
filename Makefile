@@ -2,17 +2,24 @@ CC = clang
 CFLAGS = -Iinclude -Wall -Wextra -g
 
 SRCS := $(shell find . -name '*.c')
-OBJS := $(SRCS:.c=.o)
-EXEC = programa
+OBJS := $(SRCS:%=build/%.o)
+
+EXEC = main
 
 all: $(EXEC)
 
 $(EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@
 
-%.o: %.c
+build/%.c.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+build/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -rf build
+	rm -f $(EXEC)
 
