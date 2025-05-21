@@ -38,9 +38,10 @@ void TXSSetStatus(CPU6502 *cpu) {
 */
 
 
-void TXS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void TXS(Word *Cycles, CPU6502 *cpu) {
     cpu->X = cpu->SP;
     TXSSetStatus(cpu);
+  (*Cycles)--;
 }
 
 #endif // TXS_H

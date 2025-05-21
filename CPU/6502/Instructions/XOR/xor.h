@@ -1,5 +1,5 @@
-#ifndef OR_H
-#define OR_H
+#ifndef XOR_H
+#define XOR_H
 
 #include "config.h"
 #include "cpu6502.h"
@@ -132,4 +132,4 @@ void XOR_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     XORSetStatus(cpu);
 }
 
-#endif // OR_H
+#endif // XOR_H

@@ -26,7 +26,7 @@ CLCSetStatus(CPU6502 *cpu)
 }
 
 void
-CLC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CLC(Word *Cycles, CPU6502 *cpu)
 {
     CLCSetStatus(cpu);
     (*Cycles)--;

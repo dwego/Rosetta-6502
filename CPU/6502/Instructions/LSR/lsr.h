@@ -37,7 +37,7 @@ void LSRSetStatus(Byte Value, CPU6502 *cpu) {
 */
 
 
-void LSR_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void LSR_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A = Value >> 1;
     LSRSetStatus(Value, cpu);

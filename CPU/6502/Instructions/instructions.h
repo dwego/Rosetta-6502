@@ -55,7 +55,7 @@
 #include "TXA/txa.h"
 #include "TXS/txs.h"
 #include "TYA/tya.h"
-
+#include "XOR/xor.h"
 
 /* 
    This enumeration defines opcodes for various instructions supported by the MOS Technology 6502 processor.
@@ -275,3 +275,5 @@ typedef enum {
     INS_RTI = 0x40,
     
 } Instruction;
+
+

@@ -1,5 +1,5 @@
-#ifndef BVS_H
-#define BVS_H
+#ifndef CLV_H
+#define CLV_H
 
 #include "config.h"
 #include "cpu6502.h"
@@ -26,10 +26,10 @@ CLVSetStatus(CPU6502 *cpu)
 }
 
 void
-CLV(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CLV(Word *Cycles, CPU6502 *cpu)
 {
     CLVSetStatus(cpu);
     (*Cycles)--;
 }
 
-#endif // BVS_H
+#endif // CLV_H

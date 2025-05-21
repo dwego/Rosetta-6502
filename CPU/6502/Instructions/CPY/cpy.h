@@ -28,6 +28,22 @@ CPYSetStatus(Byte Result, CPU6502 *cpu)
     cpu->Flag.N = (Result & 0x80) > 0;
 }
 
+
+/*
+   CPY_IM - Load Accumulator with Immediate value.
+   This function fetches a byte from memory and loads it into the Accumulator (A).
+   It then sets the status flags using CPYSetStatus.
+*/
+void
+CPY_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+    Byte Value = FetchByte(Cycles, memory, cpu);
+    Byte Result = cpu->Y - Value;
+    CPYSetStatus(Result, cpu);
+}
+
+
+
 /*
    CPY_ZP - Load Accumulator from Zero Page.
    This function fetches a byte representing a zero-page address from memory, reads the
