@@ -156,7 +156,7 @@ main (void)
   Word Cycles = 20;
 
   resetCPU (0xFFFC, &cpu, &mem);
-  // start - inline a little program
+  // start - inline
   mem.Data[0xFFFC] = INS_LDA_IM;
   mem.Data[0xFFFD] = 0x10;
   mem.Data[0xFFFE] = INS_STA_ZP;
