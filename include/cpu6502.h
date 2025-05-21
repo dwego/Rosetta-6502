@@ -62,7 +62,7 @@ typedef struct {
 
 
 // This function resets the CPU state to its initial values.
-void resetCPU(Word ResetVector, CPU6502 *cpu, MEM6502 *memory);
+void resetCPU(CPU6502 *cpu, MEM6502 *memory);
 
 
 // Fetch Data:
