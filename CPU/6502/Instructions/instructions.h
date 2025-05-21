@@ -1,3 +1,61 @@
+#include "ADC/adc.h"
+#include "AND/and.h"
+#include "ASL/asl.h"
+#include "BCC/bcc.h"
+#include "BCS/bcs.h"
+#include "BEQ/beq.h"
+#include "BIT/bit.h"
+#include "BMI/bmi.h"
+#include "BNE/bne.h"
+#include "BPL/bpl.h"
+#include "BVC/bvc.h"
+#include "BVS/bvs.h"
+#include "CLC/clc.h"
+#include "CLD/cld.h"
+#include "CLI/cli.h"
+#include "CLV/clv.h"
+#include "CMP/cmp.h"
+#include "CPX/cpx.h"
+#include "CPY/cpy.h"
+#include "DEC/dec.h"
+#include "DEX/dex.h"
+#include "DEY/dey.h"
+#include "XOR/xor.h"
+#include "INC/inc.h"
+#include "INX/inx.h"
+#include "INY/iny.h"
+#include "JMP/jmp.h"
+#include "JSR/jsr.h"
+#include "LDA/lda.h"
+#include "LDX/ldx.h"
+#include "LDY/ldy.h"
+#include "LSR/lsr.h"
+#include "NOP/nop.h"
+#include "OR/or.h"
+
+
+#include "PHA/pha.h"
+#include "PHP/php.h"
+#include "PLA/pla.h"
+#include "PLP/plp.h"
+#include "ROL/rol.h"
+#include "ROR/ror.h"
+
+
+#include "SBC/sbc.h"
+#include "SEC/sec.h"
+
+#include "SEI/sei.h"
+#include "STA/sta.h"
+#include "STX/stx.h"
+#include "STY/sty.h"
+#include "TAX/tax.h"
+#include "TAY/tay.h"
+#include "TSX/tsx.h"
+#include "TXA/txa.h"
+#include "TXS/txs.h"
+#include "TYA/tya.h"
+
 
 /* 
    This enumeration defines opcodes for various instructions supported by the MOS Technology 6502 processor.
@@ -13,6 +71,7 @@
 */ 
 
 typedef enum {
+    
     //LDA
     INS_LDA_IM = 0xA9, // done
     INS_LDA_ZP = 0xA5, // done
@@ -71,6 +130,7 @@ typedef enum {
     //Logical Ops
 
     //AND
+
     INS_AND_IM = 0x29, // done
     INS_AND_ZP = 0x25, // done
     INS_AND_ZPX = 0x35, // done
@@ -81,6 +141,7 @@ typedef enum {
     INS_AND_INDY = 0x31,
 
     //OR
+
     INS_OR_IM = 0x09, // done
     INS_OR_ZP = 0x05, // done
     INS_OR_ZPX = 0x15, // done
@@ -91,6 +152,7 @@ typedef enum {
     INS_OR_INDY = 0x11,
 
     //XOR
+
     INS_XOR_IM = 0x49, // done
     INS_XOR_ZP = 0x45, // done
     INS_XOR_ZPX = 0x55, // done
@@ -101,16 +163,19 @@ typedef enum {
     INS_XOR_INDY = 0x51,
 
     //BIT
+
     INS_BIT_ZP = 0x24, // done
     INS_BIT_ABS = 0x2C, // done
 
     //Transfer Registers
+
     INS_TAX = 0xAA, // done
     INS_TAY = 0xA8, // done
     INS_TXA = 0x8A, // done
     INS_TYA = 0x98, // done
 
     //Increments, Decrements
+
     INS_INX = 0xE8, // done
     INS_INY = 0xC8, // done
     INS_DEY = 0x88, // done
@@ -128,69 +193,69 @@ typedef enum {
     INS_BEQ = 0xF0, // done
     INS_BNE = 0xD0, // done
     INS_BCS = 0xB0, // done
-    INS_BCC = 0x90,
-    INS_BMI = 0x30,
-    INS_BPL = 0x10,
-    INS_BVC = 0x50,
-    INS_BVS = 0x70,
+    INS_BCC = 0x90, // done
+    INS_BMI = 0x30, // done
+    INS_BPL = 0x10, // done
+    INS_BVC = 0x50, // done
+    INS_BVS = 0x70, // done
 
     //status flag changes
-    INS_CLC = 0x18,
-    INS_SEC = 0x38,
-    INS_CLD = 0xD8,
-    INS_SED = 0xF8,
-    INS_CLI = 0x58,
-    INS_SEI = 0x78,
-    INS_CLV = 0xB8,
+    INS_CLC = 0x18, // done
+    INS_SEC = 0x38, // done
+    INS_CLD = 0xD8, // done
+    INS_SED = 0xF8, // done
+    INS_CLI = 0x58, // done
+    INS_SEI = 0x78, // done
+    INS_CLV = 0xB8, // done
 
     //Arithmetic
-    INS_ADC = 0x69,
-    INS_ADC_ZP = 0x65,
-    INS_ADC_ZPX = 0x75,
-    INS_ADC_ABS = 0x6D,
-    INS_ADC_ABSX = 0x7D,
-    INS_ADC_ABSY = 0x79,
+    INS_ADC_IM = 0x69, // done
+    INS_ADC_ZP = 0x65, // done
+    INS_ADC_ZPX = 0x75, // done
+    INS_ADC_ABS = 0x6D, // done
+    INS_ADC_ABSX = 0x7D, // done
+    INS_ADC_ABSY = 0x79, // done
     INS_ADC_INDX = 0x61,
     INS_ADC_INDY = 0x71,
 
-    INS_SBC = 0xE9,
-    INS_SBC_ABS = 0xED,
-    INS_SBC_ZP = 0xE5,
-    INS_SBC_ZPX = 0xF5,
-    INS_SBC_ABSX = 0xFD,
-    INS_SBC_ABSY = 0xF9,
+    INS_SBC_IM = 0xE9, // done
+    INS_SBC_ZP = 0xE5, // done
+    INS_SBC_ZPX = 0xF5, // done
+    INS_SBC_ABS = 0xED, // done
+    INS_SBC_ABSX = 0xFD, // done
+    INS_SBC_ABSY = 0xF9, // done
     INS_SBC_INDX = 0xE1,
     INS_SBC_INDY = 0xF1,
 
     // Register Comparison
-    INS_CMP = 0xC9,
-    INS_CMP_ZP = 0xC5,
-    INS_CMP_ZPX = 0xD5,
-    INS_CMP_ABS = 0xCD,
-    INS_CMP_ABSX = 0xDD,
-    INS_CMP_ABSY = 0xD9,
+    INS_CMP_IM = 0xC9, // done
+    INS_CMP_ZP = 0xC5, // done
+    INS_CMP_ZPX = 0xD5, // done
+    INS_CMP_ABS = 0xCD, // done
+    INS_CMP_ABSX = 0xDD, // done
+    INS_CMP_ABSY = 0xD9, // done
     INS_CMP_INDX = 0xC1,
     INS_CMP_INDY = 0xD1,
 
-    INS_CPX = 0xE0,
-    INS_CPY = 0xC0,
-    INS_CPX_ZP = 0xE4,
-    INS_CPY_ZP = 0xC4,
-    INS_CPX_ABS = 0xEC,
-    INS_CPY_ABS = 0xCC,
+    INS_CPX = 0xE0, // done
+    INS_CPY = 0xC0, // done
+    INS_CPX_ZP = 0xE4, // done
+    INS_CPY_ZP = 0xC4, // done
+    INS_CPX_ABS = 0xEC, // done
+    INS_CPY_ABS = 0xCC, // done
 
     // shifts
-    INS_ASL = 0x0A,
-    INS_ASL_ZP = 0x06,
-    INS_ASL_ZPX = 0x16,
-    INS_ASL_ABS = 0x0E,
-    INS_ASL_ABSX = 0x1E,
+    INS_ASL_ACC = 0x0A, // done
+    INS_ASL_ZP = 0x06, // done
+    INS_ASL_ZPX = 0x16, // done
+    INS_ASL_ABS = 0x0E, // done
+    INS_ASL_ABSX = 0x1E, // done
 
-    INS_LSR = 0x4A,
-    INS_LSR_ZP = 0x46,
-    INS_LSR_ZPX = 0x56,
-    INS_LSR_ABS = 0x4E,
-    INS_LSR_ABSX = 0x5E,
+    INS_LSR = 0x4A, // done
+    INS_LSR_ZP = 0x46, // done
+    INS_LSR_ZPX = 0x56, // done
+    INS_LSR_ABS = 0x4E, // done
+    INS_LSR_ABSX = 0x5E, // done
 
     INS_ROL = 0x2A,
     INS_ROL_ZP = 0x26,

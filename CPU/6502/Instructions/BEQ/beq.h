@@ -21,11 +21,11 @@
 
 
 void BEC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    if (cpu->Flag.Z == 0) {
-        Word Sub_Addr = FetchByte(Cycles, memory, cpu);
-        cpu->PC = Sub_Addr;
-        (*Cycles)--;
-    }
+        if (cpu->Flag.Z == 0) {
+            Word Sub_Addr = FetchByte(Cycles, memory, cpu);
+            cpu->PC = Sub_Addr;
+            (*Cycles)--;
+        }
 }
 
 #endif // BEC_H

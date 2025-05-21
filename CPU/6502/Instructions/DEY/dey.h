@@ -24,8 +24,8 @@
 
 
 void DEYSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+    cpu->Flag.Z = (cpu->Y == 0);
+    cpu->Flag.N = (cpu->Y & 0x80) > 0;
 }
 
 
@@ -38,6 +38,7 @@ void DEYSetStatus(CPU6502 *cpu) {
 
 void DEY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->Y--;
+    (*Cycles)--;
 }
 
 

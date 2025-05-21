@@ -1,3 +1,2 @@
-./cmake-build-debug
-./idea
-CMakeLists.txt
+.clang-format
+./.git

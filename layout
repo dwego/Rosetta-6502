@@ -1,0 +1,15 @@
+# Layout da Memória do Sistema 6502 
+
+## RAM (0x0000 - 0x7FFF)
+32KB de memória RAM, onde:
+- "Zero page" está localizada em 0x0000 - 0x00FF
+- Pilha (Stack) está localizada em 0x0100 - 0x01FF
+
+## Endereços de Memória Não Utilizados (0x8000 - 0xEFFF)
+Área reservada para expansões futuras ou outros usos. Atualmente não está sendo usada.
+
+## Periféricos (0xF000 - 0xF0FF)
+Periféricos do sistema são mapeados nesta região. Cada periférico é colocado em um limite de 16 bytes para facilitar a decodificação.
+
+## ROM (0xF100 - 0xFFFF)
+4KB de memória ROM começam em 0xF100 e vão até o topo da memória em 0xFFFF. Os endereços 0xFFFA - 0xFFFF são reservados para os vetores de interrupção do sistema.

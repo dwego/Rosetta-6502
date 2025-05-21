@@ -97,6 +97,15 @@ void LDA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 void LDA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Absolute += cpu->X;
+
+    Word OldPage = Absolute & 0xFF00;
+    Absolute += cpu->X;
+    Word NewPage = Absolute & 0xFF00;
+
+    if (OldPage != NewPage) {
+        (*Cycles)++;
+    }
+
     cpu->A = ReadByte(Cycles, Absolute, memory);
     LDASetStatus(cpu);
 }
@@ -111,7 +120,16 @@ void LDA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
 void LDA_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
+
+    Word OldPage = Absolute & 0xFF00;
     Absolute += cpu->Y;
+    Word NewPage = Absolute & 0xFF00;
+
+    // Add an extra cycle if page is crossed
+    if (OldPage != NewPage) {
+        (*Cycles)++;
+    }
+
     cpu->A = ReadByte(Cycles, Absolute, memory);
     LDASetStatus(cpu);
 }

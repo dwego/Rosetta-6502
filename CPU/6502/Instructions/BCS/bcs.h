@@ -5,26 +5,36 @@
 #include "cpu6502.h"
 
 
-/* 
-   This is a header file for the BCS (Jump to Subroutine) and RTS (Return from Subroutine) instructions for MOS Technology 6502.
-   BCS is used to jump to a subroutine, saving the return address, and RTS is used to return from that subroutine.
+/*
+   This is a header file for the BCS (Branch if Carry Set) instruction for MOS Technology 6502.
+   BCS is used to branch conditionally based on the state of the Carry flag. If the Carry flag is set, BCS will branch to a new location.
    For more information about the instructions, refer to Instructions.MD
 */
 
-
-/* 
-   BCS - Jump to Subroutine:
-   This function fetches a two-byte address from memory, saves the return address (PC + 2) to the stack,
-   and then sets the program counter (PC) to the specified address.
-   It adjusts the cycle count accordingly.
+/*
+   BCS - Branch if Carry Set:
+   This function fetches a byte from memory, interprets it as a signed quantity (allowing for backwards branching),
+   then checks if the carry flag is set. If it is, it branches by adding the signed quantity to the program counter.
+   It adjusts the cycle count accordingly, with an extra cycle consumed if the branch is taken,
+   and another cycle consumed if the branch crosses a page boundary.
 */
 
 
 void BCS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    if (cpu->A != 0) {
-        Word Sub_Addr = FetchByte(Cycles, memory, cpu);
-        cpu->PC = Sub_Addr;
+    Byte Relative = FetchByte(Cycles, memory, cpu);
+    if(cpu->Flag.C == 0) {
+        Word OldPC = cpu->PC;
+        // Since the fetched value is signed, we cast it to signed Byte
+        // to make sure it's treated as negative if the high bit is set.
+        cpu->PC += (SignedByte)Relative;
+
+        // BCC instruction takes an extra cycle if branch succeeds.
         (*Cycles)--;
+
+        // If the branch crosses a page boundary, it takes an additional cycle.
+        if ((OldPC & 0xFF00) != (cpu->PC & 0xFF00))  {
+            (*Cycles)--;
+        }
     }
 }
 

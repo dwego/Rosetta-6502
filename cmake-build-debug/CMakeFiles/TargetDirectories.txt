@@ -1,3 +1,0 @@
-/media/diego/Dados/Project/diego/diego/Rosetta/cmake-build-debug/CMakeFiles/Rosetta.dir
-/media/diego/Dados/Project/diego/diego/Rosetta/cmake-build-debug/CMakeFiles/edit_cache.dir
-/media/diego/Dados/Project/diego/diego/Rosetta/cmake-build-debug/CMakeFiles/rebuild_cache.dir
