@@ -66,12 +66,12 @@ typedef struct {
 /* 
    total_cycles_executed - Counts the total CPU cycles executed since emulation start
 */
-QWord total_cycles_executed = 0;
+extern QWord total_cycles_executed;
 
 /* 
    start_time - Timestamp marking the beginning of emulation or timing reset
 */
-struct timespec start_time;
+extern struct timespec start_time;
 
 
 /* 
