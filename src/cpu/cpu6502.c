@@ -204,6 +204,8 @@ Word
 PopWordFromStack (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
   Word ValueFromStack = ReadWord (Cycles, SPToAddress (cpu), memory);
+  WriteWord (Cycles, 0, memory, SPToAddress (cpu));
+  cpu->SP = +2;
   return ValueFromStack;
 }
 
@@ -214,6 +216,6 @@ PopByteFromStack (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
   Word ValueFromStack = ReadByte (Cycles, SPToAddress (cpu), memory);
   WriteByte (Cycles, 0, memory, SPToAddress (cpu));
-  cpu->SP--;
+  cpu->SP++;
   return ValueFromStack;
 }
