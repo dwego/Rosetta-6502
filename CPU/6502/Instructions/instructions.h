@@ -31,7 +31,7 @@
 #include "LDY/ldy.h"
 #include "LSR/lsr.h"
 #include "NOP/nop.h"
-#include "OR/or.h"
+#include "ORA/ora.h"
 
 
 #include "PHA/pha.h"
@@ -139,16 +139,16 @@ typedef enum {
     INS_AND_INDX = 0x21,
     INS_AND_INDY = 0x31,
 
-    //OR
+    //ORA
 
-    INS_OR_IM = 0x09, // done
-    INS_OR_ZP = 0x05, // done
-    INS_OR_ZPX = 0x15, // done
-    INS_OR_ABS = 0x0D, // done
-    INS_OR_ABSX = 0x1D, // done
-    INS_OR_ABSY = 0x19, // done
-    INS_OR_INDX = 0x01,
-    INS_OR_INDY = 0x11,
+    INS_ORA_IM = 0x09, // done
+    INS_ORA_ZP = 0x05, // done
+    INS_ORA_ZPX = 0x15, // done
+    INS_ORA_ABS = 0x0D, // done
+    INS_ORA_ABSX = 0x1D, // done
+    INS_ORA_ABSY = 0x19, // done
+    INS_ORA_INDX = 0x01,
+    INS_ORA_INDY = 0x11,
 
     //XOR
 
