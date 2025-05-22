@@ -37,6 +37,12 @@ Contributions, bug reports, and suggestions are welcome!
 
 ---
 
+## 📜 Full 6502 Instruction Set Documentation
+
+Explore the complete documentation of the MOS 6502 CPU instructions in the [Instructions](/src/cpu/Instructions/Instructions.md) file.
+
+---
+
 ## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
