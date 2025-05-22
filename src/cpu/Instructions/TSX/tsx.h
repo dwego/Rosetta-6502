@@ -4,44 +4,37 @@
 #include "config.h"
 #include "cpu6502.h"
 
-// TODO Arrumar os comentarios
-
 /*
-   This is a header file for the TSX (Load Accumulator) instruction for MOS Technology 6502.
-   TSX works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the TSX (Transfer Stack Pointer to Index X)
+   instruction for the MOS Technology 6502. TSX copies the value from the Stack
+   Pointer (SP) register into the Index Register X (X). For more information
+   about the instructions, refer to Instructions.MD
 */
-
-/*
-   TSX (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
-*/
-
 
 /*
    This function sets the Flags for the Status register
-   to identify what happened during the TSX instruction.
+   based on the current value of the X register after the transfer.
 */
-
-
-static inline void TSXSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->X == 0);
-    cpu->Flag.N = (cpu->X & 0x80) > 0;
+static inline void
+TSXSetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->X == 0);
+  cpu->Flag.N = (cpu->X & 0x80) != 0;
 }
 
-
 /*
-   TSX_ZP - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, and loads it into the Accumulator (A). It then sets the TSXtus flags.
+   TSX - Transfer Stack Pointer to Index X.
+   Copies the value of the Stack Pointer (SP) into the X register,
+   then updates the Zero and Negative flags accordingly.
+   Consumes 2 CPU cycles.
 */
-
-
-static inline void TSX(Word *Cycles, CPU6502 *cpu) {
-    cpu->SP = cpu->X;
-    TSXSetStatus(cpu);
-    (*Cycles)--;
-     spend_cycles(2);
+static inline void
+TSX (Word *Cycles, CPU6502 *cpu)
+{
+  cpu->X = cpu->SP;
+  TSXSetStatus (cpu);
+  (*Cycles)--;
+  spend_cycles (2);
 }
 
 #endif // TSX_H

@@ -5,41 +5,37 @@
 #include "cpu6502.h"
 
 /*
-   This is a header file for the INX (Load Accumulator) instruction for MOS Technology 6502.
-   INX works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the INX (Increment X Register) instruction for MOS
+   Technology 6502. INX increments the X register by 1. It updates the Zero and
+   Negative flags according to the new value of X. This instruction uses
+   implied addressing mode (no memory access). For more information about the
+   instructions, refer to Instructions.MD
 */
-
-/*
-   INX (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
-*/
-
 
 /*
    This function sets the Flags for the Status register
-   to identify what happened during the INX instruction.
+   based on the current value of the X register.
 */
-
-
-static inline void INXSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->X == 0);
-    cpu->Flag.N = (cpu->X & 0x80) > 0;
+static inline void
+INXSetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->X == 0);
+  cpu->Flag.N = (cpu->X & 0x80) != 0;
 }
-
 
 /*
-   INX - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, INX loads it into the Accumulator (A). It then sets the status flags.
+   INX - Increment X Register.
+   Increments the X register, updates the status flags,
+   and spends the required CPU cycles.
 */
-
-
-static inline void INX(Word *Cycles, CPU6502 *cpu) {
-    cpu->X++;
-    (*Cycles)--;
-     spend_cycles(2);
+static inline void
+INX (Word *Cycles, CPU6502 *cpu)
+{
+  cpu->X++;
+  INXSetStatus (cpu);
+  spend_cycles (2);
+  (*Cycles) -= 2; // or decrement accordingly, depending on your cycle tracking
+                  // system
 }
-
 
 #endif // INX_H

@@ -5,42 +5,37 @@
 #include "cpu6502.h"
 
 /*
-   This is a header file for the TXA (Load Accumulator) instruction for MOS Technology 6502.
-   TXA works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the TXA (Transfer X to Accumulator) instruction
+   for MOS Technology 6502.
+   TXA works by transferring the value from the Index Register X (X) into the
+   Accumulator (A). For more information about the instructions, refer to
+   Instructions.MD
 */
-
-/*
-   TXA (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
-*/
-
 
 /*
    This function sets the Flags for the Status register
-   to identify what happened during the TXA instruction.
+   based on the current value of the Accumulator (A) after the transfer.
 */
-
-
-static inline void TXASetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+static inline void
+TXASetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->A == 0);
+  cpu->Flag.N = (cpu->A & 0x80) != 0;
 }
-
 
 /*
-   TXA - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, TXA loads it into the Accumulator (A). It then sets the status flags.
+   TXA - Transfer X to Accumulator.
+   Copies the value from the X register into the Accumulator (A),
+   then updates the Zero and Negative flags accordingly.
+   Consumes 2 CPU cycles.
 */
-
-
-static inline void TXA(Word *Cycles, CPU6502 *cpu) {
-    cpu->A = cpu->X;
-    TXASetStatus(cpu);
-    (*Cycles)--;
-     spend_cycles(2);
+static inline void
+TXA (Word *Cycles, CPU6502 *cpu)
+{
+  cpu->A = cpu->X;
+  TXASetStatus (cpu);
+  (*Cycles)--;
+  spend_cycles (2);
 }
-
 
 #endif // TXA_H

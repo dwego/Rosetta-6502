@@ -3,21 +3,23 @@
 
 #include "config.h"
 #include "cpu6502.h"
+#include "mem6502.h"
 
-
-/* 
+/*
    RTS - Return from Subroutine:
-   This function retrieves the return address from the stack and sets the program counter (PC) to that address.
-   It adjusts the cycle count accordingly.
-*/ 
+   Pulls the return address (low byte, then high byte) from the stack,
+   increments it by 1 (because JSR pushes PC-1),
+   and sets the program counter (PC) to this address.
+   Consumes 6 CPU cycles.
+*/
 
-
-static inline void RTS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-  Word ReturnAddress = PopWordFromStack(Cycles, memory, cpu);
-  cpu->PC = ReturnAddress;
-  (*Cycles)-=2;
-  spend_cycles(6);
+static inline void
+RTS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word returnAddress = PopWordFromStack (Cycles, memory, cpu);
+  cpu->PC = returnAddress + 1;
+  (*Cycles) -= 2;
+  spend_cycles (6);
 }
-
 
 #endif // RTS_H

@@ -4,37 +4,40 @@
 #include "config.h"
 #include "cpu6502.h"
 
-
-/* 
-   This is a header file for the BVS (Jump to Subroutine) and RTS (Return from Subroutine) instructions for MOS Technology 6502.
-   BVS is used to jump to a subroutine, saving the return address, and RTS is used to return from that subroutine.
-   For more information about the instructions, refer to Instructions.MD
+/*
+   This is a header file for the BVS (Branch if Overflow Set) instruction for
+   MOS Technology 6502. BVS branches to a new location if the Overflow flag is
+   set. For more information about the instructions, refer to Instructions.MD
 */
 
-
-/* 
-   BVS - Jump to Subroutine:
-   This function fetches a two-byte address from memory, saves the return address (PC + 2) to the stack,
-   and then sets the program counter (PC) to the specified address.
-   It adjusts the cycle count accordingly.
+/*
+   BVS - Branch if Overflow Set:
+   This function fetches a signed byte from memory as a relative offset,
+   then checks if the Overflow flag is set. If it is, it adds the signed offset
+   to the program counter (PC) to branch. The cycle count is adjusted, with an
+   extra cycle if the branch is taken, and another cycle if the branch crosses
+   a page boundary.
 */
 
+static inline void
+BVS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  if (cpu->Flag.V == 1)
+    {
+      Byte relative_offset = FetchByte (Cycles, memory, cpu);
+      Word old_pc = cpu->PC;
+      cpu->PC += (SignedByte)relative_offset;
 
-static inline void BVS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    if (cpu->Flag.V == 1) {
-        Byte Sub_Addr = FetchByte(Cycles, memory, cpu);
-        Word old_pc = cpu->PC;
-        cpu->PC += Sub_Addr;
+      (*Cycles)--;
+      spend_cycle ();
 
-        (*Cycles)--;
-         spend_cycle();
-
-        if ((old_pc & 0xFF00) != (cpu->PC & 0xFF00)) {
-            (*Cycles)--;
-             spend_cycle();
+      if ((old_pc & 0xFF00) != (cpu->PC & 0xFF00))
+        {
+          (*Cycles)--;
+          spend_cycle ();
         }
     }
-     spend_cycles(2);
+  spend_cycles (2);
 }
 
 #endif // BVS_H

@@ -5,41 +5,36 @@
 #include "cpu6502.h"
 
 /*
-   This is a header file for the INY (Load Accumulator) instruction for MOS Technology 6502.
-   INY works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the INY (Increment Y Register) instruction for MOS
+   Technology 6502. INY increments the Y register by 1. It updates the Zero and
+   Negative flags according to the new value of Y. This instruction uses
+   implied addressing mode (no memory access). For more information about the
+   instructions, refer to Instructions.MD
 */
-
-/*
-   INY (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
-*/
-
 
 /*
    This function sets the Flags for the Status register
-   to identify what happened during the INY instruction.
+   based on the current value of the Y register.
 */
-
-
-static inline void INYSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->Y == 0);
-    cpu->Flag.N = (cpu->Y & 0x80) > 0;
+static inline void
+INYSetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->Y == 0);
+  cpu->Flag.N = (cpu->Y & 0x80) != 0;
 }
-
 
 /*
-   INY - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, INY loads it into the Accumulator (A). It then sets the status flags.
+   INY - Increment Y Register.
+   Increments the Y register, updates the status flags,
+   and spends the required CPU cycles.
 */
-
-
-static inline void INY(Word *Cycles, CPU6502 *cpu) {
-    cpu->Y++;
-    (*Cycles)--;
-     spend_cycles(2);
+static inline void
+INY (Word *Cycles, CPU6502 *cpu)
+{
+  cpu->Y++;
+  INYSetStatus (cpu);
+  spend_cycles (2);
+  (*Cycles) -= 2;
 }
-
 
 #endif // INY_H

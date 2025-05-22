@@ -5,32 +5,45 @@
 #include "cpu6502.h"
 #include "mem6502.h"
 
-static inline void BRK(Word *Cycles, MEM6502 *mem, CPU6502 *cpu) {
-    // Incrementa PC para o próximo endereço (2 bytes)
-    cpu->PC += 2;
-    (*Cycles)--;  
+/*
+   This is a header file for the BRK (Force Interrupt) instruction for MOS
+   Technology 6502. BRK triggers a software interrupt by pushing the program
+   counter and processor status to the stack, then loading the interrupt vector
+   address into the program counter.
 
-    // Empilha PC (high byte, depois low byte)
-    PushPCToStack(Cycles, mem, cpu);
+   For more information about the instructions, refer to Instructions.MD
+*/
 
-    // Prepara status para empilhamento: PS com bit B setado (bit 4)
-    Byte status_with_B = cpu->PS | 0x10;
+/*
+   BRK - Force Interrupt:
+   This function increments the program counter by 2 to point past the BRK
+   opcode, pushes the program counter and the processor status register (with
+   the Break flag set) onto the stack, sets the Interrupt Disable flag to
+   prevent further interrupts, and finally loads the interrupt vector address
+   from memory location $FFFE/$FFFF into the PC. Cycle counts are adjusted
+   according to the 6502 timing for this instruction.
+*/
 
-    // Empilha o status com o bit B setado
-    PushByteToStack(Cycles, mem, status_with_B, cpu);
+static inline void
+BRK (Word *Cycles, MEM6502 *mem, CPU6502 *cpu)
+{
+  cpu->PC += 2;
+  (*Cycles)--;
 
-    // Set Interrupt Disable flag para bloquear interrupções futuras
-    cpu->Flag.I = 1;
-    cpu->PS |= (1 << 2); // bit I setado no PS
+  PushPCToStack (Cycles, mem, cpu);
 
-    // O bit B NÃO deve ficar setado na CPU, apenas no status empilhado
+  Byte status_with_B = cpu->PS | 0x10;
 
-    // Lê vetor de interrupção (IRQ/BRK) em $FFFE/$FFFF
-    Byte lo = mem->Data[0xFFFE];
-    Byte hi = mem->Data[0xFFFF];
-    cpu->PC = (hi << 8) | lo;
-    (*Cycles) -= 2;
-     spend_cycles(7);
+  PushByteToStack (Cycles, mem, status_with_B, cpu);
+
+  cpu->Flag.I = 1;
+  cpu->PS |= (1 << 2); // Set Interrupt Disable flag in PS
+
+  Byte lo = mem->Data[0xFFFE];
+  Byte hi = mem->Data[0xFFFF];
+  cpu->PC = (hi << 8) | lo;
+  (*Cycles) -= 2;
+  spend_cycles (7);
 }
 
 #endif // BRK_H

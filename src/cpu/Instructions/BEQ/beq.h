@@ -3,37 +3,44 @@
 
 #include "config.h"
 #include "cpu6502.h"
+#include "mem6502.h"
 
-
-/* 
-   This is a header file for the BEC (Jump to Subroutine) and RTS (Return from Subroutine) instructions for MOS Technology 6502.
-   BEC is used to jump to a subroutine, saving the return address, and RTS is used to return from that subroutine.
+/*
+   This is a header file for the BEQ (Branch if Equal) instruction for MOS
+   Technology 6502. BEQ branches to a new location if the Zero flag (Z) is set.
    For more information about the instructions, refer to Instructions.MD
 */
 
-
-/* 
-   BEC - Jump to Subroutine:
-   This function fetches a two-byte address from memory, saves the return address (PC + 2) to the stack,
-   and then sets the program counter (PC) to the specified address.
-   It adjusts the cycle count accordingly.
+/*
+   BEQ - Branch if Equal:
+   This function fetches a one-byte signed relative offset from memory,
+   checks if the Zero flag is set, and if so, adjusts the program counter (PC)
+   by the signed offset. It adjusts the cycle count according to the rules of
+   the BEQ instruction, including extra cycles for a successful branch and
+   crossing a page boundary.
 */
 
+static inline void
+BEQ (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte Relative = FetchByte (Cycles, memory, cpu);
 
-static inline void BEQ(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    if (cpu->Flag.Z == 1) {
-        Byte Sub_Addr = FetchByte(Cycles, memory, cpu);
-        Word old_pc = cpu->PC;
-        cpu->PC += Sub_Addr;
+  if (cpu->Flag.Z == 1)
+    {
+      Word OldPC = cpu->PC;
+      cpu->PC += (SignedByte)Relative;
 
-        (*Cycles)--;
-        spend_cycle();
-        if ((old_pc & 0xFF00) != (cpu->PC & 0xFF00)) {
-            (*Cycles)--;
-             spend_cycle();
+      (*Cycles)--;
+      spend_cycle ();
+
+      if ((OldPC & 0xFF00) != (cpu->PC & 0xFF00))
+        {
+          (*Cycles)--;
+          spend_cycle ();
         }
     }
-  spend_cycles(2);
+
+  spend_cycles (2);
 }
 
 #endif // BEQ_H

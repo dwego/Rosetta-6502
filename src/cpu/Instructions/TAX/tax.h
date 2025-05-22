@@ -5,42 +5,42 @@
 #include "cpu6502.h"
 
 /*
-   This is a header file for the TAX (Load Accumulator) instruction for MOS Technology 6502.
-   TAX works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the TAX (Transfer Accumulator to Index X)
+   instruction for MOS Technology 6502. TAX copies the value from the
+   Accumulator register (A) to the Index Register X (X). For more information
+   about the instructions, refer to Instructions.MD
 */
 
 /*
-   TAX (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   TAX affects the processor status flags:
+   - Zero flag (Z) is set if the new X value is zero.
+   - Negative flag (N) is set if bit 7 of the new X value is set.
 */
-
 
 /*
    This function sets the Flags for the Status register
-   to identify what happened during the TAX instruction.
+   based on the current value of the X register.
 */
-
-
-static inline void TAXSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+static inline void
+TAXSetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->X == 0);
+  cpu->Flag.N = (cpu->X & 0x80) != 0;
 }
-
 
 /*
-   TAX - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, TAX loads it into the Accumulator (A). It then sets the status flags.
+   TAX - Transfer Accumulator to Index X.
+   Copies the value of the Accumulator into the X register,
+   then updates the Zero and Negative flags accordingly.
+   Consumes 2 CPU cycles.
 */
-
-
-static inline void TAX(Word *Cycles, CPU6502 *cpu) {
-    cpu->X = cpu->A;
-    TAXSetStatus(cpu);
-    (*Cycles)--;
-   spend_cycles(2);
+static inline void
+TAX (Word *Cycles, CPU6502 *cpu)
+{
+  cpu->X = cpu->A;
+  TAXSetStatus (cpu);
+  (*Cycles)--;
+  spend_cycles (2);
 }
-
 
 #endif // TAX_H

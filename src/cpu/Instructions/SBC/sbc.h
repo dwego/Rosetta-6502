@@ -5,131 +5,175 @@
 #include "cpu6502.h"
 #include "mem6502.h"
 
-/* 
-   This is a header file for the SBC (Load Accumulator) instruction for MOS Technology 6502.
-   SBC works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
-*/
-
 /*
-   SBC (Load Accumulator) instruction supports various SBCressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   This is a header file for the SBC (Subtract with Carry) instruction for MOS
+   Technology 6502. SBC subtracts a value and the inverse of the carry flag
+   from the Accumulator register (A). The instruction performs A = A + (~value)
+   + Carry. For more information about the instructions, refer to
+   Instructions.MD
 */
-
 
 /*
    This function sets the Flags for the Status register
-   to identify what happened during the SBC instruction.
+   to represent the result of the SBC instruction.
 */
 
-
-static inline void SBCSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+static inline void
+SBCSetStatus (CPU6502 *cpu, Byte before, Byte value, Byte result)
+{
+  cpu->Flag.C
+      = (result
+         <= before); // Carry is set if no borrow occurred (result <= before)
+  cpu->Flag.Z = (result == 0);
+  cpu->Flag.N = (result & 0x80) != 0;
+  // Overflow is set if the sign bit of result is incorrect for subtraction
+  cpu->Flag.V = ((before ^ result) & (before ^ value) & 0x80) != 0;
 }
 
-
 /*
-   SBC_IM - Load Accumulator with Immediate value.
-   This function fetches a byte from memory and loads it into the Accumulator (A).
-   It then sets the status flags using SBCSetStatus.
+   SBC_IM - Subtract Immediate value and the inverse of carry flag from the
+   Accumulator. This function fetches a byte from memory, performs A = A +
+   (~value) + Carry, then sets the status flags.
 */
 
+static inline void
+SBC_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte Value = FetchByte (Cycles, memory, cpu);
+  Byte Before = cpu->A;
 
-static inline void SBC_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte Value = FetchByte(Cycles, memory, cpu);
-    cpu->A -= Value - cpu->Flag.C;
-    SBCSetStatus(cpu);
-     spend_cycles(2);
+  // Perform subtraction via ADC with complemented value
+  Byte Result = cpu->A + (~Value) + cpu->Flag.C;
+  cpu->A = Result;
+
+  SBCSetStatus (cpu, Before, Value, Result);
+  spend_cycles (2);
 }
 
-
 /*
-   SBC_ZP - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page SBCress from memory, reads the
-   value at that SBCress, and loads it into the Accumulator (A). It then sets the status flags.
+   SBC_ZP - Subtract value from Zero Page and the inverse of carry flag from
+   the Accumulator. This function fetches a zero-page address from memory,
+   reads the value at that address, performs A = A + (~value) + Carry, then
+   sets the status flags.
 */
 
+static inline void
+SBC_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
+  Byte Before = cpu->A;
 
-static inline void SBC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte ZeroPageSBCr = FetchByte(Cycles, memory, cpu);
+  Byte Result = cpu->A + (~Value) + cpu->Flag.C;
+  cpu->A = Result;
 
-    Byte Value = ReadByte(Cycles, ZeroPageSBCr, memory);
-    cpu->A -= Value - cpu->Flag.C;
-    SBCSetStatus(cpu);
-     spend_cycles(3);
+  SBCSetStatus (cpu, Before, Value, Result);
+  spend_cycles (3);
 }
 
-
 /*
-   SBC_ZPX - Load Accumulator from Zero Page with X Offset.
-   Similar to SBC_ZP, but SBCs the X register value to the zero-page SBCress before reading
-   the value from memory. It adjusts the cycle count accordingly and sets the status flags.
+   SBC_ZPX - Subtract value from Zero Page with X Offset and the inverse of
+   carry flag from the Accumulator. This function fetches a zero-page address
+   from memory, adds the X register, reads the value at the resulting address,
+   performs A = A + (~value) + Carry, then sets the status flags.
 */
 
+static inline void
+SBC_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  ZeroPageAddr += cpu->X;
 
-static inline void SBC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte ZeroPageSBCr = FetchByte(Cycles, memory, cpu);
-    ZeroPageSBCr += cpu->X;
-    (*Cycles)--;
+  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
+  Byte Before = cpu->A;
 
-    Byte Value = ReadByte(Cycles, ZeroPageSBCr, memory);
-    cpu->A -= Value - cpu->Flag.C;
-    SBCSetStatus(cpu);
-     spend_cycles(4);
+  Byte Result = cpu->A + (~Value) + cpu->Flag.C;
+  cpu->A = Result;
+
+  SBCSetStatus (cpu, Before, Value, Result);
+  spend_cycles (4);
 }
 
-
 /*
-   SBC_ABS - Load Accumulator from Absolute SBCress.
-   This function fetches a two-byte absolute SBCress from memory, reads the value at that SBCress,
-   and loads it into the Accumulator (A). It then sets the status flags.
+   SBC_ABS - Subtract value from Absolute address and the inverse of carry flag
+   from the Accumulator. This function fetches an absolute address from memory,
+   reads the value at that address, performs A = A + (~value) + Carry, then
+   sets the status flags.
 */
 
+static inline void
+SBC_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
 
-static inline void SBC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
+  Byte Value = ReadByte (Cycles, Absolute, memory);
+  Byte Before = cpu->A;
 
-    Byte Value = ReadByte(Cycles, Absolute, memory);
-    cpu->A -= Value - cpu->Flag.C;
-    SBCSetStatus(cpu);
-     spend_cycles(4);
+  Byte Result = cpu->A + (~Value) + cpu->Flag.C;
+  cpu->A = Result;
+
+  SBCSetStatus (cpu, Before, Value, Result);
+  spend_cycles (4);
 }
 
-
 /*
-   SBC_ABSX - Load Accumulator from Absolute SBCress with X Offset.
-   Similar to SBC_ABS, but SBCs the X register value to the absolute SBCress before reading
-   the value from memory. It adjusts the cycle count accordingly and sets the status flags.
+   SBC_ABSX - Subtract value from Absolute address with X Offset and the
+   inverse of carry flag from the Accumulator. This function fetches an
+   absolute address from memory, adds the X register, reads the value at the
+   resulting address, performs A = A + (~value) + Carry, then sets the status
+   flags.
 */
 
+static inline void
+SBC_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word NewAddress = Absolute + cpu->X;
 
-static inline void SBC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-    Absolute += cpu->X;
+  if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
+    {
+      (*Cycles)++;
+      spend_cycle ();
+    }
 
-    Byte Value = ReadByte(Cycles, Absolute, memory);
-    cpu->A -= Value - cpu->Flag.C;
-    SBCSetStatus(cpu);
-     spend_cycles(5);
+  Byte Value = ReadByte (Cycles, NewAddress, memory);
+  Byte Before = cpu->A;
+
+  Byte Result = cpu->A + (~Value) + cpu->Flag.C;
+  cpu->A = Result;
+
+  SBCSetStatus (cpu, Before, Value, Result);
+  spend_cycles (4);
 }
 
-
 /*
-   SBC_ABSY - Load Accumulator from Absolute SBCress with Y Offset.
-   Similar to SBC_ABS, but SBCs the Y register value to the absolute SBCress before reading
-   the value from memory. It adjusts the cycle count accordingly and sets the status flags.
+   SBC_ABSY - Subtract value from Absolute address with Y Offset and the
+   inverse of carry flag from the Accumulator. This function fetches an
+   absolute address from memory, adds the Y register, reads the value at the
+   resulting address, performs A = A + (~value) + Carry, then sets the status
+   flags.
 */
 
+static inline void
+SBC_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word NewAddress = Absolute + cpu->Y;
 
-static inline void SBC_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-    Absolute += cpu->Y;
+  if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
+    {
+      (*Cycles)++;
+      spend_cycle ();
+    }
 
-    Byte Value = ReadByte(Cycles, Absolute, memory);
-    cpu->A -= Value - cpu->Flag.C;
-    SBCSetStatus(cpu);
-     spend_cycles(5);
+  Byte Value = ReadByte (Cycles, NewAddress, memory);
+  Byte Before = cpu->A;
+
+  Byte Result = cpu->A + (~Value) + cpu->Flag.C;
+  cpu->A = Result;
+
+  SBCSetStatus (cpu, Before, Value, Result);
+  spend_cycles (4);
 }
 
 #endif // SBC_H

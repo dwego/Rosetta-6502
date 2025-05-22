@@ -4,33 +4,31 @@
 #include "config.h"
 #include "cpu6502.h"
 
-
 /*
-   This is a header file for the BVS (Jump to Subroutine) and RTS (Return from Subroutine) instructions for MOS Technology 6502.
-   BVS is used to jump to a subroutine, saving the return address, and RTS is used to return from that subroutine.
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the CLI (Clear Interrupt Disable) instruction for
+   MOS Technology 6502. CLI clears the Interrupt Disable flag in the processor
+   status register (i.e., enables maskable interrupts). For more information
+   about the instructions, refer to Instructions.MD
 */
 
-
 /*
-   BVS - Jump to Subroutine:
-   This function fetches a two-byte address from memory, saves the return address (PC + 2) to the stack,
-   and then sets the program counter (PC) to the specified address.
-   It adjusts the cycle count accordingly.
+   CLI - Clear Interrupt Disable:
+   This function clears the Interrupt Disable flag (I) in the CPU status
+   register. It adjusts the cycle count accordingly.
 */
 
 static inline void
-CLISetStatus(CPU6502 *cpu)
+CLISetStatus (CPU6502 *cpu)
 {
-    cpu->Flag.I = 0;
+  cpu->Flag.I = 0;
 }
 
 static inline void
-CLI(Word *Cycles, CPU6502 *cpu)
+CLI (Word *Cycles, CPU6502 *cpu)
 {
-    CLISetStatus(cpu);
-    (*Cycles)--;
-    spend_cycles(2);
+  CLISetStatus (cpu);
+  (*Cycles)--;
+  spend_cycles (2);
 }
 
 #endif // CLI_H

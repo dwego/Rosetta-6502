@@ -4,40 +4,39 @@
 #include "config.h"
 #include "cpu6502.h"
 
-
 /*
-   This is a header file for the BCS (Branch if Carry Set) instruction for MOS Technology 6502.
-   BCS is used to branch conditionally based on the state of the Carry flag. If the Carry flag is set, BCS will branch to a new location.
+   This is a header file for the BCS (Branch if Carry Set) instruction for MOS
+   Technology 6502. BCS branches to a new location if the Carry flag is set.
    For more information about the instructions, refer to Instructions.MD
-*/
 
-/*
    BCS - Branch if Carry Set:
-   This function fetches a byte from memory, interprets it as a signed quantity (allowing for backwards branching),
-   then checks if the carry flag is set. If it is, it branches by adding the signed quantity to the program counter.
-   It adjusts the cycle count accordingly, with an extra cycle consumed if the branch is taken,
-   and another cycle consumed if the branch crosses a page boundary.
+   This function fetches a one-byte signed value from memory,
+   checks if the Carry flag is set, and if so, adjusts the program counter (PC)
+   by the fetched signed value. It adjusts the cycle count according to the
+   rules of the BCS instruction, including extra cycles for a successful branch
+   and crossing a page boundary.
 */
 
+static inline void
+BCS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte Relative = FetchByte (Cycles, memory, cpu);
 
-static inline void BCS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte Relative = FetchByte(Cycles, memory, cpu);
-    if(cpu->Flag.C == 0) {
-        Word OldPC = cpu->PC;
-        // Since the fetched value is signed, we cast it to signed Byte
-        // to make sure it's treated as negative if the high bit is set.
-        cpu->PC += (SignedByte)Relative;
+  if (cpu->Flag.C != 0)
+    {
+      Word OldPC = cpu->PC;
+      cpu->PC += (SignedByte)Relative;
 
-        // BCC instruction takes an extra cycle if branch succeeds.
-        (*Cycles)--;
-         spend_cycle();  
-        // If the branch crosses a page boundary, it takes an additional cycle.
-        if ((OldPC & 0xFF00) != (cpu->PC & 0xFF00))  {
-            (*Cycles)--;
-             spend_cycle();
+      (*Cycles)--;
+      spend_cycle ();
+
+      if ((OldPC & 0xFF00) != (cpu->PC & 0xFF00))
+        {
+          (*Cycles)--;
+          spend_cycle ();
         }
     }
-     spend_cycles(2);
+  spend_cycles (2);
 }
 
-#endif // BCS_H
+#endif /* BCS_H */
