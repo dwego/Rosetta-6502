@@ -9,6 +9,11 @@
 #include <stdint.h>
 #include <time.h>
 
+extern FILE *log_file;
+
+void open_log(const char *filename);
+void close_log(void);
+
 typedef uint8_t Byte;
 typedef uint16_t Word;
 typedef uint32_t DWord;

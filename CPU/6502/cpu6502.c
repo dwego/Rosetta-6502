@@ -35,6 +35,7 @@ QWord total_cycles_executed = 0;
 struct timespec start_time;
 
 // Função para inicializar o timer
+
 void
 clock_init ()
 {
@@ -52,6 +53,15 @@ sync_clock ()
   double elapsed_sec = (now.tv_sec - start_time.tv_sec)
                        + (now.tv_nsec - start_time.tv_nsec) / 1e9;
 
+  if (log_file)
+    {
+      fprintf (log_file, "[sync_clock] total_cycles_executed = %llu\n",
+               (unsigned long long)total_cycles_executed);
+      fprintf (log_file, "[sync_clock] expected_time_sec = %f\n",
+               expected_time_sec);
+      fprintf (log_file, "[sync_clock] elapsed_sec = %f\n", elapsed_sec);
+    }
+
   while (elapsed_sec < expected_time_sec)
     {
       // Pode dormir pouco para economizar CPU
@@ -60,6 +70,14 @@ sync_clock ()
       clock_gettime (CLOCK_MONOTONIC_RAW, &now);
       elapsed_sec = (now.tv_sec - start_time.tv_sec)
                     + (now.tv_nsec - start_time.tv_nsec) / 1e9;
+      if (log_file)
+        {
+          fprintf (log_file,
+                   "[sync_clock] Waiting... elapsed_sec = %f, "
+                   "expected_time_sec = %f\n",
+                   elapsed_sec, expected_time_sec);
+          fflush (log_file); // garante que escreve no arquivo imediatamente
+        }
     }
 }
 
@@ -68,6 +86,9 @@ void
 spend_cycle ()
 {
   total_cycles_executed++;
+  fprintf (log_file,
+           "[spend_cycle] total_cycles_executed incrementado para %llu\n",
+           (unsigned long long)total_cycles_executed);
   sync_clock ();
 }
 
