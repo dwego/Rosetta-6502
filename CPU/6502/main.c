@@ -444,23 +444,22 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       ROL_ABSX (Cycles, memory, cpu);
       break;
 
-      /*
-       case INS_ROR:
-         ROR_ACC (Cycles, memory, cpu);
-         break;
-       case INS_ROR_ZP:
-         ROR_ZP (Cycles, memory, cpu);
-         break;
-       case INS_ROR_ZPX:
-         ROR_ZPX (Cycles, memory, cpu);
-         break;
-       case INS_ROR_ABS:
-         ROR_ABS (Cycles, memory, cpu);
-         break;
-       case INS_ROR_ABSX:
-         ROR_ABSX (Cycles, memory, cpu);
-         break;
-     */
+    case INS_ROR:
+      ROR_ACC (Cycles, cpu);
+      break;
+    case INS_ROR_ZP:
+      ROR_ZP (Cycles, memory, cpu);
+      break;
+    case INS_ROR_ZPX:
+      ROR_ZPX (Cycles, memory, cpu);
+      break;
+    case INS_ROR_ABS:
+      ROR_ABS (Cycles, memory, cpu);
+      break;
+    case INS_ROR_ABSX:
+      ROR_ABSX (Cycles, memory, cpu);
+      break;
+
     /*──────────────────────────────────
       MISC
       ──────────────────────────────────*/

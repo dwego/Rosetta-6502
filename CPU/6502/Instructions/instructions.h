@@ -39,6 +39,7 @@
 #include "PLA/pla.h"
 #include "PLP/plp.h"
 #include "ROL/rol.h"
+#include "ROR/ror.h"
 #include "RTS/rts.h"
 
 #include "SBC/sbc.h"
@@ -257,21 +258,21 @@ typedef enum {
     INS_LSR_ABS = 0x4E, // done
     INS_LSR_ABSX = 0x5E, // done
 
-    INS_ROL = 0x2A,
-    INS_ROL_ZP = 0x26,
-    INS_ROL_ZPX = 0x36,
-    INS_ROL_ABS = 0x2E,
-    INS_ROL_ABSX = 0x3E,
+    INS_ROL = 0x2A, // done
+    INS_ROL_ZP = 0x26,  // done
+    INS_ROL_ZPX = 0x36, // done
+    INS_ROL_ABS = 0x2E, // done
+    INS_ROL_ABSX = 0x3E,  // done
 
-    INS_ROR = 0x6A,
-    INS_ROR_ZP = 0x66,
-    INS_ROR_ZPX = 0x76,
-    INS_ROR_ABS = 0x6E,
-    INS_ROR_ABSX = 0x7E,
+    INS_ROR = 0x6A, // done
+    INS_ROR_ZP = 0x66,  // done
+    INS_ROR_ZPX = 0x76, // done
+    INS_ROR_ABS = 0x6E, // done
+    INS_ROR_ABSX = 0x7E,  // done
 
     //misc
     INS_NOP = 0xEA,
-    INS_BRK = 0x00,
+    INS_BRK = 0x00, // done
     INS_RTI = 0x40,
     
 } Instruction;
