@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "cpu6502.h"
-#include "mem6502.h"
 
 /*
    This is a header file for the TAX (Load Accumulator) instruction for MOS Technology 6502.
@@ -36,9 +35,11 @@ void TAXSetStatus(CPU6502 *cpu) {
 */
 
 
-void TAX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void TAX(Word *Cycles, CPU6502 *cpu) {
     cpu->X = cpu->A;
     TAXSetStatus(cpu);
+    (*Cycles)--;
+   spend_cycles(2);
 }
 
 
