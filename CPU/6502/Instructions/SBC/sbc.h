@@ -40,6 +40,7 @@ void SBC_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A -= Value - cpu->Flag.C;
     SBCSetStatus(cpu);
+     spend_cycles(2);
 }
 
 
@@ -56,6 +57,7 @@ void SBC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, ZeroPageSBCr, memory);
     cpu->A -= Value - cpu->Flag.C;
     SBCSetStatus(cpu);
+     spend_cycles(3);
 }
 
 
@@ -74,6 +76,7 @@ void SBC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, ZeroPageSBCr, memory);
     cpu->A -= Value - cpu->Flag.C;
     SBCSetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -90,6 +93,7 @@ void SBC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, Absolute, memory);
     cpu->A -= Value - cpu->Flag.C;
     SBCSetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -107,6 +111,7 @@ void SBC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, Absolute, memory);
     cpu->A -= Value - cpu->Flag.C;
     SBCSetStatus(cpu);
+     spend_cycles(5);
 }
 
 
@@ -124,6 +129,7 @@ void SBC_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, Absolute, memory);
     cpu->A -= Value - cpu->Flag.C;
     SBCSetStatus(cpu);
+     spend_cycles(5);
 }
 
 #endif // SBC_H

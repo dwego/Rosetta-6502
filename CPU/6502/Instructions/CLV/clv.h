@@ -30,6 +30,7 @@ CLV(Word *Cycles, CPU6502 *cpu)
 {
     CLVSetStatus(cpu);
     (*Cycles)--;
+    spend_cycles(2);
 }
 
 #endif // CLV_H

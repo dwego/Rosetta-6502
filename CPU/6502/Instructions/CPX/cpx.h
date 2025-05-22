@@ -40,6 +40,7 @@ CPX_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Value = FetchByte(Cycles, memory, cpu);
     Byte Result = cpu->X - Value;
     CPXSetStatus(Result, cpu);
+    spend_cycles(2);
 }
 
 /*
@@ -54,6 +55,7 @@ CPX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Data = ReadByte(Cycles, ZeroPageAddr, memory);
     Byte Result = cpu->X - Data;
     CPXSetStatus(Result, cpu);
+    spend_cycles(3);
 }
 
 /*
@@ -68,6 +70,7 @@ CPX_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Data = ReadByte(Cycles, Absolute, memory);
     Byte Result = cpu->X - Data;
     CPXSetStatus(Result, cpu);
+    spend_cycles(4);
 }
 
 #endif // CPX_H

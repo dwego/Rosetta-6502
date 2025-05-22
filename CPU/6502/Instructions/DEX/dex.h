@@ -36,9 +36,10 @@ void DEXSetStatus(CPU6502 *cpu) {
 */
 
 
-void DEX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void DEX(Word *Cycles, CPU6502 *cpu) {
     cpu->X--;
     (*Cycles)--;
+    spend_cycles(2);
 }
 
 

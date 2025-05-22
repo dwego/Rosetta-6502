@@ -38,6 +38,7 @@ void ANDSetStatus(CPU6502 *cpu) {
 void AND_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->A &= FetchByte(Cycles, memory, cpu);
     ANDSetStatus(cpu);
+     spend_cycles(2);
 }
 
 
@@ -50,6 +51,7 @@ void AND_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     cpu->A &= ReadByte(Cycles, ZeroPageAddr, memory);
     ANDSetStatus(cpu);
+     spend_cycles(3);
 }
 
 /*
@@ -65,6 +67,7 @@ void AND_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->A &= ReadByte(Cycles, ZeroPageAddr, memory);
     (*Cycles)--;
     ANDSetStatus(cpu);
+     spend_cycles(4);
 }
 
 /*
@@ -78,6 +81,7 @@ void AND_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->A &= ReadByte(Cycles, Absolute, memory);
 
     ANDSetStatus(cpu);
+     spend_cycles(4);
 }
 
 /*
@@ -96,10 +100,12 @@ void AND_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     if (OldPage != NewPage) {
         (*Cycles)++;
+         spend_cycle();
     }
 
     cpu->A &= ReadByte(Cycles, Absolute, memory);
     ANDSetStatus(cpu);
+     spend_cycles(4);
 }
 
 /*
@@ -117,10 +123,12 @@ void AND_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     if (OldPage != NewPage) {
         (*Cycles)++;
+         spend_cycle();
     }
 
     cpu->A &= ReadByte(Cycles, Absolute, memory);
     ANDSetStatus(cpu);
+     spend_cycles(4);
 }
 
 #endif // AND_H

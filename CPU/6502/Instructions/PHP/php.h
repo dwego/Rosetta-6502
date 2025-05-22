@@ -41,6 +41,7 @@ void PHPSetStatus(CPU6502 *cpu) {
 void PHP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     PHPSetStatus(cpu);
     PushByteToStack(Cycles, memory, cpu->PS, cpu);
+     spend_cycles(3);
 }
 
 #endif // PHP_H

@@ -25,21 +25,7 @@ void JSR(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
   PushPCToStack(Cycles, memory, cpu);
   cpu->PC = Sub_Addr;
   (*Cycles)--;
+   spend_cycles(6);
 }
-
-
-/* 
-   RTS - Return from Subroutine:
-   This function retrieves the return address from the stack and sets the program counter (PC) to that address.
-   It adjusts the cycle count accordingly.
-*/ 
-
-
-void RTS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-  Word ReturnAddress = PopWordFromStack(Cycles, memory, cpu);
-  cpu->PC = ReturnAddress;
-  (*Cycles)-=2;
-}
-
 
 #endif // JSR_H

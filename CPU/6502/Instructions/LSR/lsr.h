@@ -41,6 +41,7 @@ void LSR_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A = Value >> 1;
     LSRSetStatus(Value, cpu);
+     spend_cycles(2);
 }
 
 
@@ -57,6 +58,7 @@ void LSR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, ZeroPageLSRr, memory);
     cpu->A = Value >> 1;
     LSRSetStatus(Value, cpu);
+     spend_cycles(5);
 }
 
 
@@ -75,6 +77,7 @@ void LSR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, ZeroPageLSRr, memory);
     cpu->A = Value >> 1;
     LSRSetStatus(Value, cpu);
+     spend_cycles(6);
 }
 
 
@@ -91,6 +94,7 @@ void LSR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, Absolute, memory);
     cpu->A = Value >> 1;
     LSRSetStatus(Value, cpu);
+     spend_cycles(6);
 }
 
 
@@ -108,6 +112,7 @@ void LSR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = ReadByte(Cycles, Absolute, memory);
     cpu->A = Value >> 1;
     LSRSetStatus(Value, cpu);
+     spend_cycles(6);
 }
 
 #endif // LSR_H

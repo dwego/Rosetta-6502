@@ -40,6 +40,7 @@ void ORA_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);;
     cpu->A = Value | cpu->A;
     ORASetStatus(cpu);
+     spend_cycles(2);
 }
 
 
@@ -54,6 +55,7 @@ void ORA_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) | cpu->A;
     ORASetStatus(cpu);
+     spend_cycles(3);
 }
 
 
@@ -70,6 +72,7 @@ void ORA_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     (*Cycles)--;
     cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) | cpu->A;
     ORASetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -84,6 +87,7 @@ void ORA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     cpu->A = ReadByte(Cycles, Absolute, memory) | cpu->A;
     ORASetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -96,12 +100,20 @@ void ORA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
 void ORA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
-    Absolute += cpu->X;
-    cpu->A = ReadByte(Cycles, Absolute, memory) | cpu->A;
+
+    Word OldPage = Absolute & 0xFF00;
+    Word AddressWithX = Absolute + cpu->X;
+    Word NewPage = AddressWithX & 0xFF00;
+
+    if (OldPage != NewPage) {
+        (*Cycles)++;
+        spend_cycle();
+    }
+
+    cpu->A = ReadByte(Cycles, AddressWithX, memory) | cpu->A;
     ORASetStatus(cpu);
+    spend_cycles(4);
 }
-
-
 /*
    ORA_ABSY - Load Accumulator from Absolute address with Y Offset.
    Similar to ORA_ABS, but adds the Y register value to the absolute address before reading
@@ -111,9 +123,19 @@ void ORA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
 void ORA_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
-    Absolute += cpu->Y;
-    cpu->A = ReadByte(Cycles, Absolute, memory) | cpu->A;
+
+    Word OldPage = Absolute & 0xFF00;
+    Word AddressWithY = Absolute + cpu->Y;
+    Word NewPage = AddressWithY & 0xFF00;
+
+    if (OldPage != NewPage) {
+        (*Cycles)++;
+        spend_cycle();
+    }
+
+    cpu->A = ReadByte(Cycles, AddressWithY, memory) | cpu->A;
     ORASetStatus(cpu);
+    spend_cycles(4);
 }
 
 #endif // ORA_H

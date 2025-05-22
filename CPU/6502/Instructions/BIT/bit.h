@@ -41,6 +41,7 @@ void BIT_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     Byte Value = ReadByte(Cycles, ZeroPageAddr, memory);
     BITSetStatus(Value, cpu);
+     spend_cycles(3);
 }
 
 /*
@@ -54,6 +55,7 @@ void BIT_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Byte Value = ReadByte(Cycles, Absolute, memory);
     BITSetStatus(Value, cpu);
+   spend_cycles(4);
 }
 
 

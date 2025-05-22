@@ -28,12 +28,14 @@ void BCC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
         // BCC instruction takes an extra cycle if branch succeeds.
         (*Cycles)--;
-
+         spend_cycle();
         // If the branch crosses a page boundary, it takes an additional cycle.
         if ((OldPC & 0xFF00) != (cpu->PC & 0xFF00))  {
             (*Cycles)--;
+             spend_cycle();
         }
     }
+    spend_cycles(2);
 }
-
+ 
 #endif // BCC_H

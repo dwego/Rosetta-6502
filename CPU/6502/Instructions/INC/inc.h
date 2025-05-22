@@ -46,6 +46,7 @@ void INC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     WriteByte(Cycles, IncrementValue, memory, ZeroPageAddr);
     INCSetStatus(cpu);
+     spend_cycles(5);
 }
 
 
@@ -67,6 +68,7 @@ void INC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     WriteByte(Cycles, IncrementValue, memory, ZeroPageAddr);
     INCSetStatus(cpu);
+     spend_cycles(6);
 }
 
 
@@ -86,6 +88,7 @@ void INC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     WriteByte(Cycles, IncrementValue, memory, Absolute);
     INCSetStatus(cpu);
+     spend_cycles(6);
 }
 
 void INC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
@@ -99,6 +102,7 @@ void INC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     WriteByte(Cycles, IncrementValue, memory, Absolute);
     INCSetStatus(cpu);
+     spend_cycles(6);
 }
 
 

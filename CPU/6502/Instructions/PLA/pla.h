@@ -42,6 +42,7 @@ void PLA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Value = PopWordFromStack(Cycles, memory, cpu);
     cpu->A = Value;
     PLASetStatus(cpu);
+     spend_cycles(4);
 }
 
 #endif // PLA_H

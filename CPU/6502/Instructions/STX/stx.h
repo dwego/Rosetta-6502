@@ -43,6 +43,7 @@ void STX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->X, memory, ZeroPageAddr);
     STXSetStatus(cpu);
+     spend_cycles(3);
 }
 
 
@@ -59,6 +60,7 @@ void STX_ZPY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     (*Cycles)--;
     WriteByte(Cycles, cpu->X, memory, ZeroPageAddr);
     STXSetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -74,6 +76,7 @@ void STX_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->X, memory, Absolute);
     STXSetStatus(cpu);
+     spend_cycles(4);
 }
 
 #endif // STX_H

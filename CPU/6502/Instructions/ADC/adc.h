@@ -42,6 +42,8 @@ ADC_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Before = cpu->A;
     cpu->A += Value + cpu->Flag.C;
     ADCSetStatus(cpu, Before, Value);
+    spend_cycles(2);
+
 }
 
 
@@ -62,6 +64,7 @@ ADC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Before = cpu->A;
     cpu->A += Value + cpu->Flag.C;
     ADCSetStatus(cpu, Before, Value);
+    spend_cycles(3);
 }
 
 
@@ -83,6 +86,7 @@ ADC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Before = cpu->A;
     cpu->A += Value + cpu->Flag.C;
     ADCSetStatus(cpu, Before, Value);
+     spend_cycles(4);
 }
 
 
@@ -103,6 +107,7 @@ ADC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Before = cpu->A;
     cpu->A += Value + cpu->Flag.C;
     ADCSetStatus(cpu, Before, Value);
+     spend_cycles(4);
 }
 
 
@@ -122,12 +127,14 @@ ADC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 
     if ((NewAddress & 0xFF00) != (Absolute & 0xFF00)) {
         (*Cycles)++;
+         spend_cycle();
     }
 
     Byte Value = ReadByte(Cycles, NewAddress, memory);
     Byte Before = cpu->A;
     cpu->A += Value + cpu->Flag.C;
     ADCSetStatus(cpu, Before, Value);
+     spend_cycles(4);
 }
 
 
@@ -147,12 +154,14 @@ ADC_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 
     if ((NewAddress & 0xFF00) != (Absolute & 0xFF00)) {
         (*Cycles)++;
+         spend_cycle();
     }
 
     Byte Value = ReadByte(Cycles, NewAddress, memory);
     Byte Before = cpu->A;
     cpu->A += Value + cpu->Flag.C;
     ADCSetStatus(cpu, Before, Value);
+     spend_cycles(4);
 }
 
 #endif

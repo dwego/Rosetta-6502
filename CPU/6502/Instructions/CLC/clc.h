@@ -30,6 +30,7 @@ CLC(Word *Cycles, CPU6502 *cpu)
 {
     CLCSetStatus(cpu);
     (*Cycles)--;
+    spend_cycles(2);
 }
 
 #endif // CLC_H

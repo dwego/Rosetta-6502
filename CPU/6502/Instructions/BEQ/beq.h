@@ -1,5 +1,5 @@
-#ifndef BEC_H
-#define BEC_H
+#ifndef BEQ_H
+#define BEQ_H
 
 #include "config.h"
 #include "cpu6502.h"
@@ -20,12 +20,20 @@
 */
 
 
-void BEC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-        if (cpu->Flag.Z == 0) {
-            Word Sub_Addr = FetchByte(Cycles, memory, cpu);
-            cpu->PC = Sub_Addr;
+void BEQ(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+    if (cpu->Flag.Z == 1) {
+        Byte Sub_Addr = FetchByte(Cycles, memory, cpu);
+        Word old_pc = cpu->PC;
+        cpu->PC += Sub_Addr;
+
+        (*Cycles)--;
+        spend_cycle();
+        if ((old_pc & 0xFF00) != (cpu->PC & 0xFF00)) {
             (*Cycles)--;
+             spend_cycle();
         }
+    }
+  spend_cycles(2);
 }
 
-#endif // BEC_H
+#endif // BEQ_H
