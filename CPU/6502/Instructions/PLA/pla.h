@@ -25,7 +25,7 @@
 */
 
 
-void PLASetStatus(CPU6502 *cpu) {
+static inline void PLASetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->X == 0);
     cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
@@ -38,7 +38,7 @@ void PLASetStatus(CPU6502 *cpu) {
 */
 
 
-void PLA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void PLA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Value = PopWordFromStack(Cycles, memory, cpu);
     cpu->A = Value;
     PLASetStatus(cpu);

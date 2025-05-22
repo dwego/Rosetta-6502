@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "cpu6502.h"
-#include "mem6502.h"
 
 /*
    This is a header file for the INX (Load Accumulator) instruction for MOS Technology 6502.
@@ -23,7 +22,7 @@
 */
 
 
-void INXSetStatus(CPU6502 *cpu) {
+static inline void INXSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->X == 0);
     cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
@@ -36,7 +35,7 @@ void INXSetStatus(CPU6502 *cpu) {
 */
 
 
-void INX(Word *Cycles, CPU6502 *cpu) {
+static inline void INX(Word *Cycles, CPU6502 *cpu) {
     cpu->X++;
     (*Cycles)--;
      spend_cycles(2);

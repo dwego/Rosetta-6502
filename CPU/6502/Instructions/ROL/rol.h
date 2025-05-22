@@ -20,7 +20,7 @@
    This function sets the Flags for the Status register
    to identify what happened during the ROL instruction.
 */
-void ROLSetStatus(Byte originalValue, Byte result, CPU6502 *cpu) 
+static inline void ROLSetStatus(Byte originalValue, Byte result, CPU6502 *cpu) 
 {
     // Carry vem do bit 7 do valor original (antes da rotação)
     cpu->Flag.C = (originalValue & 0x80) ? 1 : 0;
@@ -34,7 +34,7 @@ void ROLSetStatus(Byte originalValue, Byte result, CPU6502 *cpu)
    This function fetches a byte from memory and loads it into the Accumulator (A).
    It then sets the status flags using ROLSetStatus.
 */
-void ROL_ACC(Word *Cycles, CPU6502 *cpu) 
+static inline void ROL_ACC(Word *Cycles, CPU6502 *cpu) 
 {
     Byte oldCarry = cpu->Flag.C;
     Byte original = cpu->A;
@@ -51,7 +51,7 @@ void ROL_ACC(Word *Cycles, CPU6502 *cpu)
    This function fetches a byte representing a zero-page ROLress from memory, reads the
    value at that ROLress, and loads it into the Accumulator (A). It then sets the status flags.
 */
-void ROL_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+static inline void ROL_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Byte addr = FetchByte(Cycles, memory, cpu);
 
@@ -69,7 +69,7 @@ void ROL_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    Similar to ROL_ZP, but ROLs the X register value to the zero-page ROLress before reading
    the value from memory. It adjusts the cycle count accordingly and sets the status flags.
 */
-void ROL_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+static inline void ROL_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Byte addr = FetchByte(Cycles, memory, cpu);
     addr += cpu->X;
@@ -90,7 +90,7 @@ void ROL_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    This function fetches a two-byte absolute ROLress from memory, reads the value at that ROLress,
    and loads it into the Accumulator (A). It then sets the status flags.
 */
-void ROL_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+static inline void ROL_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Word addr = FetchWord(Cycles, memory, cpu);
 
@@ -110,7 +110,7 @@ void ROL_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    Similar to ROL_ABS, but ROLs the X register value to the absolute ROLress before reading
    the value from memory. It adjusts the cycle count accordingly and sets the status flags.
 */
-void ROL_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+static inline void ROL_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Word addr = FetchWord(Cycles, memory, cpu);
     addr += cpu->X;

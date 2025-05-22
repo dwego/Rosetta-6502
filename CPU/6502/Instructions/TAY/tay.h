@@ -22,7 +22,7 @@
 */
 
 
-void TAYSetStatus(CPU6502 *cpu) {
+static inline void TAYSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -35,7 +35,7 @@ void TAYSetStatus(CPU6502 *cpu) {
 */
 
 
-void TAY(Word *Cycles, CPU6502 *cpu) {
+static inline void TAY(Word *Cycles, CPU6502 *cpu) {
     cpu->Y = cpu->A;
     TAYSetStatus(cpu);
     (*Cycles)--;

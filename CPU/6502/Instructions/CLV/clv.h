@@ -19,13 +19,13 @@
    It adjusts the cycle count accordingly.
 */
 
-void
+static inline void
 CLVSetStatus(CPU6502 *cpu)
 {
     cpu->Flag.V = 0;
 }
 
-void
+static inline void
 CLV(Word *Cycles, CPU6502 *cpu)
 {
     CLVSetStatus(cpu);

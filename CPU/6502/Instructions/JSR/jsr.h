@@ -20,7 +20,7 @@
 */ 
 
 
-void JSR(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void JSR(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
   Word Sub_Addr = FetchWord(Cycles, memory, cpu);
   PushPCToStack(Cycles, memory, cpu);
   cpu->PC = Sub_Addr;

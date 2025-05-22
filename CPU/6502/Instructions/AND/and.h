@@ -22,7 +22,7 @@
    This function sets the Flags for the Status register
    to represent the result of the AND operation.
 */
-void ANDSetStatus(CPU6502 *cpu) {
+static inline void ANDSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -35,7 +35,7 @@ void ANDSetStatus(CPU6502 *cpu) {
    It then sets the status flags using ANDSetStatus.
 */
 
-void AND_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void AND_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->A &= FetchByte(Cycles, memory, cpu);
     ANDSetStatus(cpu);
      spend_cycles(2);
@@ -47,7 +47,7 @@ void AND_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
    This function fetches a byte representing a zero-page address from memory, reads the
    value at that address, ANDs it with the Accumulator, and stores value in the Accumulator. It then sets the status flags using ANDSetStatus.
 */
-void AND_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void AND_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     cpu->A &= ReadByte(Cycles, ZeroPageAddr, memory);
     ANDSetStatus(cpu);
@@ -61,7 +61,7 @@ void AND_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
    with the Accumulator, and stores the result in the Accumulator. It then sets
    the status flags using ANDSetStatus.
 */
-void AND_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void AND_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     ZeroPageAddr += cpu->X;
     cpu->A &= ReadByte(Cycles, ZeroPageAddr, memory);
@@ -76,7 +76,7 @@ void AND_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
    at that address, ANDs it with the Accumulator, and stores the result in the Accumulator.
    It then sets the status flags using ANDSetStatus.
 */
-void AND_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void AND_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     cpu->A &= ReadByte(Cycles, Absolute, memory);
 
@@ -91,7 +91,7 @@ void AND_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
    and stores the result in the Accumulator. It then sets the status flags using ANDSetStatus.
 */
 
-void AND_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void AND_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Word OldPage = Absolute & 0xFF00;
@@ -114,7 +114,7 @@ void AND_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
    to this address, reads the value from this address, ANDs it with the Accumulator,
    and stores the result in the Accumulator. It then sets the status flags using ANDSetStatus.
 */
-void AND_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void AND_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Word OldPage = Absolute & 0xFF00;

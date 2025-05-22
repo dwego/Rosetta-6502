@@ -25,7 +25,7 @@
 */
 
 
-void PHASetStatus(CPU6502 *cpu) {
+static inline void PHASetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->X == 0);
     cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
@@ -38,7 +38,7 @@ void PHASetStatus(CPU6502 *cpu) {
 */
 
 
-void PHA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void PHA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     PushByteToStack(Cycles, memory, cpu->A, cpu);
     PHASetStatus(cpu);
     spend_cycles(3);

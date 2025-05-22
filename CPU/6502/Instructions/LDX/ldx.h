@@ -18,7 +18,7 @@
 */
 
 
-void LDXSetStatus(CPU6502 *cpu) {
+static inline static inline void LDXSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->X == 0);
     cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
@@ -37,7 +37,7 @@ void LDXSetStatus(CPU6502 *cpu) {
 */
 
 
-void LDX_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LDX_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->X = Value;
     LDXSetStatus(cpu);
@@ -52,7 +52,7 @@ void LDX_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void LDX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LDX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     cpu->X = ReadByte(Cycles, ZeroPageAddr, memory);
     LDXSetStatus(cpu);
@@ -67,7 +67,7 @@ void LDX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void LDX_ZPY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LDX_ZPY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     ZeroPageAddr += cpu->Y;
     (*Cycles)--;
@@ -86,7 +86,7 @@ void LDX_ZPY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
 
 
-void LDX_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LDX_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     cpu->X = ReadByte(Cycles, Absolute, memory);
     LDXSetStatus(cpu);
@@ -101,7 +101,7 @@ void LDX_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void LDX_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LDX_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Word OldPage = Absolute & 0xFF00;

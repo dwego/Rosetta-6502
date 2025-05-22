@@ -23,7 +23,7 @@
 */
 
 
-void ASLSetStatus(Byte Value, CPU6502 *cpu) {
+static inline void ASLSetStatus(Byte Value, CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.C = (Value & 0x80) ? 1 : 0;
     cpu->Flag.N = (cpu->A & 0x80) > 0;
@@ -37,7 +37,7 @@ void ASLSetStatus(Byte Value, CPU6502 *cpu) {
 */
 
 
-void ASL_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void ASL_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A = Value << 1;
     ASLSetStatus(Value, cpu);
@@ -51,7 +51,7 @@ void ASL_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void ASL_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void ASL_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageASLr = FetchByte(Cycles, memory, cpu);
 
     Byte Value = ReadByte(Cycles, ZeroPageASLr, memory);
@@ -69,7 +69,7 @@ void ASL_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void ASL_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void ASL_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageASLr = FetchByte(Cycles, memory, cpu);
     ZeroPageASLr += cpu->X;
     (*Cycles)--;
@@ -89,7 +89,7 @@ void ASL_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void ASL_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void ASL_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Byte Value = ReadByte(Cycles, Absolute, memory);
@@ -107,7 +107,7 @@ void ASL_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void ASL_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void ASL_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Absolute += cpu->X;
 

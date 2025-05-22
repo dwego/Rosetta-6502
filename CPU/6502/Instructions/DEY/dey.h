@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "cpu6502.h"
-#include "mem6502.h"
 
 /*
    This is a header file for the DEY (Load Accumulator) instruction for MOS Technology 6502.
@@ -23,7 +22,7 @@
 */
 
 
-void DEYSetStatus(CPU6502 *cpu) {
+static inline void DEYSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->Y == 0);
     cpu->Flag.N = (cpu->Y & 0x80) > 0;
 }
@@ -36,7 +35,7 @@ void DEYSetStatus(CPU6502 *cpu) {
 */
 
 
-void DEY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void DEY(Word *Cycles, CPU6502 *cpu) {
     cpu->Y--;
     (*Cycles)--;
     spend_cycles(2);

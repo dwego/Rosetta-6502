@@ -20,7 +20,7 @@
 */
 
 
-void BCS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void BCS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Relative = FetchByte(Cycles, memory, cpu);
     if(cpu->Flag.C == 0) {
         Word OldPC = cpu->PC;

@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "cpu6502.h"
-#include "mem6502.h"
+
 
 /*
    This is a header file for the DEX (Load Accumulator) instruction for MOS Technology 6502.
@@ -23,7 +23,7 @@
 */
 
 
-void DEXSetStatus(CPU6502 *cpu) {
+static inline void DEXSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->X == 0);
     cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
@@ -36,7 +36,7 @@ void DEXSetStatus(CPU6502 *cpu) {
 */
 
 
-void DEX(Word *Cycles, CPU6502 *cpu) {
+static inline void DEX(Word *Cycles, CPU6502 *cpu) {
     cpu->X--;
     (*Cycles)--;
     spend_cycles(2);

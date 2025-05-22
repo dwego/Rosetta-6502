@@ -25,7 +25,7 @@
 */
 
 
-void PLPSetStatus(CPU6502 *cpu) {
+static inline void PLPSetStatus(CPU6502 *cpu) {
     cpu->Flag.B = 0;
     cpu->Flag.Unused = 0;
 }
@@ -38,7 +38,7 @@ void PLPSetStatus(CPU6502 *cpu) {
 */
 
 
-void PLP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void PLP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Value = PopWordFromStack(Cycles, memory, cpu);
     cpu->PS = Value;
     PLPSetStatus(cpu);

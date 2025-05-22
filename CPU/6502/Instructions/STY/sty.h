@@ -20,7 +20,7 @@
 */
 
 
-void STYSetStatus(CPU6502 *cpu) {
+static inline void STYSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->Y == 0);
     cpu->Flag.N = (cpu->Y & 0x80) > 0;
 }
@@ -39,7 +39,7 @@ void STYSetStatus(CPU6502 *cpu) {
 */
 
 
-void STY_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STY_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->Y, memory, ZeroPageAddr);
     STYSetStatus(cpu);
@@ -54,7 +54,7 @@ void STY_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void STY_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STY_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     ZeroPageAddr += cpu->X;
     (*Cycles)--;
@@ -72,7 +72,7 @@ void STY_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
 
 
-void STY_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STY_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->Y, memory, Absolute);
     STYSetStatus(cpu);

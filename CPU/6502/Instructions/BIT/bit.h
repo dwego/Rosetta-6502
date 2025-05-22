@@ -23,7 +23,7 @@
 */
 
 
-void BITSetStatus(Byte Value, CPU6502 *cpu) {
+static inline void BITSetStatus(Byte Value, CPU6502 *cpu) {
     cpu->Flag.N = get_bit(Value, 0);
     cpu->Flag.V= get_bit(Value, 1);
     cpu->Flag.Z = (cpu->A & Value) == 0;
@@ -37,7 +37,7 @@ void BITSetStatus(Byte Value, CPU6502 *cpu) {
 */
 
 
-void BIT_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void BIT_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     Byte Value = ReadByte(Cycles, ZeroPageAddr, memory);
     BITSetStatus(Value, cpu);
@@ -51,7 +51,7 @@ void BIT_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void BIT_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void BIT_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Byte Value = ReadByte(Cycles, Absolute, memory);
     BITSetStatus(Value, cpu);

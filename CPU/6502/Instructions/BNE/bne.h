@@ -20,7 +20,7 @@
 */
 
 
-void BNE(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void BNE(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     if (cpu->Flag.Z == 0) {
         Byte Sub_Addr = FetchByte(Cycles, memory, cpu);
         Word old_pc = cpu->PC;

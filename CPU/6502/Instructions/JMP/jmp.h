@@ -20,13 +20,13 @@
 */
 
 
-void JMP_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void JMP_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Sub_Addr = FetchWord(Cycles, memory, cpu);
     cpu->PC = Sub_Addr;
      spend_cycles(3);
 }
 
-void JMP_IND(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void JMP_IND(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Sub_Addr = FetchWord(Cycles, memory, cpu);
     cpu->PC = ReadByte(Cycles, Sub_Addr, memory);
     (*Cycles)--;

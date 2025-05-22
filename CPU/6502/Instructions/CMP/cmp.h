@@ -22,7 +22,7 @@
 */
 
 
-void
+static inline void
 CMPSetStatus(Byte Result, CPU6502 *cpu)
 {
     cpu->Flag.Z = (Result == cpu->A);
@@ -35,7 +35,7 @@ CMPSetStatus(Byte Result, CPU6502 *cpu)
    This function fetches a byte from memory and loads it into the Accumulator (A).
    It then sets the status flags using CMPSetStatus.
 */
-void
+static inline void
 CMP_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Byte Value = FetchByte(Cycles, memory, cpu);
@@ -49,7 +49,7 @@ CMP_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    This function fetches a byte representing a zero-page address from memory, reads the
    value at that address, and loads it into the Accumulator (A). It then sets the status flags.
 */
-void
+static inline void
 CMP_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
@@ -64,7 +64,7 @@ CMP_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    Similar to CMP_ZP, but adds the X register value to the zero-page address before reading
    the value from memory. It adjusts the cycle count accordingly and sets the status flags.
 */
-void
+static inline void
 CMP_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
@@ -81,7 +81,7 @@ CMP_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    This function fetches a two-byte absolute address from memory, reads the value at that address,
    and loads it into the Accumulator (A). It then sets the status flags.
 */
-void
+static inline void
 CMP_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Word Absolute = FetchWord(Cycles, memory, cpu);
@@ -96,7 +96,7 @@ CMP_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    Similar to CMP_ABS, but adds the X register value to the absolute address before reading
    the value from memory. It adjusts the cycle count accordingly and sets the status flags.
 */
-void
+static inline void
 CMP_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Word Absolute = FetchWord(Cycles, memory, cpu);
@@ -118,7 +118,7 @@ CMP_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    Similar to CMP_ABS, but adds the Y register value to the absolute address before reading
    the value from memory. It adjusts the cycle count accordingly and sets the status flags.
 */
-void
+static inline void
 CMP_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Word Absolute = FetchWord(Cycles, memory, cpu);
