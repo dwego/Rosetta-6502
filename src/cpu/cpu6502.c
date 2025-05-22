@@ -211,10 +211,10 @@ PopWordFromStack (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 
 // Pop a byte from the stack, clear the byte in memory (optional),
 // and decrement the stack pointer.
-Word
+Byte
 PopByteFromStack (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word ValueFromStack = ReadByte (Cycles, SPToAddress (cpu), memory);
+  Byte ValueFromStack = ReadByte (Cycles, SPToAddress (cpu), memory);
   WriteByte (Cycles, 0, memory, SPToAddress (cpu));
   cpu->SP++;
   return ValueFromStack;
