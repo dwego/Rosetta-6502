@@ -24,7 +24,7 @@
 */
 
 
-void TSXSetStatus(CPU6502 *cpu) {
+static inline void TSXSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->X == 0);
     cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
@@ -37,7 +37,7 @@ void TSXSetStatus(CPU6502 *cpu) {
 */
 
 
-void TSX(Word *Cycles, CPU6502 *cpu) {
+static inline void TSX(Word *Cycles, CPU6502 *cpu) {
     cpu->SP = cpu->X;
     TSXSetStatus(cpu);
     (*Cycles)--;

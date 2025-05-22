@@ -22,7 +22,7 @@
 */
 
 
-void TXASetStatus(CPU6502 *cpu) {
+static inline void TXASetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -35,7 +35,7 @@ void TXASetStatus(CPU6502 *cpu) {
 */
 
 
-void TXA(Word *Cycles, CPU6502 *cpu) {
+static inline void TXA(Word *Cycles, CPU6502 *cpu) {
     cpu->A = cpu->X;
     TXASetStatus(cpu);
     (*Cycles)--;

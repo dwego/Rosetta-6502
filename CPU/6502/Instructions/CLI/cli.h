@@ -19,13 +19,13 @@
    It adjusts the cycle count accordingly.
 */
 
-void
+static inline void
 CLISetStatus(CPU6502 *cpu)
 {
     cpu->Flag.I = 0;
 }
 
-void
+static inline void
 CLI(Word *Cycles, CPU6502 *cpu)
 {
     CLISetStatus(cpu);

@@ -23,7 +23,7 @@
 */
 
 
-void INCSetStatus(CPU6502 *cpu) {
+static inline void INCSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -37,7 +37,7 @@ void INCSetStatus(CPU6502 *cpu) {
 
 
 
-void INC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void INC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
 
     Byte Value = ReadByte(Cycles, ZeroPageAddr, memory);
@@ -57,7 +57,7 @@ void INC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void INC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void INC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     ZeroPageAddr += cpu->X;
     (*Cycles)--;
@@ -79,7 +79,7 @@ void INC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void INC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void INC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Byte Value = ReadByte(Cycles, Absolute, memory);
@@ -91,7 +91,7 @@ void INC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
      spend_cycles(6);
 }
 
-void INC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void INC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Absolute += cpu->X;
     (*Cycles)--;

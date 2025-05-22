@@ -20,7 +20,7 @@
 */
 
 
-void STXSetStatus(CPU6502 *cpu) {
+static inline void STXSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->X == 0);
     cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
@@ -39,7 +39,7 @@ void STXSetStatus(CPU6502 *cpu) {
 */
 
 
-void STX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->X, memory, ZeroPageAddr);
     STXSetStatus(cpu);
@@ -54,7 +54,7 @@ void STX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void STX_ZPY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STX_ZPY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     ZeroPageAddr += cpu->Y;
     (*Cycles)--;
@@ -72,7 +72,7 @@ void STX_ZPY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
 
 
-void STX_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STX_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->X, memory, Absolute);
     STXSetStatus(cpu);

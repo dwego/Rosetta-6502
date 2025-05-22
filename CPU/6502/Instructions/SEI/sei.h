@@ -20,7 +20,7 @@
 */
 
 
-void SEI(Word *Cycles, CPU6502 *cpu) {
+static inline void SEI(Word *Cycles, CPU6502 *cpu) {
     cpu->Flag.I = 1;
     (*Cycles)--;
      spend_cycles(2);

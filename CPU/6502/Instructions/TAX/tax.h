@@ -22,7 +22,7 @@
 */
 
 
-void TAXSetStatus(CPU6502 *cpu) {
+static inline void TAXSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -35,7 +35,7 @@ void TAXSetStatus(CPU6502 *cpu) {
 */
 
 
-void TAX(Word *Cycles, CPU6502 *cpu) {
+static inline void TAX(Word *Cycles, CPU6502 *cpu) {
     cpu->X = cpu->A;
     TAXSetStatus(cpu);
     (*Cycles)--;

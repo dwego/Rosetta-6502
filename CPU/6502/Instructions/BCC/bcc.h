@@ -18,7 +18,7 @@
    It adjusts the cycle count according to the rules of the BCC instruction.
 */
 
-void BCC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void BCC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Relative = FetchByte(Cycles, memory, cpu);
     if(cpu->Flag.C == 0) {
         Word OldPC = cpu->PC;

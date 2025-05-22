@@ -23,7 +23,7 @@
 */
 
 
-void RORSetStatus(Byte originalValue, Byte result, CPU6502 *cpu) 
+static inline void RORSetStatus(Byte originalValue, Byte result, CPU6502 *cpu) 
 {
     cpu->Flag.C = (originalValue & 0x01) ? 1 : 0;
     cpu->Flag.Z = (result == 0);
@@ -38,7 +38,7 @@ void RORSetStatus(Byte originalValue, Byte result, CPU6502 *cpu)
 */
 
 
-void ROR_ACC(Word *Cycles, CPU6502 *cpu) 
+static inline void ROR_ACC(Word *Cycles, CPU6502 *cpu) 
 {
     Byte original = cpu->A;
     Byte oldCarry = cpu->Flag.C;
@@ -56,7 +56,7 @@ void ROR_ACC(Word *Cycles, CPU6502 *cpu)
 */
 
 
-void ROR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+static inline void ROR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Byte addr = FetchByte(Cycles, memory, cpu);
 
@@ -76,7 +76,7 @@ void ROR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 
-void ROR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+static inline void ROR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Byte addr = FetchByte(Cycles, memory, cpu);
     addr += cpu->X;
@@ -98,7 +98,7 @@ void ROR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 
-void ROR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+static inline void ROR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Word addr = FetchWord(Cycles, memory, cpu);
 
@@ -118,7 +118,7 @@ void ROR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 
-void ROR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
+static inline void ROR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) 
 {
     Word addr = FetchWord(Cycles, memory, cpu);
     addr += cpu->X;

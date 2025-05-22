@@ -20,7 +20,7 @@
    This function sets the Flags for the Status register
    to identify what happened during the CPY instruction.
 */
-void
+static inline void
 CPYSetStatus(Byte Result, CPU6502 *cpu)
 {
     cpu->Flag.Z = (Result == cpu->Y);
@@ -34,7 +34,7 @@ CPYSetStatus(Byte Result, CPU6502 *cpu)
    This function fetches a byte from memory and loads it into the Accumulator (A).
    It then sets the status flags using CPYSetStatus.
 */
-void
+static inline void
 CPY_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Byte Value = FetchByte(Cycles, memory, cpu);
@@ -50,7 +50,7 @@ CPY_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    This function fetches a byte representing a zero-page address from memory, reads the
    value at that address, and loads it into the Accumulator (A). It then sets the status flags.
 */
-void
+static inline void
 CPY_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
@@ -65,7 +65,7 @@ CPY_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    This function fetches a two-byte absolute address from memory, reads the value at that address,
    and loads it into the Accumulator (A). It then sets the status flags.
 */
-void
+static inline void
 CPY_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Word Absolute = FetchWord(Cycles, memory, cpu);

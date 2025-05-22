@@ -23,7 +23,7 @@
 */
 
 
-void LSRSetStatus(Byte Value, CPU6502 *cpu) {
+static inline void LSRSetStatus(Byte Value, CPU6502 *cpu) {
     cpu->Flag.C = Value & 1;
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
@@ -37,7 +37,7 @@ void LSRSetStatus(Byte Value, CPU6502 *cpu) {
 */
 
 
-void LSR_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LSR_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A = Value >> 1;
     LSRSetStatus(Value, cpu);
@@ -52,7 +52,7 @@ void LSR_ACC(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void LSR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LSR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageLSRr = FetchByte(Cycles, memory, cpu);
 
     Byte Value = ReadByte(Cycles, ZeroPageLSRr, memory);
@@ -69,7 +69,7 @@ void LSR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void LSR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LSR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageLSRr = FetchByte(Cycles, memory, cpu);
     ZeroPageLSRr += cpu->X;
     (*Cycles)--;
@@ -88,7 +88,7 @@ void LSR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void LSR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LSR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Byte Value = ReadByte(Cycles, Absolute, memory);
@@ -105,7 +105,7 @@ void LSR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void LSR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void LSR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Absolute += cpu->X;
 

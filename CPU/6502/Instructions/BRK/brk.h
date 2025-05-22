@@ -5,7 +5,7 @@
 #include "cpu6502.h"
 #include "mem6502.h"
 
-void BRK(Word *Cycles, MEM6502 *mem, CPU6502 *cpu) {
+static inline void BRK(Word *Cycles, MEM6502 *mem, CPU6502 *cpu) {
     // Incrementa PC para o próximo endereço (2 bytes)
     cpu->PC += 2;
     (*Cycles)--;  

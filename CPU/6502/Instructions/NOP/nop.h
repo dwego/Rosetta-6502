@@ -19,7 +19,7 @@
 */
 
 
-void NOP(Word *Cycles) {
+static inline void NOP(Word *Cycles) {
     (*Cycles)--;
      spend_cycles(2);
 }

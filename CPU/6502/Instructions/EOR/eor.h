@@ -23,7 +23,7 @@
 */
 
 
-void EORSetStatus(CPU6502 *cpu) {
+static inline void EORSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -36,7 +36,7 @@ void EORSetStatus(CPU6502 *cpu) {
 */
 
 
-void EOR_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void EOR_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A = Value ^ cpu->A;
     EORSetStatus(cpu);
@@ -51,7 +51,7 @@ void EOR_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void EOR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void EOR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) ^ cpu->A;
     EORSetStatus(cpu);
@@ -66,7 +66,7 @@ void EOR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void EOR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void EOR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     ZeroPageAddr += cpu->X;
     (*Cycles)--;
@@ -83,7 +83,7 @@ void EOR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void EOR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void EOR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
     EORSetStatus(cpu);
@@ -98,7 +98,7 @@ void EOR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void EOR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void EOR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Word OldPage = Absolute & 0xFF00;
@@ -123,7 +123,7 @@ void EOR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void EOR_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void EOR_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Word OldPage = Absolute & 0xFF00;

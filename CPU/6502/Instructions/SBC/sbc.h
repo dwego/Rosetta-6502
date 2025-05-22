@@ -23,7 +23,7 @@
 */
 
 
-void SBCSetStatus(CPU6502 *cpu) {
+static inline void SBCSetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -36,7 +36,7 @@ void SBCSetStatus(CPU6502 *cpu) {
 */
 
 
-void SBC_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void SBC_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A -= Value - cpu->Flag.C;
     SBCSetStatus(cpu);
@@ -51,7 +51,7 @@ void SBC_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void SBC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void SBC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageSBCr = FetchByte(Cycles, memory, cpu);
 
     Byte Value = ReadByte(Cycles, ZeroPageSBCr, memory);
@@ -68,7 +68,7 @@ void SBC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void SBC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void SBC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageSBCr = FetchByte(Cycles, memory, cpu);
     ZeroPageSBCr += cpu->X;
     (*Cycles)--;
@@ -87,7 +87,7 @@ void SBC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void SBC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void SBC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
 
     Byte Value = ReadByte(Cycles, Absolute, memory);
@@ -104,7 +104,7 @@ void SBC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void SBC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void SBC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Absolute += cpu->X;
 
@@ -122,7 +122,7 @@ void SBC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void SBC_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void SBC_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Absolute += cpu->Y;
 

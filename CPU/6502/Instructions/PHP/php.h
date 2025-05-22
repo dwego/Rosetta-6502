@@ -25,7 +25,7 @@
 */
 
 
-void PHPSetStatus(CPU6502 *cpu) {
+static inline void PHPSetStatus(CPU6502 *cpu) {
     cpu->Flag.B = 1;
     cpu->Flag.Unused = 1;
 }
@@ -38,7 +38,7 @@ void PHPSetStatus(CPU6502 *cpu) {
 */
 
 
-void PHP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void PHP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     PHPSetStatus(cpu);
     PushByteToStack(Cycles, memory, cpu->PS, cpu);
      spend_cycles(3);

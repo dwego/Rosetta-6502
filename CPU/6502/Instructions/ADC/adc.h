@@ -19,7 +19,7 @@
 */
 
 
-void ADCSetStatus(CPU6502 *cpu, Byte before, Byte value){
+static inline void ADCSetStatus(CPU6502 *cpu, Byte before, Byte value){
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
     cpu->Flag.V = (~(before ^ value) & (before ^ cpu->A) & 0x80) != 0;
@@ -34,7 +34,7 @@ void ADCSetStatus(CPU6502 *cpu, Byte before, Byte value){
 */
 
 
-void
+static inline void
 ADC_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Byte Value = FetchByte(Cycles, memory, cpu);
@@ -55,7 +55,7 @@ ADC_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 
-void
+static inline void
 ADC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
@@ -76,7 +76,7 @@ ADC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 
-void
+static inline void
 ADC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
@@ -98,7 +98,7 @@ ADC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 
-void
+static inline void
 ADC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Word Absolute = FetchWord(Cycles, memory, cpu);
@@ -119,7 +119,7 @@ ADC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 
-void
+static inline void
 ADC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Word Absolute = FetchWord(Cycles, memory, cpu);
@@ -146,7 +146,7 @@ ADC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 
-void
+static inline void
 ADC_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
     Word Absolute = FetchWord(Cycles, memory, cpu);

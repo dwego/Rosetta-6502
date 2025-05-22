@@ -20,7 +20,7 @@
 */
 
 
-void SEC(Word *Cycles, CPU6502 *cpu) {
+static inline void SEC(Word *Cycles, CPU6502 *cpu) {
     cpu->Flag.C = 1;
     (*Cycles)--;
    spend_cycles(2);

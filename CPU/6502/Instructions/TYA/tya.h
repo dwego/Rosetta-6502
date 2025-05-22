@@ -22,7 +22,7 @@
 */
 
 
-void TYASetStatus(CPU6502 *cpu) {
+static inline void TYASetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -35,7 +35,7 @@ void TYASetStatus(CPU6502 *cpu) {
 */
 
 
-void TYA(Word *Cycles, CPU6502 *cpu) {
+static inline void TYA(Word *Cycles, CPU6502 *cpu) {
     cpu->A = cpu->Y;
     TYASetStatus(cpu);
     (*Cycles)--;

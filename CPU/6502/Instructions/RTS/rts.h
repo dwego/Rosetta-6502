@@ -12,7 +12,7 @@
 */ 
 
 
-void RTS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void RTS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
   Word ReturnAddress = PopWordFromStack(Cycles, memory, cpu);
   cpu->PC = ReturnAddress;
   (*Cycles)-=2;

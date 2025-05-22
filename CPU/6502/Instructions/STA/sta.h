@@ -25,7 +25,7 @@
 */
 
 
-void STASetStatus(CPU6502 *cpu) {
+static inline void STASetStatus(CPU6502 *cpu) {
     cpu->Flag.Z = (cpu->A == 0);
     cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
@@ -38,7 +38,7 @@ void STASetStatus(CPU6502 *cpu) {
 */
 
 
-void STA_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STA_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->A, memory, ZeroPageAddr);
     STASetStatus(cpu);
@@ -53,7 +53,7 @@ void STA_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void STA_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STA_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     ZeroPageAddr += cpu->X;
     (*Cycles)--;
@@ -70,7 +70,7 @@ void STA_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void STA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->A, memory, Absolute);
     STASetStatus(cpu);
@@ -85,7 +85,7 @@ void STA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void STA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Absolute += cpu->X;
     WriteByte(Cycles, cpu->A, memory, Absolute);
@@ -101,7 +101,7 @@ void STA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 */
 
 
-void STA_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void STA_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     Absolute += cpu->Y;
     WriteByte(Cycles, cpu->A, memory, Absolute);

@@ -20,7 +20,7 @@
 */
 
 
-void BMI(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+static inline void BMI(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     if (cpu->Flag.N != 0) {
         Byte relative_offset = FetchByte(Cycles, memory, cpu);
         Word old_pc = cpu->PC;
