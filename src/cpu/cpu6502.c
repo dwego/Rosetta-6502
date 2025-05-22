@@ -165,7 +165,7 @@ FetchWord (Word *Cycles, const MEM6502 *memory, CPU6502 *cpu)
 Word
 SPToAddress (CPU6502 *cpu)
 {
-  return 0x100 | cpu->SP;
+  return 0x100 + cpu->SP;
 }
 
 // Push a byte onto the stack, write it to memory at the stack address,
@@ -184,6 +184,7 @@ void
 PushWordToStack (Word *Cycles, MEM6502 *memory, Word Value, CPU6502 *cpu)
 {
   WriteByte (Cycles, Value >> 8, memory, SPToAddress (cpu));
+  cpu->SP--;
   WriteByte (Cycles, Value & 0xFF, memory, SPToAddress (cpu));
   cpu->SP--;
 }
