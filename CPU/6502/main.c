@@ -429,7 +429,7 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_ROL:
-      ROL_ACC (Cycles, memory, cpu);
+      ROL_ACC (Cycles, cpu);
       break;
     case INS_ROL_ZP:
       ROL_ZP (Cycles, memory, cpu);
