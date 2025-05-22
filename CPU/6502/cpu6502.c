@@ -1,4 +1,6 @@
 #include "cpu6502.h"
+#include "config.h"
+#include <time.h>
 
 /*
    CPU6502 - 6502 Emulated CPU
@@ -28,6 +30,9 @@
    For more information about the instructions and addressing modes, refer to
    Instructions.MD
 */
+
+QWord total_cycles_executed = 0;
+struct timespec start_time;
 
 // Função para inicializar o timer
 void
