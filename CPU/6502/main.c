@@ -488,6 +488,7 @@ main (void)
   Byte test;
   Word Cycles = 20;
 
+  open_log ("cpu_log.txt");
   initializeMem6502 (&mem);
   // start - inline
 
@@ -532,5 +533,6 @@ end:
   test = cpu.A;
   printf ("stored value in: Accumulator is: %u\n", test);
   freeMem6502 (&mem);
+  close_log ();
   return 0;
 }
