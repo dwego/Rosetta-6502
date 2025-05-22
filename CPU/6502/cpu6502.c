@@ -29,6 +29,52 @@
    Instructions.MD
 */
 
+// Função para inicializar o timer
+void
+clock_init ()
+{
+  clock_gettime (CLOCK_MONOTONIC_RAW, &start_time);
+}
+
+// Função para sincronizar o clock com o tempo real
+void
+sync_clock ()
+{
+  double expected_time_sec = (double)total_cycles_executed / (CPU_FREQ_HZ);
+  struct timespec now;
+  clock_gettime (CLOCK_MONOTONIC_RAW, &now);
+
+  double elapsed_sec = (now.tv_sec - start_time.tv_sec)
+                       + (now.tv_nsec - start_time.tv_nsec) / 1e9;
+
+  while (elapsed_sec < expected_time_sec)
+    {
+      // Pode dormir pouco para economizar CPU
+      struct timespec ts = { 0, 1000 }; // 1 microssegundo
+      nanosleep (&ts, NULL);
+      clock_gettime (CLOCK_MONOTONIC_RAW, &now);
+      elapsed_sec = (now.tv_sec - start_time.tv_sec)
+                    + (now.tv_nsec - start_time.tv_nsec) / 1e9;
+    }
+}
+
+// Simula gastar um ciclo de clock
+void
+spend_cycle ()
+{
+  total_cycles_executed++;
+  sync_clock ();
+}
+
+void
+spend_cycles (Word cycles)
+{
+  for (Word i = 0; i < cycles; i++)
+    {
+      spend_cycle (); // spend_cycle() espera o tempo de 1 ciclo
+    }
+}
+
 // This function resets the CPU state to its initial values.
 void
 resetCPU (CPU6502 *cpu, MEM6502 *memory)
