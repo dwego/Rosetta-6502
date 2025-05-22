@@ -2,7 +2,6 @@
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
-#include <stdio.h>
 
 void
 execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
@@ -468,7 +467,6 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       break;
     case INS_BRK:
       BRK (Cycles, memory, cpu);
-      printf ("PC after BRK: 0x%04X\n", cpu->PC);
       break;
 
     /*──────────────────────────────────
@@ -496,8 +494,8 @@ main (void)
   program_start = 0x8000;
   mem.Data[0xFFFC] = program_start & 0xFF;
   mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
-  mem.Data[0xFFFE] = mem.Data[0xFFFC];
-  mem.Data[0xFFFF] = mem.Data[0xFFFD];
+  mem.Data[0xFFFE] = 0x10;
+  mem.Data[0xFFFF] = 0x80;
 
   mem.Data[0x8000] = INS_LDA_IM;
   mem.Data[0x8001] = 0x10;
@@ -505,10 +503,17 @@ main (void)
   mem.Data[0x8003] = 0x42;
   mem.Data[0x8004] = INS_BRK;
 
-  printf ("PC before reset: 0x%04X\n", cpu.PC);
+  // Break ASM because "0x02" isn't a instruction
+  mem.Data[0x8010] = 0x02;
+
+  // printf ("PC before reset: 0x%04X\n", cpu.PC);
   resetCPU (&cpu, &mem);
-  printf ("PC after reset: 0x%04X\n", cpu.PC);
+  // printf ("PC after reset: 0x%04X\n", cpu.PC);
   // end - inline a little program
+
+  // init sync clock
+  clock_init ();
+
   execute (&Cycles, &mem, &cpu);
 
   if (Cycles == 0)
@@ -527,6 +532,5 @@ end:
   test = cpu.A;
   printf ("stored value in: Accumulator is: %u\n", test);
   freeMem6502 (&mem);
-
   return 0;
 }
