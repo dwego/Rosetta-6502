@@ -20,7 +20,7 @@
 #include "DEC/dec.h"
 #include "DEX/dex.h"
 #include "DEY/dey.h"
-#include "XOR/xor.h"
+#include "EOR/eor.h"
 #include "INC/inc.h"
 #include "INX/inx.h"
 #include "INY/iny.h"
@@ -54,14 +54,14 @@
 #include "TXS/txs.h"
 #include "TYA/tya.h"
 #include "BRK/brk.h"
-#include "XOR/xor.h"
+#include "EOR/eor.h"
 
 /* 
    This enumeration defines opcodes for various instructions supported by the MOS Technology 6502 processor.
    Each opcode represents a specific instruction that the processor can execute.
 
    The instructions are categorized based on their functionality, such as data loading (LDA, LDX, LDY), 
-   data storing (STA, STX, STY), logical operations (AND, ORA, XOR, BIT), transfer operations (TAX, TAY, TXA, TYA),
+   data storing (STA, STX, STY), logical operations (AND, ORA, EOR, BIT), transfer operations (TAX, TAY, TXA, TYA),
    increments/decrements (INX, INY, DEY, DEX, DEX, INC), branches (BEQ, BNE, BCS, BCC, BMI, BPL, BVC, BVS),
    status flag changes (CLC, SEC, CLD, SED, CLI, SEI, CLV), arithmetic operations (ADC, SBC), and more.
 
@@ -150,16 +150,16 @@ typedef enum {
     INS_ORA_INDX = 0x01,
     INS_ORA_INDY = 0x11,
 
-    //XOR
+    //EOR
 
-    INS_XOR_IM = 0x49, // done
-    INS_XOR_ZP = 0x45, // done
-    INS_XOR_ZPX = 0x55, // done
-    INS_XOR_ABS = 0x4D, // done
-    INS_XOR_ABSX = 0x5D, // done // done
-    INS_XOR_ABSY = 0x59, // done
-    INS_XOR_INDX = 0x41,
-    INS_XOR_INDY = 0x51,
+    INS_EOR_IM = 0x49, // done
+    INS_EOR_ZP = 0x45, // done
+    INS_EOR_ZPX = 0x55, // done
+    INS_EOR_ABS = 0x4D, // done
+    INS_EOR_ABSX = 0x5D, // done // done
+    INS_EOR_ABSY = 0x59, // done
+    INS_EOR_INDX = 0x41,
+    INS_EOR_INDY = 0x51,
 
     //BIT
 
