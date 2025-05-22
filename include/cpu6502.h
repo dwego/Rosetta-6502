@@ -17,6 +17,7 @@
    For more information about the instructions and addressing modes, refer to Instructions.MD
 */ 
 
+#define CPU_FREQ_HZ 1000000  // CPU frequency in Hertz (1 MHz)
 
 /* 
    StatusFlags - Status Flags for the CPU6502
@@ -58,6 +59,42 @@ typedef struct {
 } CPU6502;
 
 
+/* 
+   Timing and Clock synchronization variables and functions
+*/
+
+/* 
+   total_cycles_executed - Counts the total CPU cycles executed since emulation start
+*/
+QWord total_cycles_executed = 0;
+
+/* 
+   start_time - Timestamp marking the beginning of emulation or timing reset
+*/
+struct timespec start_time;
+
+
+/* 
+   clock_init - Initializes timing variables and marks the start time of emulation.
+   Should be called once before starting CPU execution.
+*/
+void clock_init();
+
+/* 
+   sync_clock - Synchronizes emulation speed to the CPU clock.
+   This function calculates the expected elapsed time based on total cycles executed
+   and CPU frequency, then sleeps the thread if the emulation is running too fast,
+   to maintain real-time timing.
+*/
+void sync_clock();
+
+/* 
+   spend_cycle - Increments cycle count and updates timing accordingly.
+   This should be called once per CPU cycle to keep track of timing and help sync.
+*/
+void spend_cycle();
+void spend_cycles(Word cycles);
+
 // Reset:
 
 
@@ -92,6 +129,5 @@ void PushPCToStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu);
 
 // This function pops a 16-bit word from the stack.
 Word PopWordFromStack(Word *Cycles, MEM6502 *memory, CPU6502 *cpu);
-
 
 #endif // CPU6502_H
