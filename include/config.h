@@ -7,6 +7,7 @@
 #include <error.h>
 #include <stdint.h>
 #include <stdint.h>
+#include <time.h>
 
 typedef uint8_t Byte;
 typedef uint16_t Word;
