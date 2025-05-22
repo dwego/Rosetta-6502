@@ -39,8 +39,6 @@
 #include "PLA/pla.h"
 #include "PLP/plp.h"
 #include "ROL/rol.h"
-#include "ROR/ror.h"
-
 
 #include "SBC/sbc.h"
 #include "SEC/sec.h"
@@ -55,6 +53,7 @@
 #include "TXA/txa.h"
 #include "TXS/txs.h"
 #include "TYA/tya.h"
+#include "BRK/brk.h"
 #include "XOR/xor.h"
 
 /* 
@@ -197,7 +196,7 @@ typedef enum {
     INS_BMI = 0x30, // done
     INS_BPL = 0x10, // done
     INS_BVC = 0x50, // done
-    INS_BVS = 0x70, // done
+    INS_BVS = 0x70, // done  
 
     //status flag changes
     INS_CLC = 0x18, // done
