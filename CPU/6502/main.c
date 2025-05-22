@@ -178,23 +178,23 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       AND_ABSY (Cycles, memory, cpu);
       break;
 
-    case INS_OR_IM:
-      OR_IM (Cycles, memory, cpu);
+    case INS_ORA_IM:
+      ORA_IM (Cycles, memory, cpu);
       break;
-    case INS_OR_ZP:
-      OR_ZP (Cycles, memory, cpu);
+    case INS_ORA_ZP:
+      ORA_ZP (Cycles, memory, cpu);
       break;
-    case INS_OR_ZPX:
-      OR_ZPX (Cycles, memory, cpu);
+    case INS_ORA_ZPX:
+      ORA_ZPX (Cycles, memory, cpu);
       break;
-    case INS_OR_ABS:
-      OR_ABS (Cycles, memory, cpu);
+    case INS_ORA_ABS:
+      ORA_ABS (Cycles, memory, cpu);
       break;
-    case INS_OR_ABSX:
-      OR_ABSX (Cycles, memory, cpu);
+    case INS_ORA_ABSX:
+      ORA_ABSX (Cycles, memory, cpu);
       break;
-    case INS_OR_ABSY:
-      OR_ABSY (Cycles, memory, cpu);
+    case INS_ORA_ABSY:
+      ORA_ABSY (Cycles, memory, cpu);
       break;
 
     case INS_XOR_IM:
