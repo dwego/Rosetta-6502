@@ -53,6 +53,7 @@ clock_init ()
 // Synchronize the emulated CPU clock with real elapsed time.
 // This function will sleep in small increments if the emulator is running
 // faster than real time, ensuring accurate timing.
+
 void
 sync_clock ()
 {
