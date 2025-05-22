@@ -36,12 +36,11 @@ main (void)
   // init sync clock
   clock_init ();
 
-  run_cpu_instruction (&Cycles, &mem, &cpu);
-
-  if (Cycles == 0)
+  while (Cycles > 0)
     {
-      goto end;
+      run_cpu_instruction (&Cycles, &mem, &cpu);
     }
+  goto end;
 
 end:
   test = cpu.A;
