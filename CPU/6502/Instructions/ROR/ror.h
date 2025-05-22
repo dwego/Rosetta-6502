@@ -1,5 +1,5 @@
-#ifndef ROL_H
-#define ROL_H
+#ifndef ROR_H
+#define ROR_H
 
 #include "config.h"
 #include "cpu6502.h"
