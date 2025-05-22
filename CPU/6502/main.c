@@ -1,6 +1,6 @@
 #include "Instructions/BRK/brk.h"
+#include "Instructions/EOR/xor.h"
 #include "Instructions/OR/or.h"
-#include "Instructions/XOR/xor.h"
 #include "Instructions/instructions.h"
 #include "config.h"
 #include "cpu6502.h"
@@ -157,7 +157,7 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     /*──────────────────────────────────
-      LOGICAL  (AND / OR / XOR / BIT)
+      LOGICAL  (AND / OR / EOR / BIT)
       ──────────────────────────────────*/
     case INS_AND_IM:
       AND_IM (Cycles, memory, cpu);
@@ -197,23 +197,23 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       ORA_ABSY (Cycles, memory, cpu);
       break;
 
-    case INS_XOR_IM:
-      XOR_IM (Cycles, memory, cpu);
+    case INS_EOR_IM:
+      EOR_IM (Cycles, memory, cpu);
       break;
-    case INS_XOR_ZP:
-      XOR_ZP (Cycles, memory, cpu);
+    case INS_EOR_ZP:
+      EOR_ZP (Cycles, memory, cpu);
       break;
-    case INS_XOR_ZPX:
-      XOR_ZPX (Cycles, memory, cpu);
+    case INS_EOR_ZPX:
+      EOR_ZPX (Cycles, memory, cpu);
       break;
-    case INS_XOR_ABS:
-      XOR_ABS (Cycles, memory, cpu);
+    case INS_EOR_ABS:
+      EOR_ABS (Cycles, memory, cpu);
       break;
-    case INS_XOR_ABSX:
-      XOR_ABSX (Cycles, memory, cpu);
+    case INS_EOR_ABSX:
+      EOR_ABSX (Cycles, memory, cpu);
       break;
-    case INS_XOR_ABSY:
-      XOR_ABSY (Cycles, memory, cpu);
+    case INS_EOR_ABSY:
+      EOR_ABSY (Cycles, memory, cpu);
       break;
 
     case INS_BIT_ZP:
