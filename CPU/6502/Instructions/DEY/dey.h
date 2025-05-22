@@ -39,6 +39,7 @@ void DEYSetStatus(CPU6502 *cpu) {
 void DEY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->Y--;
     (*Cycles)--;
+    spend_cycles(2);
 }
 
 

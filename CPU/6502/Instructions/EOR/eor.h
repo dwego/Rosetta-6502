@@ -40,6 +40,7 @@ void EOR_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->A = Value ^ cpu->A;
     EORSetStatus(cpu);
+    spend_cycles(2);
 }
 
 
@@ -54,6 +55,7 @@ void EOR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) ^ cpu->A;
     EORSetStatus(cpu);
+     spend_cycles(3);
 }
 
 
@@ -70,6 +72,7 @@ void EOR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     (*Cycles)--;
     cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) ^ cpu->A;
     EORSetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -84,6 +87,7 @@ void EOR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
     EORSetStatus(cpu);
+    spend_cycles(4);
 }
 
 
@@ -103,10 +107,12 @@ void EOR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     if (OldPage != NewPage) {
         (*Cycles)++;
+        spend_cycle();  
     }
 
     cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
     EORSetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -126,10 +132,12 @@ void EOR_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     if (OldPage != NewPage) {
         (*Cycles)++;
+         spend_cycle();  
     }
 
     cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
     EORSetStatus(cpu);
+     spend_cycles(4);
 }
 
 #endif // EOR_H

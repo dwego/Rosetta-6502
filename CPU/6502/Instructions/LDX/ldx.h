@@ -41,6 +41,7 @@ void LDX_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);
     cpu->X = Value;
     LDXSetStatus(cpu);
+     spend_cycles(2);
 }
 
 
@@ -55,6 +56,7 @@ void LDX_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     cpu->X = ReadByte(Cycles, ZeroPageAddr, memory);
     LDXSetStatus(cpu);
+     spend_cycles(3);
 }
 
 
@@ -71,7 +73,9 @@ void LDX_ZPY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     (*Cycles)--;
     cpu->X = ReadByte(Cycles, ZeroPageAddr, memory);
     LDXSetStatus(cpu);
+     spend_cycles(4);
 }
+
 
 
 /*
@@ -86,6 +90,7 @@ void LDX_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     cpu->X = ReadByte(Cycles, Absolute, memory);
     LDXSetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -106,10 +111,12 @@ void LDX_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     // Add an extra cycle if page is crossed
     if (OldPage != NewPage) {
         (*Cycles)++;
+         spend_cycle();
     }
 
     cpu->X = ReadByte(Cycles, Absolute, memory);
     LDXSetStatus(cpu);
+     spend_cycles(4);
 }
 
 #endif // LDX_H

@@ -43,6 +43,7 @@ void STY_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->Y, memory, ZeroPageAddr);
     STYSetStatus(cpu);
+     spend_cycles(3);
 }
 
 
@@ -59,6 +60,7 @@ void STY_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     (*Cycles)--;
     WriteByte(Cycles, cpu->Y, memory, ZeroPageAddr);
     STYSetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -74,6 +76,7 @@ void STY_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->Y, memory, Absolute);
     STYSetStatus(cpu);
+     spend_cycles(4);
 }
 
 #endif // STY_H

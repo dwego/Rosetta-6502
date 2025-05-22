@@ -41,6 +41,7 @@ CMP_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Value = FetchByte(Cycles, memory, cpu);
     Byte Result = cpu->A - Value;
     CMPSetStatus(Result, cpu);
+      spend_cycles(2);
 }
 
 /*
@@ -55,6 +56,7 @@ CMP_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Data = ReadByte(Cycles, ZeroPageAddr, memory);
     Byte Result = cpu->A - Data;
     CMPSetStatus(Result, cpu);
+    spend_cycles(3);
 }
 
 /*
@@ -71,6 +73,7 @@ CMP_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Data = ReadByte(Cycles, ZeroPageAddr, memory);
     Byte Result = cpu->A - Data;
     CMPSetStatus(Result, cpu);
+    spend_cycles(4);
 }
 
 /*
@@ -85,6 +88,7 @@ CMP_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Data = ReadByte(Cycles, Absolute, memory);
     Byte Result = cpu->A - Data;
     CMPSetStatus(Result, cpu);
+    spend_cycles(4);
 }
 
 /*
@@ -100,11 +104,13 @@ CMP_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 
     if ((NewAddress & 0xFF00) != (Absolute & 0xFF00)) {
         (*Cycles)++;
+        spend_cycle();
     }
 
     Byte Data = ReadByte(Cycles, NewAddress, memory);
     Byte Result = cpu->A - Data;
     CMPSetStatus(Result, cpu);
+    spend_cycles(4);
 }
 
 /*
@@ -120,11 +126,13 @@ CMP_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 
     if ((NewAddress & 0xFF00) != (Absolute & 0xFF00)) {
         (*Cycles)++;
+        spend_cycle();
     }
 
     Byte Data = ReadByte(Cycles, NewAddress, memory);
     Byte Result = cpu->A - Data;
     CMPSetStatus(Result, cpu);
+    spend_cycles(4);
 }
 
 #endif // CMP_H

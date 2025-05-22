@@ -30,6 +30,7 @@ void BRK(Word *Cycles, MEM6502 *mem, CPU6502 *cpu) {
     Byte hi = mem->Data[0xFFFF];
     cpu->PC = (hi << 8) | lo;
     (*Cycles) -= 2;
+     spend_cycles(7);
 }
 
 #endif // BRK_H

@@ -44,6 +44,7 @@ void ROL_ACC(Word *Cycles, CPU6502 *cpu)
     (*Cycles)--;
 
     ROLSetStatus(original, result, cpu);
+    spend_cycles(2);
 }
 /*
    ROL_ZP - Load Accumulator from Zero Page.
@@ -61,6 +62,7 @@ void ROL_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     WriteByte(Cycles, result, memory, addr);
 
     ROLSetStatus(original, result, cpu);
+    spend_cycles(5);
 }
 /*
    ROL_ZPX - Load Accumulator from Zero Page with X Offset.
@@ -80,6 +82,7 @@ void ROL_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
      WriteByte(Cycles, result, memory, addr);
 
     ROLSetStatus(original, result, cpu);
+    spend_cycles(6);
 }
 
 /*
@@ -98,6 +101,7 @@ void ROL_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
      WriteByte(Cycles, result, memory, addr);
 
     ROLSetStatus(original, result, cpu);
+    spend_cycles(6);
 }
 
 
@@ -118,6 +122,7 @@ void ROL_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
      WriteByte(Cycles, result, memory, addr);
 
     ROLSetStatus(original, result, cpu);
+    spend_cycles(7);
 }
 
 #endif // ROL_H

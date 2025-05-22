@@ -45,6 +45,7 @@ void DEC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     WriteByte(Cycles, DecrementValue, memory, ZeroPageAddr);
     DECSetStatus(DecrementValue, cpu);
+    spend_cycles(5);
 }
 
 
@@ -66,6 +67,7 @@ void DEC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     WriteByte(Cycles, DecrementValue, memory, ZeroPageAddr);
     DECSetStatus(DecrementValue, cpu);
+    spend_cycles(6);
 }
 
 
@@ -85,6 +87,7 @@ void DEC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     WriteByte(Cycles, DecrementValue, memory, Absolute);
     DECSetStatus(DecrementValue, cpu);
+    spend_cycles(6);
 }
 
 void DEC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
@@ -98,6 +101,7 @@ void DEC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     WriteByte(Cycles, DecrementValue, memory, Absolute);
     DECSetStatus(DecrementValue, cpu);
+    spend_cycles(6);
 }
 
 

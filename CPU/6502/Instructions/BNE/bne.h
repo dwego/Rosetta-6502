@@ -27,11 +27,13 @@ void BNE(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
         cpu->PC += Sub_Addr;
 
         (*Cycles)--;
-
+         spend_cycle();
         if ((old_pc & 0xFF00) != (cpu->PC & 0xFF00)) {
             (*Cycles)--;
+             spend_cycle();
         }
     }
+     spend_cycles(2);
 }
 
 #endif // BNE_H

@@ -30,6 +30,7 @@ CLI(Word *Cycles, CPU6502 *cpu)
 {
     CLISetStatus(cpu);
     (*Cycles)--;
+    spend_cycles(2);
 }
 
 #endif // CLI_H

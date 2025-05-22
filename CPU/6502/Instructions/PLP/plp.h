@@ -42,6 +42,7 @@ void PLP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Value = PopWordFromStack(Cycles, memory, cpu);
     cpu->PS = Value;
     PLPSetStatus(cpu);
+     spend_cycles(4);
 }
 
 #endif // PLP_H

@@ -41,6 +41,7 @@ void PHASetStatus(CPU6502 *cpu) {
 void PHA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     PushByteToStack(Cycles, memory, cpu->A, cpu);
     PHASetStatus(cpu);
+    spend_cycles(3);
 }
 
 #endif // PHA_H

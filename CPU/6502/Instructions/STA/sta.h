@@ -42,6 +42,7 @@ void STA_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->A, memory, ZeroPageAddr);
     STASetStatus(cpu);
+     spend_cycles(3);
 }
 
 
@@ -58,6 +59,7 @@ void STA_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     (*Cycles)--;
     WriteByte(Cycles, cpu->A, memory, ZeroPageAddr);
     STASetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -72,6 +74,7 @@ void STA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     WriteByte(Cycles, cpu->A, memory, Absolute);
     STASetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -87,6 +90,7 @@ void STA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Absolute += cpu->X;
     WriteByte(Cycles, cpu->A, memory, Absolute);
     STASetStatus(cpu);
+     spend_cycles(5);
 }
 
 
@@ -102,6 +106,7 @@ void STA_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Absolute += cpu->Y;
     WriteByte(Cycles, cpu->A, memory, Absolute);
     STASetStatus(cpu);
+     spend_cycles(5);
 }
 
 #endif // STA_H

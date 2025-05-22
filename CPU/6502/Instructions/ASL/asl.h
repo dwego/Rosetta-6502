@@ -58,6 +58,7 @@ void ASL_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->A = Value << 1;
     (*Cycles)=-2;
     ASLSetStatus(Value, cpu);
+     spend_cycles(5);
 }
 
 
@@ -77,6 +78,7 @@ void ASL_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->A = Value << 1;
     (*Cycles)=-2;
     ASLSetStatus(Value, cpu);
+     spend_cycles(6);
 }
 
 
@@ -94,6 +96,7 @@ void ASL_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->A = Value << 1;
     (*Cycles)=-2;
     ASLSetStatus(Value, cpu);
+     spend_cycles(6);   
 }
 
 
@@ -112,6 +115,7 @@ void ASL_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     cpu->A = Value << 1;
     (*Cycles)=-3;
     ASLSetStatus(Value, cpu);
+    spend_cycles(6);   
 }
 
 #endif // ASL_H

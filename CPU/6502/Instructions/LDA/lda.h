@@ -40,6 +40,7 @@ void LDA_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte Value = FetchByte(Cycles, memory, cpu);;
     cpu->A = Value;
     LDASetStatus(cpu);
+     spend_cycles(2);
 }
 
 
@@ -54,6 +55,7 @@ void LDA_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
     cpu->A = ReadByte(Cycles, ZeroPageAddr, memory);
     LDASetStatus(cpu);
+     spend_cycles(3);
 }
 
 
@@ -70,6 +72,7 @@ void LDA_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     (*Cycles)--;
     cpu->A = ReadByte(Cycles, ZeroPageAddr, memory);
     LDASetStatus(cpu);
+   spend_cycles(4);
 }
 
 
@@ -84,6 +87,7 @@ void LDA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     Word Absolute = FetchWord(Cycles, memory, cpu);
     cpu->A = ReadByte(Cycles, Absolute, memory);
     LDASetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -104,10 +108,12 @@ void LDA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
 
     if (OldPage != NewPage) {
         (*Cycles)++;
+         spend_cycle();  
     }
 
     cpu->A = ReadByte(Cycles, Absolute, memory);
     LDASetStatus(cpu);
+     spend_cycles(4);
 }
 
 
@@ -128,10 +134,12 @@ void LDA_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
     // Add an extra cycle if page is crossed
     if (OldPage != NewPage) {
         (*Cycles)++;
+         spend_cycle();
     }
 
     cpu->A = ReadByte(Cycles, Absolute, memory);
     LDASetStatus(cpu);
+     spend_cycles(4);
 }
 
 #endif // LDA_H

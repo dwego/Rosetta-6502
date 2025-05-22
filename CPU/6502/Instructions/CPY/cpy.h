@@ -40,6 +40,7 @@ CPY_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Value = FetchByte(Cycles, memory, cpu);
     Byte Result = cpu->Y - Value;
     CPYSetStatus(Result, cpu);
+    spend_cycles(2);
 }
 
 
@@ -56,6 +57,7 @@ CPY_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Data = ReadByte(Cycles, ZeroPageAddr, memory);
     Byte Result = cpu->Y - Data;
     CPYSetStatus(Result, cpu);
+    spend_cycles(3);
 }
 
 /*
@@ -70,6 +72,7 @@ CPY_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     Byte Data = ReadByte(Cycles, Absolute, memory);
     Byte Result = cpu->Y - Data;
     CPYSetStatus(Result, cpu);
+    spend_cycles(4);
 }
 
 #endif // CPY_H
