@@ -1,9 +1,11 @@
+#include "Instructions/BRK/brk.h"
 #include "Instructions/OR/or.h"
 #include "Instructions/XOR/xor.h"
 #include "Instructions/instructions.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
+#include <stdio.h>
 
 void
 execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
@@ -110,7 +112,7 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       TSX (Cycles, memory, cpu);
       break;
     case INS_TXS:
-      TXS (Cycles, memory, cpu);
+      TXS (Cycles, cpu);
       break;
     case INS_TAX:
       TAX (Cycles, memory, cpu);
@@ -122,7 +124,7 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       TXA (Cycles, memory, cpu);
       break;
     case INS_TYA:
-      TYA (Cycles, memory, cpu);
+      TYA (Cycles, cpu);
       break;
 
     case INS_PHA:
@@ -468,6 +470,10 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
     case INS_NOP:
       NOP (Cycles);
       break;
+    case INS_BRK:
+      BRK (Cycles, memory, cpu);
+      printf ("PC after BRK: 0x%04X\n", cpu->PC);
+      break;
 
     /*──────────────────────────────────
       DEFAULT
@@ -482,6 +488,7 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 int
 main (void)
 {
+  int program_start;
   CPU6502 cpu;
   MEM6502 mem;
   Byte test;
@@ -490,16 +497,21 @@ main (void)
   initializeMem6502 (&mem);
   // start - inline
 
-  mem.Data[0xFFFC] = 0x00;
-  mem.Data[0xFFFD] = 0x80;
+  program_start = 0x8000;
+  mem.Data[0xFFFC] = program_start & 0xFF;
+  mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
+  mem.Data[0xFFFE] = mem.Data[0xFFFC];
+  mem.Data[0xFFFF] = mem.Data[0xFFFD];
 
   mem.Data[0x8000] = INS_LDA_IM;
   mem.Data[0x8001] = 0x10;
   mem.Data[0x8002] = INS_STA_ZP;
   mem.Data[0x8003] = 0x42;
+  mem.Data[0x8004] = INS_BRK;
 
+  printf ("PC before reset: 0x%04X\n", cpu.PC);
   resetCPU (&cpu, &mem);
-
+  printf ("PC after reset: 0x%04X\n", cpu.PC);
   // end - inline a little program
   execute (&Cycles, &mem, &cpu);
 
