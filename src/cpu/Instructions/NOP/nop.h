@@ -5,23 +5,24 @@
 #include "cpu6502.h"
 
 /*
-   This is a header file for the BVS (Jump to Subroutine) and RTS (Return from Subroutine) instructions for MOS Technology 6502.
-   BVS is used to jump to a subroutine, saving the return address, and RTS is used to return from that subroutine.
+   This is a header file for the NOP (No Operation) instruction for the MOS
+   Technology 6502. NOP performs no operation and simply advances the program
+   counter by one byte. It is often used for timing adjustments or as padding.
    For more information about the instructions, refer to Instructions.MD
 */
 
-
 /*
-   BVS - Jump to Subroutine:
-   This function fetches a two-byte address from memory, saves the return address (PC + 2) to the stack,
-   and then sets the program counter (PC) to the specified address.
-   It adjusts the cycle count accordingly.
+   NOP - No Operation:
+   This function simulates the NOP instruction which does nothing except
+   consume time. It decreases the cycle count and optionally triggers a dummy
+   cycle (for accuracy in emulation).
 */
 
-
-static inline void NOP(Word *Cycles) {
-    (*Cycles)--;
-     spend_cycles(2);
+static inline void
+NOP (Word *Cycles)
+{
+  (*Cycles)--;      // Decrease the cycle count by one
+  spend_cycles (2); // Simulate 2 CPU cycles typically used by NOP
 }
 
 #endif // NOP_H

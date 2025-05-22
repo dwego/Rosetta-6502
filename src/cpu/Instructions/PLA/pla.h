@@ -5,44 +5,44 @@
 #include "cpu6502.h"
 #include "mem6502.h"
 
-// TODO Arrumar os comentarios
-
 /*
-   This is a header file for the PLA (Load Accumulator) instruction for MOS Technology 6502.
-   PLA works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the PLA (Pull Accumulator) instruction for MOS
+   Technology 6502. PLA pulls a byte from the stack and loads it into the
+   Accumulator register (A). For more information about the instructions, refer
+   to Instructions.MD
 */
 
 /*
-   PLA (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   PLA uses the implied addressing mode.
+   It retrieves a byte from the stack and loads it into the Accumulator (A).
 */
-
 
 /*
    This function sets the Flags for the Status register
    to identify what happened during the PLA instruction.
 */
 
-
-static inline void PLASetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->X == 0);
-    cpu->Flag.N = (cpu->X & 0x80) > 0;
+static inline void
+PLASetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->A == 0);
+  cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
 
-
 /*
-   PLA - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, and loads it into the Accumulator (A). It then sets the Status flags.
+   PLA - Pull Accumulator from Stack.
+   This function pops a byte from the stack, loads it into the Accumulator (A),
+   sets the status flags accordingly, and spends the required CPU cycles.
 */
 
-
-static inline void PLA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Value = PopWordFromStack(Cycles, memory, cpu);
-    cpu->A = Value;
-    PLASetStatus(cpu);
-     spend_cycles(4);
+static inline void
+PLA (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte Value = PopByteFromStack (Cycles, memory,
+                                 cpu); // Use a PopByteFromStack if available
+  cpu->A = Value;
+  PLASetStatus (cpu);
+  spend_cycles (4);
 }
 
 #endif // PLA_H

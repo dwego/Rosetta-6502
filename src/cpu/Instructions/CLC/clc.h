@@ -4,33 +4,30 @@
 #include "config.h"
 #include "cpu6502.h"
 
-
 /*
-   This is a header file for the CLC (Jump to Subroutine) and RTS (Return from Subroutine) instructions for MOS Technology 6502.
-   CLC is used to jump to a subroutine, saving the return address, and RTS is used to return from that subroutine.
+   This is a header file for the CLC (Clear Carry Flag) instruction for MOS
+   Technology 6502. CLC clears the Carry flag in the processor status register.
    For more information about the instructions, refer to Instructions.MD
 */
 
-
 /*
-   CLC - Jump to Subroutine:
-   This function fetches a two-byte address from memory, saves the return address (PC + 2) to the stack,
-   and then sets the program counter (PC) to the specified address.
+   CLC - Clear Carry Flag:
+   This function clears the Carry flag in the CPU status register.
    It adjusts the cycle count accordingly.
 */
 
 static inline void
-CLCSetStatus(CPU6502 *cpu)
+CLCSetStatus (CPU6502 *cpu)
 {
-    cpu->Flag.C = 0;
+  cpu->Flag.C = 0;
 }
 
 static inline void
-CLC(Word *Cycles, CPU6502 *cpu)
+CLC (Word *Cycles, CPU6502 *cpu)
 {
-    CLCSetStatus(cpu);
-    (*Cycles)--;
-    spend_cycles(2);
+  CLCSetStatus (cpu);
+  (*Cycles)--;
+  spend_cycles (2);
 }
 
 #endif // CLC_H

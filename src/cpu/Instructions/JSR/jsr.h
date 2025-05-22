@@ -14,18 +14,28 @@
 
 /*
    JSR - Jump to Subroutine:
-   This function fetches a two-byte address from memory, saves the return
-   address (PC + 2) to the stack, and then sets the program counter (PC) to the
-   specified address. It adjusts the cycle count accordingly.
+   This function fetches a two-byte address from memory, which is the target
+   subroutine address. It pushes the return address (PC - 1) onto the stack,
+   which corresponds to the address of the last byte of the JSR instruction (so
+   that RTS returns correctly to the instruction following the JSR). Then it
+   sets the program counter (PC) to the subroutine address. The cycle count is
+   decremented accordingly.
 */
 
 static inline void
 JSR (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 {
   Word SubAddr = FetchWord (Cycles, memory, cpu);
+
+  // Push the return address (PC - 1) onto the stack.
+  // This is because RTS will pull the return address and add 1 before resuming
+  // execution.
   Word ReturnAddr = cpu->PC - 1;
   PushWordToStack (Cycles, memory, ReturnAddr, cpu);
+
+  // Set the program counter to the target subroutine address.
   cpu->PC = SubAddr;
+
   spend_cycles (6);
 }
 

@@ -5,137 +5,138 @@
 #include "cpu6502.h"
 #include "mem6502.h"
 
-/* 
-   This is a header file for the OR (Load Accumulator) instruction for MOS Technology 6502.
-   ORA works by moving a value into the Accumulator register (A).
+/*
+   This is a header file for the ORA (Logical Inclusive OR with Accumulator)
+   instruction for the MOS Technology 6502 processor.
+
+   ORA performs a bitwise OR between the Accumulator (A) and a fetched value,
+   storing the result back into the Accumulator. It affects the Zero and
+   Negative flags.
+
    For more information about the instructions, refer to Instructions.MD
 */
 
 /*
-   ORA (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   The ORA instruction supports various addressing modes in the 6502
+   architecture. These modes determine how the operand is fetched from memory
+   before being OR-ed with A.
 */
-
 
 /*
-   This function sets the Flags for the Status register
-   to identify what happened during the OR instruction.
+   This function sets the Zero and Negative flags
+   based on the result in the Accumulator after the ORA operation.
 */
-
-
-static inline void ORASetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+static inline void
+ORASetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->A == 0);
+  cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
 
-
 /*
-   ORA_IM - Load Accumulator with Immediate value.
-   This function fetches a byte from memory OR loads it into the Accumulator (A).
-   It then sets the status flags using ORASetStatus.
+   ORA_IM - OR Accumulator with Immediate value.
+   Fetches an immediate byte, ORs it with A, updates A and sets status flags.
 */
-
-
-static inline void ORA_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte Value = FetchByte(Cycles, memory, cpu);;
-    cpu->A = Value | cpu->A;
-    ORASetStatus(cpu);
-     spend_cycles(2);
+static inline void
+ORA_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte Value = FetchByte (Cycles, memory, cpu);
+  cpu->A |= Value;
+  ORASetStatus (cpu);
+  spend_cycles (2);
 }
 
-
 /*
-   ORA_ZP - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, ORA loads it into the Accumulator (A). It then sets the status flags.
+   ORA_ZP - OR Accumulator with Zero Page address value.
+   Fetches a zero-page address, reads its value, ORs with A, updates A and
+   flags.
 */
-
-
-static inline void ORA_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
-    cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) | cpu->A;
-    ORASetStatus(cpu);
-     spend_cycles(3);
+static inline void
+ORA_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu->A |= Value;
+  ORASetStatus (cpu);
+  spend_cycles (3);
 }
 
-
 /*
-   ORA_ZPX - Load Accumulator from Zero Page with X Offset.
-   Similar to ORA_ZP, but adds the X register value to the zero-page address before reading
-   the value from memory. It adjusts the cycle count accordingly ORA sets the status flags.
+   ORA_ZPX - OR Accumulator with Zero Page,X address value.
+   Adds X to a zero-page address, reads the value, ORs with A, updates A and
+   flags.
 */
-
-
-static inline void ORA_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
-    ZeroPageAddr += cpu->X;
-    (*Cycles)--;
-    cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) | cpu->A;
-    ORASetStatus(cpu);
-     spend_cycles(4);
+static inline void
+ORA_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  ZeroPageAddr += cpu->X;
+  (*Cycles)--; // penalty cycle for zero-page wraparound handling
+  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu->A |= Value;
+  ORASetStatus (cpu);
+  spend_cycles (4);
 }
 
-
 /*
-   ORA_ABS - Load Accumulator from Absolute address.
-   This function fetches a two-byte absolute address from memory, reads the value at that address,
-   ORA loads it into the Accumulator (A). It then sets the status flags.
+   ORA_ABS - OR Accumulator with Absolute address value.
+   Fetches a full 16-bit address, reads the value, ORs with A, updates A and
+   flags.
 */
-
-
-static inline void ORA_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-    cpu->A = ReadByte(Cycles, Absolute, memory) | cpu->A;
-    ORASetStatus(cpu);
-     spend_cycles(4);
+static inline void
+ORA_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Byte Value = ReadByte (Cycles, Absolute, memory);
+  cpu->A |= Value;
+  ORASetStatus (cpu);
+  spend_cycles (4);
 }
 
-
 /*
-   ORA_ABSX - Load Accumulator from Absolute address with X Offset.
-   Similar to ORA_ABS, but adds the X register value to the absolute address before reading
-   the value from memory. It adjusts the cycle count accordingly ORA sets the status flags.
+   ORA_ABSX - OR Accumulator with Absolute,X address value.
+   Adds X to a full 16-bit address. If page crosses, adds a cycle.
+   Reads value at new address, ORs with A, updates A and flags.
 */
+static inline void
+ORA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word AddressWithX = Absolute + cpu->X;
 
-
-static inline void ORA_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-
-    Word OldPage = Absolute & 0xFF00;
-    Word AddressWithX = Absolute + cpu->X;
-    Word NewPage = AddressWithX & 0xFF00;
-
-    if (OldPage != NewPage) {
-        (*Cycles)++;
-        spend_cycle();
+  if ((Absolute & 0xFF00) != (AddressWithX & 0xFF00))
+    {
+      (*Cycles)++;
+      spend_cycle (); // page boundary crossed
     }
 
-    cpu->A = ReadByte(Cycles, AddressWithX, memory) | cpu->A;
-    ORASetStatus(cpu);
-    spend_cycles(4);
+  Byte Value = ReadByte (Cycles, AddressWithX, memory);
+  cpu->A |= Value;
+  ORASetStatus (cpu);
+  spend_cycles (4);
 }
+
 /*
-   ORA_ABSY - Load Accumulator from Absolute address with Y Offset.
-   Similar to ORA_ABS, but adds the Y register value to the absolute address before reading
-   the value from memory. It adjusts the cycle count accordingly ORA sets the status flags.
+   ORA_ABSY - OR Accumulator with Absolute,Y address value.
+   Adds Y to a full 16-bit address. If page crosses, adds a cycle.
+   Reads value at new address, ORs with A, updates A and flags.
 */
+static inline void
+ORA_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word AddressWithY = Absolute + cpu->Y;
 
-
-static inline void ORA_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-
-    Word OldPage = Absolute & 0xFF00;
-    Word AddressWithY = Absolute + cpu->Y;
-    Word NewPage = AddressWithY & 0xFF00;
-
-    if (OldPage != NewPage) {
-        (*Cycles)++;
-        spend_cycle();
+  if ((Absolute & 0xFF00) != (AddressWithY & 0xFF00))
+    {
+      (*Cycles)++;
+      spend_cycle (); // page boundary crossed
     }
 
-    cpu->A = ReadByte(Cycles, AddressWithY, memory) | cpu->A;
-    ORASetStatus(cpu);
-    spend_cycles(4);
+  Byte Value = ReadByte (Cycles, AddressWithY, memory);
+  cpu->A |= Value;
+  ORASetStatus (cpu);
+  spend_cycles (4);
 }
 
 #endif // ORA_H

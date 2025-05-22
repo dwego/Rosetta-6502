@@ -6,104 +6,101 @@
 #include "mem6502.h"
 
 /*
-   This is a header file for the INC (Load Accumulator) instruction for MOS Technology 6502.
-   INC works by moving a value into the Accumulator register (A).
+   This is a header file for the INC (Increment Memory) instruction for MOS
+   Technology 6502. INC increments the value stored at a specified memory
+   address by one. It affects the Zero and Negative flags based on the result
+   of the increment operation. It does NOT modify the Accumulator register (A).
    For more information about the instructions, refer to Instructions.MD
 */
 
 /*
-   INC (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   INC instruction supports various addressing modes in the 6502 architecture.
+   These modes specify the memory location whose value will be incremented.
 */
-
 
 /*
    This function sets the Flags for the Status register
-   to identify what happened during the INC instruction.
+   based on the result of the INC instruction.
+   It updates the Zero (Z) and Negative (N) flags according to the incremented
+   value.
 */
-
-
-static inline void INCSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+static inline void
+INCSetStatus (CPU6502 *cpu, Byte value)
+{
+  cpu->Flag.Z = (value == 0);
+  cpu->Flag.N = (value & 0x80) != 0;
 }
-
 
 /*
-   INC_ZP - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, INC loads it into the Accumulator (A). It then sets the status flags.
+   INC_ZP - Increment Memory at Zero Page address.
+   Fetches a zero-page address from memory, reads the value at that address,
+   increments it by one, writes it back to memory, then updates the flags.
 */
+static inline void
+INC_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
+  Byte IncrementedValue = Value + 1;
 
-
-
-static inline void INC_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
-
-    Byte Value = ReadByte(Cycles, ZeroPageAddr, memory);
-    Byte IncrementValue = Value + 1;
-    (*Cycles)--;
-
-    WriteByte(Cycles, IncrementValue, memory, ZeroPageAddr);
-    INCSetStatus(cpu);
-     spend_cycles(5);
+  WriteByte (Cycles, IncrementedValue, memory, ZeroPageAddr);
+  INCSetStatus (cpu, IncrementedValue);
+  spend_cycles (5);
 }
-
 
 /*
-   INC - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, INC loads it into the Accumulator (A). It then sets the status flags.
+   INC_ZPX - Increment Memory at Zero Page address offset by X.
+   Fetches a zero-page address, adds the X register, reads the value,
+   increments it, writes it back, then updates the flags.
 */
+static inline void
+INC_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  ZeroPageAddr += cpu->X;
 
+  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
+  Byte IncrementedValue = Value + 1;
 
-static inline void INC_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
-    ZeroPageAddr += cpu->X;
-    (*Cycles)--;
-
-    Byte Value = ReadByte(Cycles, ZeroPageAddr, memory);
-    Byte IncrementValue = Value + 1;
-    (*Cycles)--;
-
-    WriteByte(Cycles, IncrementValue, memory, ZeroPageAddr);
-    INCSetStatus(cpu);
-     spend_cycles(6);
+  WriteByte (Cycles, IncrementedValue, memory, ZeroPageAddr);
+  INCSetStatus (cpu, IncrementedValue);
+  spend_cycles (6);
 }
-
 
 /*
-   INC - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, INC loads it into the Accumulator (A). It then sets the status flags.
+   INC_ABS - Increment Memory at Absolute address.
+   Fetches a 16-bit absolute address, reads the value at that address,
+   increments it, writes it back, then updates the flags.
 */
+static inline void
+INC_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Byte Value = ReadByte (Cycles, Absolute, memory);
+  Byte IncrementedValue = Value + 1;
 
-
-static inline void INC_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-
-    Byte Value = ReadByte(Cycles, Absolute, memory);
-    Byte IncrementValue = Value + 1;
-    (*Cycles)--;
-
-    WriteByte(Cycles, IncrementValue, memory, Absolute);
-    INCSetStatus(cpu);
-     spend_cycles(6);
+  WriteByte (Cycles, IncrementedValue, memory, Absolute);
+  INCSetStatus (cpu, IncrementedValue);
+  spend_cycles (6);
 }
 
-static inline void INC_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-    Absolute += cpu->X;
-    (*Cycles)--;
+/*
+   INC_ABSX - Increment Memory at Absolute address offset by X.
+   Fetches a 16-bit absolute address, adds the X register,
+   reads the value, increments it, writes it back, then updates the flags.
+*/
+static inline void
+INC_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Absolute += cpu->X;
 
-    Byte Value = ReadByte(Cycles, Absolute, memory);
-    Byte IncrementValue = Value + 1;
-    (*Cycles)--;
+  Byte Value = ReadByte (Cycles, Absolute, memory);
+  Byte IncrementedValue = Value + 1;
 
-    WriteByte(Cycles, IncrementValue, memory, Absolute);
-    INCSetStatus(cpu);
-     spend_cycles(6);
+  WriteByte (Cycles, IncrementedValue, memory, Absolute);
+  INCSetStatus (cpu, IncrementedValue);
+  spend_cycles (6);
 }
-
 
 #endif // INC_H

@@ -5,41 +5,40 @@
 #include "cpu6502.h"
 
 /*
-   This is a header file for the DEY (Load Accumulator) instruction for MOS Technology 6502.
-   DEY works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the DEY (Decrement Y Register) instruction for MOS
+   Technology 6502. DEY works by decrementing the CPU's Y register by 1. For
+   more information about the instructions, refer to Instructions.MD
 */
 
 /*
-   DEY (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   DEY instruction does not use addressing modes because it operates directly
+   on the CPU's Y register.
 */
-
 
 /*
    This function sets the Flags for the Status register
    to identify what happened during the DEY instruction.
+   It updates the Zero and Negative flags based on the new value of Y.
 */
-
-
-static inline void DEYSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->Y == 0);
-    cpu->Flag.N = (cpu->Y & 0x80) > 0;
+static inline void
+DEYSetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->Y == 0);
+  cpu->Flag.N = (cpu->Y & 0x80) > 0;
 }
-
 
 /*
-   DEY - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, DEY loads it into the Accumulator (A). It then sets the status flags.
+   DEY - Decrement the Y register by 1.
+   This function decrements the Y register, updates the cycle count,
+   sets the status flags, and spends the required CPU cycles.
 */
-
-
-static inline void DEY(Word *Cycles, CPU6502 *cpu) {
-    cpu->Y--;
-    (*Cycles)--;
-    spend_cycles(2);
+static inline void
+DEY (Word *Cycles, CPU6502 *cpu)
+{
+  cpu->Y--;
+  DEYSetStatus (cpu);
+  (*Cycles)--;
+  spend_cycles (2);
 }
-
 
 #endif // DEY_H

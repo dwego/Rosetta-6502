@@ -5,139 +5,143 @@
 #include "cpu6502.h"
 #include "mem6502.h"
 
-/* 
-   This is a header file for the EOR (Load Accumulator) instruction for MOS Technology 6502.
-   EOR works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+/*
+   This is a header file for the EOR (Exclusive OR Accumulator) instruction for
+   MOS Technology 6502. EOR performs a bitwise exclusive OR operation between
+   the Accumulator register (A) and a value fetched from memory, then stores
+   the result back into the Accumulator. For more information about the
+   instructions, refer to Instructions.MD
 */
 
 /*
-   EOR (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   EOR instruction supports various addressing modes in the 6502 architecture.
+   These modes provide flexibility in specifying the source of the data
+   to be exclusive ORed with the Accumulator (A).
 */
-
 
 /*
    This function sets the Flags for the Status register
    to identify what happened during the EOR instruction.
+   It updates the Zero and Negative flags based on the new value of the
+   Accumulator.
 */
-
-
-static inline void EORSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+static inline void
+EORSetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->A == 0);
+  cpu->Flag.N = (cpu->A & 0x80) > 0;
 }
 
-
 /*
-   EOR_IM - Load Accumulator with Immediate value.
-   This function fetches a byte from memoryEOR loads it into the Accumulator (A).
-   It then sets the status flags usingEORSetStatus.
+   EOR_IM - Exclusive OR with Immediate value.
+   This function fetches a byte from memory, performs EOR with the Accumulator
+   (A), then sets the status flags accordingly.
 */
-
-
-static inline void EOR_IM(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte Value = FetchByte(Cycles, memory, cpu);
-    cpu->A = Value ^ cpu->A;
-    EORSetStatus(cpu);
-    spend_cycles(2);
+static inline void
+EOR_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte Value = FetchByte (Cycles, memory, cpu);
+  cpu->A ^= Value;
+  EORSetStatus (cpu);
+  spend_cycles (2);
 }
 
-
 /*
-   EOR_ZP - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address,EOR loads it into the Accumulator (A). It then sets the status flags.
+   EOR_ZP - Exclusive OR with Zero Page address.
+   This function fetches a zero-page address from memory, reads the byte at
+   that address, performs EOR with the Accumulator (A), then sets the status
+   flags accordingly.
 */
-
-
-static inline void EOR_ZP(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
-    cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) ^ cpu->A;
-    EORSetStatus(cpu);
-     spend_cycles(3);
+static inline void
+EOR_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  cpu->A ^= ReadByte (Cycles, ZeroPageAddr, memory);
+  EORSetStatus (cpu);
+  spend_cycles (3);
 }
 
-
 /*
-   EOR_ZPX - Load Accumulator from Zero Page with X Offset.
-   Similar to EOR_ZP, but adds the X register value to the zero-page address before reading
-   the value from memory. It adjusts the cycle count accordingly EOR sets the status flags.
+   EOR_ZPX - Exclusive OR with Zero Page address offset by X register.
+   Similar to EOR_ZP, but adds the X register to the zero-page address before
+   reading. It adjusts the cycle count accordingly and sets the status flags.
 */
-
-
-static inline void EOR_ZPX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Byte ZeroPageAddr = FetchByte(Cycles, memory, cpu);
-    ZeroPageAddr += cpu->X;
-    (*Cycles)--;
-    cpu->A = ReadByte(Cycles, ZeroPageAddr, memory) ^ cpu->A;
-    EORSetStatus(cpu);
-     spend_cycles(4);
+static inline void
+EOR_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  ZeroPageAddr += cpu->X;
+  (*Cycles)--;
+  cpu->A ^= ReadByte (Cycles, ZeroPageAddr, memory);
+  EORSetStatus (cpu);
+  spend_cycles (4);
 }
 
-
 /*
-   EOR_ABS - Load Accumulator from Absolute address.
-   This function fetches a two-byte absolute address from memory, reads the value at that address,
-   EOR loads it into the Accumulator (A). It then sets the status flags.
+   EOR_ABS - Exclusive OR with Absolute address.
+   This function fetches a two-byte absolute address from memory, reads the
+   byte at that address, performs EOR with the Accumulator (A), then sets the
+   status flags.
 */
-
-
-static inline void EOR_ABS(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-    cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
-    EORSetStatus(cpu);
-    spend_cycles(4);
+static inline void
+EOR_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
+  cpu->A ^= ReadByte (Cycles, Absolute, memory);
+  EORSetStatus (cpu);
+  spend_cycles (4);
 }
 
-
 /*
-   EOR_ABSX - Load Accumulator from Absolute address with X Offset.
-   Similar to EOR_ABS, but adds the X register value to the absolute address before reading
-   the value from memory. It adjusts the cycle count accordinglyEOR sets the status flags.
+   EOR_ABSX - Exclusive OR with Absolute address offset by X register.
+   Similar to EOR_ABS, but adds the X register value to the absolute address
+   before reading. If the addition crosses a page boundary, it adjusts the
+   cycle count. It then sets the status flags.
 */
+static inline void
+EOR_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
 
+  Word OldPage = Absolute & 0xFF00;
+  Absolute += cpu->X;
+  Word NewPage = Absolute & 0xFF00;
 
-static inline void EOR_ABSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-
-    Word OldPage = Absolute & 0xFF00;
-    Absolute += cpu->X;
-    Word NewPage = Absolute & 0xFF00;
-
-    if (OldPage != NewPage) {
-        (*Cycles)++;
-        spend_cycle();  
+  if (OldPage != NewPage)
+    {
+      (*Cycles)++;
+      spend_cycle ();
     }
 
-    cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
-    EORSetStatus(cpu);
-     spend_cycles(4);
+  cpu->A ^= ReadByte (Cycles, Absolute, memory);
+  EORSetStatus (cpu);
+  spend_cycles (4);
 }
 
-
 /*
-   EOR_ABSY - Load Accumulator from Absolute address with Y Offset.
-   Similar to EOR_ABS, but adds the Y register value to the absolute address before reading
-   the value from memory. It adjusts the cycle count accordinglyEOR sets the status flags.
+   EOR_ABSY - Exclusive OR with Absolute address offset by Y register.
+   Similar to EOR_ABS, but adds the Y register value to the absolute address
+   before reading. If the addition crosses a page boundary, it adjusts the
+   cycle count. It then sets the status flags.
 */
+static inline void
+EOR_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+{
+  Word Absolute = FetchWord (Cycles, memory, cpu);
 
+  Word OldPage = Absolute & 0xFF00;
+  Absolute += cpu->Y;
+  Word NewPage = Absolute & 0xFF00;
 
-static inline void EOR_ABSY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
-    Word Absolute = FetchWord(Cycles, memory, cpu);
-
-    Word OldPage = Absolute & 0xFF00;
-    Absolute += cpu->Y;
-    Word NewPage = Absolute & 0xFF00;
-
-    if (OldPage != NewPage) {
-        (*Cycles)++;
-         spend_cycle();  
+  if (OldPage != NewPage)
+    {
+      (*Cycles)++;
+      spend_cycle ();
     }
 
-    cpu->A = ReadByte(Cycles, Absolute, memory) ^ cpu->A;
-    EORSetStatus(cpu);
-     spend_cycles(4);
+  cpu->A ^= ReadByte (Cycles, Absolute, memory);
+  EORSetStatus (cpu);
+  spend_cycles (4);
 }
 
 #endif // EOR_H

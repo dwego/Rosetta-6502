@@ -5,42 +5,37 @@
 #include "cpu6502.h"
 
 /*
-   This is a header file for the TYA (Load Accumulator) instruction for MOS Technology 6502.
-   TYA works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the TYA (Transfer Y to Accumulator) instruction
+   for MOS Technology 6502. TYA works by transferring the value from the Index
+   Register Y (Y) into the Accumulator register (A). This instruction updates
+   the Zero and Negative flags based on the new value of the Accumulator. For
+   more information about the instructions, refer to Instructions.MD
 */
 
 /*
-   TYA (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   This function sets the flags in the Status register
+   to reflect the result of the TYA instruction.
 */
-
-
-/*
-   This function sets the Flags for the Status register
-   to identify what happened during the TYA instruction.
-*/
-
-
-static inline void TYASetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->A == 0);
-    cpu->Flag.N = (cpu->A & 0x80) > 0;
+static inline void
+TYASetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->A == 0);
+  cpu->Flag.N = (cpu->A & 0x80) != 0;
 }
 
-
 /*
-   TYA - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, TYA loads it into the Accumulator (A). It then sets the status flags.
+   TYA - Transfer Y to Accumulator.
+   Copies the value from the Y register into the Accumulator (A).
+   Updates Zero and Negative flags accordingly.
+   Consumes 2 CPU cycles.
 */
-
-
-static inline void TYA(Word *Cycles, CPU6502 *cpu) {
-    cpu->A = cpu->Y;
-    TYASetStatus(cpu);
-    (*Cycles)--;
-     spend_cycles(2);
+static inline void
+TYA (Word *Cycles, CPU6502 *cpu)
+{
+  cpu->A = cpu->Y;
+  TYASetStatus (cpu);
+  (*Cycles)--;
+  spend_cycles (2);
 }
-
 
 #endif // TYA_H

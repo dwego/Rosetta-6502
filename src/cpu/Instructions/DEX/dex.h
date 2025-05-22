@@ -4,43 +4,41 @@
 #include "config.h"
 #include "cpu6502.h"
 
-
 /*
-   This is a header file for the DEX (Load Accumulator) instruction for MOS Technology 6502.
-   DEX works by moving a value into the Accumulator register (A).
-   For more information about the instructions, refer to Instructions.MD
+   This is a header file for the DEX (Decrement X Register) instruction for MOS
+   Technology 6502. DEX works by decrementing the CPU's X register by 1. For
+   more information about the instructions, refer to Instructions.MD
 */
 
 /*
-   DEX (Load Accumulator) instruction supports various addressing modes in the 6502 architecture.
-   The different modes provide flexibility in specifying the source of the data to be loaded into the Accumulator (A).
+   DEX instruction does not use addressing modes because it operates directly
+   on the CPU's X register.
 */
-
 
 /*
    This function sets the Flags for the Status register
    to identify what happened during the DEX instruction.
+   It updates the Zero and Negative flags based on the new value of X.
 */
-
-
-static inline void DEXSetStatus(CPU6502 *cpu) {
-    cpu->Flag.Z = (cpu->X == 0);
-    cpu->Flag.N = (cpu->X & 0x80) > 0;
+static inline void
+DEXSetStatus (CPU6502 *cpu)
+{
+  cpu->Flag.Z = (cpu->X == 0);
+  cpu->Flag.N = (cpu->X & 0x80) > 0;
 }
-
 
 /*
-   DEX - Load Accumulator from Zero Page.
-   This function fetches a byte representing a zero-page address from memory, reads the
-   value at that address, DEX loads it into the Accumulator (A). It then sets the status flags.
+   DEX - Decrement the X register by 1.
+   This function decrements the X register, updates the cycle count,
+   sets the status flags, and spends the required CPU cycles.
 */
-
-
-static inline void DEX(Word *Cycles, CPU6502 *cpu) {
-    cpu->X--;
-    (*Cycles)--;
-    spend_cycles(2);
+static inline void
+DEX (Word *Cycles, CPU6502 *cpu)
+{
+  cpu->X--;
+  DEXSetStatus (cpu);
+  (*Cycles)--;
+  spend_cycles (2);
 }
-
 
 #endif // DEX_H
