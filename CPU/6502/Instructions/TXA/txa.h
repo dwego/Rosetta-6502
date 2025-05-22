@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "cpu6502.h"
-#include "mem6502.h"
 
 /*
    This is a header file for the TXA (Load Accumulator) instruction for MOS Technology 6502.
@@ -36,9 +35,11 @@ void TXASetStatus(CPU6502 *cpu) {
 */
 
 
-void TXA(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void TXA(Word *Cycles, CPU6502 *cpu) {
     cpu->A = cpu->X;
     TXASetStatus(cpu);
+    (*Cycles)--;
+     spend_cycles(2);
 }
 
 

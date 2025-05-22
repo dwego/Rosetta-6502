@@ -39,6 +39,7 @@ void TYA(Word *Cycles, CPU6502 *cpu) {
     cpu->A = cpu->Y;
     TYASetStatus(cpu);
     (*Cycles)--;
+     spend_cycles(2);
 }
 
 

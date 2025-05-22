@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "cpu6502.h"
-#include "mem6502.h"
 
 // TODO Arrumar os comentarios
 
@@ -38,9 +37,11 @@ void TSXSetStatus(CPU6502 *cpu) {
 */
 
 
-void TSX(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void TSX(Word *Cycles, CPU6502 *cpu) {
     cpu->SP = cpu->X;
     TSXSetStatus(cpu);
+    (*Cycles)--;
+     spend_cycles(2);
 }
 
 #endif // TSX_H

@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "cpu6502.h"
-#include "mem6502.h"
 
 /*
    This is a header file for the TAY (Load Accumulator) instruction for MOS Technology 6502.
@@ -36,9 +35,11 @@ void TAYSetStatus(CPU6502 *cpu) {
 */
 
 
-void TAY(Word *Cycles, MEM6502 *memory, CPU6502 *cpu) {
+void TAY(Word *Cycles, CPU6502 *cpu) {
     cpu->Y = cpu->A;
     TAYSetStatus(cpu);
+    (*Cycles)--;
+     spend_cycles(2);
 }
 
 

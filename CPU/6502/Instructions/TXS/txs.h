@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "cpu6502.h"
-#include "mem6502.h"
 
 // TODO Arrumar os comentarios
 
@@ -41,7 +40,8 @@ void TXSSetStatus(CPU6502 *cpu) {
 void TXS(Word *Cycles, CPU6502 *cpu) {
     cpu->X = cpu->SP;
     TXSSetStatus(cpu);
-  (*Cycles)--;
+    (*Cycles)--;
+     spend_cycles(2);
 }
 
 #endif // TXS_H

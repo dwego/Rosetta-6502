@@ -106,19 +106,19 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       TRANSFER, STACK, MISC
       ──────────────────────────────────*/
     case INS_TSX:
-      TSX (Cycles, memory, cpu);
+      TSX (Cycles, cpu);
       break;
     case INS_TXS:
       TXS (Cycles, cpu);
       break;
     case INS_TAX:
-      TAX (Cycles, memory, cpu);
+      TAX (Cycles, cpu);
       break;
     case INS_TAY:
-      TAY (Cycles, memory, cpu);
+      TAY (Cycles, cpu);
       break;
     case INS_TXA:
-      TXA (Cycles, memory, cpu);
+      TXA (Cycles, cpu);
       break;
     case INS_TYA:
       TYA (Cycles, cpu);
