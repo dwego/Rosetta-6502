@@ -1,6 +1,3 @@
-#include "Instructions/BRK/brk.h"
-#include "Instructions/EOR/xor.h"
-#include "Instructions/OR/or.h"
 #include "Instructions/instructions.h"
 #include "config.h"
 #include "cpu6502.h"
@@ -227,13 +224,13 @@ execute (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       INCREMENT / DECREMENT
       ──────────────────────────────────*/
     case INS_INX:
-      INX (Cycles, memory, cpu);
+      INX (Cycles, cpu);
       break;
     case INS_INY:
       INY (Cycles, memory, cpu);
       break;
     case INS_DEX:
-      DEX (Cycles, memory, cpu);
+      DEX (Cycles, cpu);
       break;
     case INS_DEY:
       DEY (Cycles, memory, cpu);

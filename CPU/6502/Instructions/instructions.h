@@ -39,6 +39,7 @@
 #include "PLA/pla.h"
 #include "PLP/plp.h"
 #include "ROL/rol.h"
+#include "RTS/rts.h"
 
 #include "SBC/sbc.h"
 #include "SEC/sec.h"
