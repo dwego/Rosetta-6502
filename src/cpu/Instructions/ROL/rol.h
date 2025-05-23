@@ -70,7 +70,7 @@ ROL_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original << 1) | oldCarry;
-  WriteByte (Cycles, result, memory, addr);
+  cpu_write (bus, memory, addr, result, Cycles);
 
   ROLSetStatus (original, result, cpu);
   spend_cycles (5);
@@ -93,7 +93,7 @@ ROL_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original << 1) | oldCarry;
-  WriteByte (Cycles, result, memory, addr);
+  cpu_write (bus, memory, addr, result, Cycles);
 
   ROLSetStatus (original, result, cpu);
   spend_cycles (6);
@@ -115,7 +115,7 @@ ROL_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original << 1) | oldCarry;
-  WriteByte (Cycles, result, memory, addr);
+  cpu_write (bus, memory, addr, result, Cycles);
 
   ROLSetStatus (original, result, cpu);
   spend_cycles (6);
@@ -137,7 +137,7 @@ ROL_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original << 1) | oldCarry;
-  WriteByte (Cycles, result, memory, addr);
+  cpu_write (bus, memory, addr, result, Cycles);
 
   ROLSetStatus (original, result, cpu);
   spend_cycles (7);

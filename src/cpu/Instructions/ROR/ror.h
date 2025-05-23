@@ -69,7 +69,7 @@ ROR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
-  WriteByte (Cycles, result, memory, addr);
+  cpu_write (bus, memory, addr, result, Cycles);
 
   RORSetStatus (original, result, cpu);
 }
@@ -91,7 +91,7 @@ ROR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
-  WriteByte (Cycles, result, memory, addr);
+  cpu_write (bus, memory, addr, result, Cycles);
 
   RORSetStatus (original, result, cpu);
 }
@@ -112,7 +112,7 @@ ROR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
-  WriteByte (Cycles, result, memory, addr);
+  cpu_write (bus, memory, addr, result, Cycles);
 
   RORSetStatus (original, result, cpu);
 }
@@ -133,7 +133,7 @@ ROR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
-  WriteByte (Cycles, result, memory, addr);
+  cpu_write (bus, memory, addr, result, Cycles);
 
   RORSetStatus (original, result, cpu);
 }
