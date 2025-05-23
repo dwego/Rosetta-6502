@@ -1,6 +1,7 @@
 #ifndef MEM6502_H
 #define MEM6502_H
 
+#include "bus.h"
 #include "config.h"
 
 #define RAM_SIZE 65536
@@ -43,12 +44,10 @@ void initializeMem6502 (MEM6502 *memory);
 // Frees 65 Kilobytes of RAM.
 void freeMem6502 (MEM6502 *memory);
 
-// Reads data stored at the specified address.
-Byte ReadByte (Word *Cycles, Word Address, const MEM6502 *memory);
-Word ReadWord (Word *Cycles, Word Address, const MEM6502 *memory);
+void cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address,
+               Word *Cycles);
 
-// Writes data at the specified address.
-void WriteByte (Word *Cycles, Word Value, MEM6502 *mem, DWord Address);
-void WriteWord (Word *Cycles, Word Value, MEM6502 *mem, DWord Address);
+void cpu_write (Bus6502 *bus, MEM6502 *memory, Word address, Byte data,
+                Word *Cycles);
 
 #endif // MEM6502_H
