@@ -6,6 +6,7 @@ main (void)
   int program_start;
   CPU6502 cpu;
   MEM6502 mem;
+  Bus6502 bus;
   Byte test;
   Word Cycles = 20;
 
@@ -38,7 +39,7 @@ main (void)
 
   while (Cycles > 0)
     {
-      run_cpu_instruction (&Cycles, &mem, &cpu);
+      run_cpu_instruction (&Cycles, &bus, &mem, &cpu);
     }
   goto end;
 

@@ -1,6 +1,7 @@
 #ifndef CMP_H
 #define CMP_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -47,11 +48,11 @@ CMP_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    compares it with A, and updates status flags.
 */
 static inline void
-CMP_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CMP_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  Byte Data = ReadByte (Cycles, ZeroPageAddr, memory);
-  Byte Result = cpu->A - Data;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (3);
 }
@@ -62,13 +63,13 @@ CMP_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    it with A and updates status flags.
 */
 static inline void
-CMP_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CMP_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--;
-  Byte Data = ReadByte (Cycles, ZeroPageAddr, memory);
-  Byte Result = cpu->A - Data;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
 }
@@ -79,11 +80,11 @@ CMP_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    compares it with A, and updates status flags.
 */
 static inline void
-CMP_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  Byte Data = ReadByte (Cycles, Absolute, memory);
-  Byte Result = cpu->A - Data;
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
 }
@@ -95,7 +96,7 @@ CMP_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    status flags.
 */
 static inline void
-CMP_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CMP_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Word NewAddress = Absolute + cpu->X;
@@ -106,8 +107,8 @@ CMP_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  Byte Data = ReadByte (Cycles, NewAddress, memory);
-  Byte Result = cpu->A - Data;
+  cpu_read (bus, memory, NewAddress, Cycles);
+  Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
 }
@@ -119,7 +120,7 @@ CMP_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    status flags.
 */
 static inline void
-CMP_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CMP_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Word NewAddress = Absolute + cpu->Y;
@@ -130,8 +131,8 @@ CMP_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  Byte Data = ReadByte (Cycles, NewAddress, memory);
-  Byte Result = cpu->A - Data;
+  cpu_read (bus, memory, NewAddress, Cycles);
+  Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
 }

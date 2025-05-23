@@ -1,6 +1,7 @@
 #ifndef ROR_H
 #define ROR_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -59,11 +60,12 @@ ROR_ACC (Word *Cycles, CPU6502 *cpu)
    writes the result back, updates status flags, and spends cycles.
 */
 static inline void
-ROR_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ROR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte addr = FetchByte (Cycles, memory, cpu);
 
-  Byte original = ReadByte (Cycles, addr, memory);
+  cpu_read (bus, memory, addr, Cycles);
+  Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
@@ -78,13 +80,14 @@ ROR_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    rotation.
 */
 static inline void
-ROR_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ROR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte addr = FetchByte (Cycles, memory, cpu);
   addr += cpu->X;
   (*Cycles)--;
 
-  Byte original = ReadByte (Cycles, addr, memory);
+  cpu_read (bus, memory, addr, Cycles);
+  Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
@@ -100,11 +103,12 @@ ROR_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    writes the result back, sets flags, and spends cycles.
 */
 static inline void
-ROR_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ROR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word addr = FetchWord (Cycles, memory, cpu);
 
-  Byte original = ReadByte (Cycles, addr, memory);
+  cpu_read (bus, memory, addr, Cycles);
+  Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
@@ -119,12 +123,13 @@ ROR_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    rotation.
 */
 static inline void
-ROR_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ROR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word addr = FetchWord (Cycles, memory, cpu);
   addr += cpu->X;
 
-  Byte original = ReadByte (Cycles, addr, memory);
+  cpu_read (bus, memory, addr, Cycles);
+  Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);

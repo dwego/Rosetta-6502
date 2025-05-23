@@ -1,7 +1,7 @@
 #include "cpu_exec.h"
 
 void
-run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
 
   Byte Ins = FetchByte (Cycles, memory, cpu);
@@ -15,87 +15,87 @@ run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       LDA_IM (Cycles, memory, cpu);
       break;
     case INS_LDA_ZP:
-      LDA_ZP (Cycles, memory, cpu);
+      LDA_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_LDA_ZPX:
-      LDA_ZPX (Cycles, memory, cpu);
+      LDA_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_LDA_ABS:
-      LDA_ABS (Cycles, memory, cpu);
+      LDA_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_LDA_ABSX:
-      LDA_ABSX (Cycles, memory, cpu);
+      LDA_ABSX (Cycles, bus, memory, cpu);
       break;
     case INS_LDA_ABSY:
-      LDA_ABSY (Cycles, memory, cpu);
+      LDA_ABSY (Cycles, bus, memory, cpu);
       break;
 
     case INS_LDX_IM:
       LDX_IM (Cycles, memory, cpu);
       break;
     case INS_LDX_ZP:
-      LDX_ZP (Cycles, memory, cpu);
+      LDX_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_LDX_ZPY:
-      LDX_ZPY (Cycles, memory, cpu);
+      LDX_ZPY (Cycles, bus, memory, cpu);
       break;
     case INS_LDX_ABS:
-      LDX_ABS (Cycles, memory, cpu);
+      LDX_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_LDX_ABSY:
-      LDX_ABSY (Cycles, memory, cpu);
+      LDX_ABSY (Cycles, bus, memory, cpu);
       break;
 
     case INS_LDY_IM:
       LDY_IM (Cycles, memory, cpu);
       break;
     case INS_LDY_ZP:
-      LDY_ZP (Cycles, memory, cpu);
+      LDY_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_LDY_ZPX:
-      LDY_ZPX (Cycles, memory, cpu);
+      LDY_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_LDY_ABS:
-      LDY_ABS (Cycles, memory, cpu);
+      LDY_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_LDY_ABSX:
-      LDY_ABSX (Cycles, memory, cpu);
+      LDY_ABSX (Cycles, bus, memory, cpu);
       break;
 
     case INS_STA_ZP:
-      STA_ZP (Cycles, memory, cpu);
+      STA_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_STA_ZPX:
-      STA_ZPX (Cycles, memory, cpu);
+      STA_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_STA_ABS:
-      STA_ABS (Cycles, memory, cpu);
+      STA_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_STA_ABSX:
-      STA_ABSX (Cycles, memory, cpu);
+      STA_ABSX (Cycles, bus, memory, cpu);
       break;
     case INS_STA_ABSY:
-      STA_ABSY (Cycles, memory, cpu);
+      STA_ABSY (Cycles, bus, memory, cpu);
       break;
 
     case INS_STX_ZP:
-      STX_ZP (Cycles, memory, cpu);
+      STX_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_STX_ZPY:
-      STX_ZPY (Cycles, memory, cpu);
+      STX_ZPY (Cycles, bus, memory, cpu);
       break;
     case INS_STX_ABS:
-      STX_ABS (Cycles, memory, cpu);
+      STX_ABS (Cycles, bus, memory, cpu);
       break;
 
     case INS_STY_ZP:
-      STY_ZP (Cycles, memory, cpu);
+      STY_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_STY_ZPX:
-      STY_ZPX (Cycles, memory, cpu);
+      STY_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_STY_ABS:
-      STY_ABS (Cycles, memory, cpu);
+      STY_ABS (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
@@ -140,7 +140,7 @@ run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       JMP_ABS (Cycles, memory, cpu);
       break;
     case INS_JMP_IND:
-      JMP_IND (Cycles, memory, cpu);
+      JMP_IND (Cycles, bus, memory, cpu);
       break;
     case INS_JSR:
       JSR (Cycles, memory, cpu);
@@ -156,64 +156,64 @@ run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       AND_IM (Cycles, memory, cpu);
       break;
     case INS_AND_ZP:
-      AND_ZP (Cycles, memory, cpu);
+      AND_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_AND_ZPX:
-      AND_ZPX (Cycles, memory, cpu);
+      AND_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_AND_ABS:
-      AND_ABS (Cycles, memory, cpu);
+      AND_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_AND_ABSX:
-      AND_ABSX (Cycles, memory, cpu);
+      AND_ABSX (Cycles, bus, memory, cpu);
       break;
     case INS_AND_ABSY:
-      AND_ABSY (Cycles, memory, cpu);
+      AND_ABSY (Cycles, bus, memory, cpu);
       break;
 
     case INS_ORA_IM:
       ORA_IM (Cycles, memory, cpu);
       break;
     case INS_ORA_ZP:
-      ORA_ZP (Cycles, memory, cpu);
+      ORA_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_ORA_ZPX:
-      ORA_ZPX (Cycles, memory, cpu);
+      ORA_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_ORA_ABS:
-      ORA_ABS (Cycles, memory, cpu);
+      ORA_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_ORA_ABSX:
-      ORA_ABSX (Cycles, memory, cpu);
+      ORA_ABSX (Cycles, bus, memory, cpu);
       break;
     case INS_ORA_ABSY:
-      ORA_ABSY (Cycles, memory, cpu);
+      ORA_ABSY (Cycles, bus, memory, cpu);
       break;
 
     case INS_EOR_IM:
       EOR_IM (Cycles, memory, cpu);
       break;
     case INS_EOR_ZP:
-      EOR_ZP (Cycles, memory, cpu);
+      EOR_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_EOR_ZPX:
-      EOR_ZPX (Cycles, memory, cpu);
+      EOR_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_EOR_ABS:
-      EOR_ABS (Cycles, memory, cpu);
+      EOR_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_EOR_ABSX:
-      EOR_ABSX (Cycles, memory, cpu);
+      EOR_ABSX (Cycles, bus, memory, cpu);
       break;
     case INS_EOR_ABSY:
-      EOR_ABSY (Cycles, memory, cpu);
+      EOR_ABSY (Cycles, bus, memory, cpu);
       break;
 
     case INS_BIT_ZP:
-      BIT_ZP (Cycles, memory, cpu);
+      BIT_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_BIT_ABS:
-      BIT_ABS (Cycles, memory, cpu);
+      BIT_ABS (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
@@ -233,29 +233,29 @@ run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_INC_ZP:
-      INC_ZP (Cycles, memory, cpu);
+      INC_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_INC_ZPX:
-      INC_ZPX (Cycles, memory, cpu);
+      INC_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_INC_ABS:
-      INC_ABS (Cycles, memory, cpu);
+      INC_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_INC_ABSX:
-      INC_ABSX (Cycles, memory, cpu);
+      INC_ABSX (Cycles, bus, memory, cpu);
       break;
 
     case INS_DEC_ZP:
-      DEC_ZP (Cycles, memory, cpu);
+      DEC_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_DEC_ZPX:
-      DEC_ZPX (Cycles, memory, cpu);
+      DEC_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_DEC_ABS:
-      DEC_ABS (Cycles, memory, cpu);
+      DEC_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_DEC_ABSX:
-      DEC_ABSX (Cycles, memory, cpu);
+      DEC_ABSX (Cycles, bus, memory, cpu);
       break;
 
       /*──────────────────────────────────
@@ -314,38 +314,38 @@ run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       ADC_IM (Cycles, memory, cpu);
       break;
     case INS_ADC_ZP:
-      ADC_ZP (Cycles, memory, cpu);
+      ADC_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_ADC_ZPX:
-      ADC_ZPX (Cycles, memory, cpu);
+      ADC_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_ADC_ABS:
-      ADC_ABS (Cycles, memory, cpu);
+      ADC_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_ADC_ABSX:
-      ADC_ABSX (Cycles, memory, cpu);
+      ADC_ABSX (Cycles, bus, memory, cpu);
       break;
     case INS_ADC_ABSY:
-      ADC_ABSY (Cycles, memory, cpu);
+      ADC_ABSY (Cycles, bus, memory, cpu);
       break;
 
     case INS_SBC_IM:
       SBC_IM (Cycles, memory, cpu);
       break;
     case INS_SBC_ZP:
-      SBC_ZP (Cycles, memory, cpu);
+      SBC_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_SBC_ZPX:
-      SBC_ZPX (Cycles, memory, cpu);
+      SBC_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_SBC_ABS:
-      SBC_ABS (Cycles, memory, cpu);
+      SBC_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_SBC_ABSX:
-      SBC_ABSX (Cycles, memory, cpu);
+      SBC_ABSX (Cycles, bus, memory, cpu);
       break;
     case INS_SBC_ABSY:
-      SBC_ABSY (Cycles, memory, cpu);
+      SBC_ABSY (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
@@ -355,19 +355,19 @@ run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       CMP_IM (Cycles, memory, cpu);
       break;
     case INS_CMP_ZP:
-      CMP_ZP (Cycles, memory, cpu);
+      CMP_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_CMP_ZPX:
-      CMP_ZPX (Cycles, memory, cpu);
+      CMP_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_CMP_ABS:
-      CMP_ABS (Cycles, memory, cpu);
+      CMP_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_CMP_ABSX:
-      CMP_ABSX (Cycles, memory, cpu);
+      CMP_ABSX (Cycles, bus, memory, cpu);
       break;
     case INS_CMP_ABSY:
-      CMP_ABSY (Cycles, memory, cpu);
+      CMP_ABSY (Cycles, bus, memory, cpu);
       break;
 
     case INS_CPX:
@@ -377,16 +377,16 @@ run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       CPY_IM (Cycles, memory, cpu);
       break; /* CPY immediate */
     case INS_CPX_ZP:
-      CPX_ZP (Cycles, memory, cpu);
+      CPX_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_CPY_ZP:
-      CPY_ZP (Cycles, memory, cpu);
+      CPY_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_CPX_ABS:
-      CPX_ABS (Cycles, memory, cpu);
+      CPX_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_CPY_ABS:
-      CPY_ABS (Cycles, memory, cpu);
+      CPY_ABS (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
@@ -396,64 +396,64 @@ run_cpu_instruction (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       ASL_ACC (Cycles, memory, cpu);
       break;
     case INS_ASL_ZP:
-      ASL_ZP (Cycles, memory, cpu);
+      ASL_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_ASL_ZPX:
-      ASL_ZPX (Cycles, memory, cpu);
+      ASL_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_ASL_ABS:
-      ASL_ABS (Cycles, memory, cpu);
+      ASL_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_ASL_ABSX:
-      ASL_ABSX (Cycles, memory, cpu);
+      ASL_ABSX (Cycles, bus, memory, cpu);
       break;
 
     case INS_LSR:
-      LSR_ACC (Cycles, memory, cpu);
+      LSR_ACC (Cycles, cpu);
       break;
     case INS_LSR_ZP:
-      LSR_ZP (Cycles, memory, cpu);
+      LSR_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_LSR_ZPX:
-      LSR_ZPX (Cycles, memory, cpu);
+      LSR_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_LSR_ABS:
-      LSR_ABS (Cycles, memory, cpu);
+      LSR_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_LSR_ABSX:
-      LSR_ABSX (Cycles, memory, cpu);
+      LSR_ABSX (Cycles, bus, memory, cpu);
       break;
 
     case INS_ROL:
       ROL_ACC (Cycles, cpu);
       break;
     case INS_ROL_ZP:
-      ROL_ZP (Cycles, memory, cpu);
+      ROL_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_ROL_ZPX:
-      ROL_ZPX (Cycles, memory, cpu);
+      ROL_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_ROL_ABS:
-      ROL_ABS (Cycles, memory, cpu);
+      ROL_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_ROL_ABSX:
-      ROL_ABSX (Cycles, memory, cpu);
+      ROL_ABSX (Cycles, bus, memory, cpu);
       break;
 
     case INS_ROR:
       ROR_ACC (Cycles, cpu);
       break;
     case INS_ROR_ZP:
-      ROR_ZP (Cycles, memory, cpu);
+      ROR_ZP (Cycles, bus, memory, cpu);
       break;
     case INS_ROR_ZPX:
-      ROR_ZPX (Cycles, memory, cpu);
+      ROR_ZPX (Cycles, bus, memory, cpu);
       break;
     case INS_ROR_ABS:
-      ROR_ABS (Cycles, memory, cpu);
+      ROR_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_ROR_ABSX:
-      ROR_ABSX (Cycles, memory, cpu);
+      ROR_ABSX (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
