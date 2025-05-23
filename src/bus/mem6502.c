@@ -49,10 +49,7 @@ initializeMem6502 (MEM6502 *memory)
     }
 
   // Initialize memory with zeros.
-  for (DWord i = 0; i < MAX_MEM; i++)
-    {
-      memory->Data[i] = 0;
-    }
+  memset (memory->Data, 0, MAX_MEM);
 }
 
 // Frees 65 Kilobytes of RAM.
