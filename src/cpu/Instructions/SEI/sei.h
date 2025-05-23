@@ -4,6 +4,10 @@
 #include "config.h"
 #include "cpu6502.h"
 
+#ifdef I
+#undef I
+#endif
+
 /*
    This is a header file for the SEI (Set Interrupt Disable) instruction for
    MOS Technology 6502. SEI sets the Interrupt Disable flag in the Status
