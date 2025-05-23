@@ -5,6 +5,10 @@
 #include "cpu6502.h"
 #include "mem6502.h"
 
+#ifdef I
+#undef I
+#endif
+
 /*
    This is a header file for the BRK (Force Interrupt) instruction for MOS
    Technology 6502. BRK triggers a software interrupt by pushing the program
