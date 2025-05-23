@@ -4,7 +4,7 @@ void
 run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
 
-  Byte Ins = FetchByte (Cycles, memory, cpu);
+  Byte Ins = FetchByte (Cycles, bus, memory, cpu);
 
   switch (Ins)
     {
@@ -12,7 +12,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       LOAD / STORE
       ──────────────────────────────────*/
     case INS_LDA_IM:
-      LDA_IM (Cycles, memory, cpu);
+      LDA_IM (Cycles, bus, memory, cpu);
       break;
     case INS_LDA_ZP:
       LDA_ZP (Cycles, bus, memory, cpu);
@@ -31,7 +31,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_LDX_IM:
-      LDX_IM (Cycles, memory, cpu);
+      LDX_IM (Cycles, bus, memory, cpu);
       break;
     case INS_LDX_ZP:
       LDX_ZP (Cycles, bus, memory, cpu);
@@ -47,7 +47,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_LDY_IM:
-      LDY_IM (Cycles, memory, cpu);
+      LDY_IM (Cycles, bus, memory, cpu);
       break;
     case INS_LDY_ZP:
       LDY_ZP (Cycles, bus, memory, cpu);
@@ -121,39 +121,39 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_PHA:
-      PHA (Cycles, memory, cpu);
+      PHA (Cycles, bus, memory, cpu);
       break;
     case INS_PLA:
-      PLA (Cycles, memory, cpu);
+      PLA (Cycles, bus, memory, cpu);
       break;
     case INS_PHP:
-      PHP (Cycles, memory, cpu);
+      PHP (Cycles, bus, memory, cpu);
       break;
     case INS_PLP:
-      PLP (Cycles, memory, cpu);
+      PLP (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
       JMP / CALL / RETURN
       ──────────────────────────────────*/
     case INS_JMP_ABS:
-      JMP_ABS (Cycles, memory, cpu);
+      JMP_ABS (Cycles, bus, memory, cpu);
       break;
     case INS_JMP_IND:
       JMP_IND (Cycles, bus, memory, cpu);
       break;
     case INS_JSR:
-      JSR (Cycles, memory, cpu);
+      JSR (Cycles, bus, memory, cpu);
       break;
     case INS_RTS:
-      RTS (Cycles, memory, cpu);
+      RTS (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
       LOGICAL  (AND / OR / EOR / BIT)
       ──────────────────────────────────*/
     case INS_AND_IM:
-      AND_IM (Cycles, memory, cpu);
+      AND_IM (Cycles, bus, memory, cpu);
       break;
     case INS_AND_ZP:
       AND_ZP (Cycles, bus, memory, cpu);
@@ -172,7 +172,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_ORA_IM:
-      ORA_IM (Cycles, memory, cpu);
+      ORA_IM (Cycles, bus, memory, cpu);
       break;
     case INS_ORA_ZP:
       ORA_ZP (Cycles, bus, memory, cpu);
@@ -191,7 +191,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_EOR_IM:
-      EOR_IM (Cycles, memory, cpu);
+      EOR_IM (Cycles, bus, memory, cpu);
       break;
     case INS_EOR_ZP:
       EOR_ZP (Cycles, bus, memory, cpu);
@@ -264,25 +264,25 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       */
 
     case INS_BNE:
-      BNE (Cycles, memory, cpu);
+      BNE (Cycles, bus, memory, cpu);
       break;
     case INS_BCS:
-      BCS (Cycles, memory, cpu);
+      BCS (Cycles, bus, memory, cpu);
       break;
     case INS_BCC:
-      BCC (Cycles, memory, cpu);
+      BCC (Cycles, bus, memory, cpu);
       break;
     case INS_BMI:
-      BMI (Cycles, memory, cpu);
+      BMI (Cycles, bus, memory, cpu);
       break;
     case INS_BPL:
-      BPL (Cycles, memory, cpu);
+      BPL (Cycles, bus, memory, cpu);
       break;
     case INS_BVC:
-      BVC (Cycles, memory, cpu);
+      BVC (Cycles, bus, memory, cpu);
       break;
     case INS_BVS:
-      BVS (Cycles, memory, cpu);
+      BVS (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
@@ -311,7 +311,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       ARITHMETIC (ADC / SBC)
       ──────────────────────────────────*/
     case INS_ADC_IM:
-      ADC_IM (Cycles, memory, cpu);
+      ADC_IM (Cycles, bus, memory, cpu);
       break;
     case INS_ADC_ZP:
       ADC_ZP (Cycles, bus, memory, cpu);
@@ -330,7 +330,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_SBC_IM:
-      SBC_IM (Cycles, memory, cpu);
+      SBC_IM (Cycles, bus, memory, cpu);
       break;
     case INS_SBC_ZP:
       SBC_ZP (Cycles, bus, memory, cpu);
@@ -352,7 +352,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       REGISTER COMPARISON
       ──────────────────────────────────*/
     case INS_CMP_IM:
-      CMP_IM (Cycles, memory, cpu);
+      CMP_IM (Cycles, bus, memory, cpu);
       break;
     case INS_CMP_ZP:
       CMP_ZP (Cycles, bus, memory, cpu);
@@ -371,10 +371,10 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
 
     case INS_CPX:
-      CPX_IM (Cycles, memory, cpu);
+      CPX_IM (Cycles, bus, memory, cpu);
       break; /* CPX immediate */
     case INS_CPY:
-      CPY_IM (Cycles, memory, cpu);
+      CPY_IM (Cycles, bus, memory, cpu);
       break; /* CPY immediate */
     case INS_CPX_ZP:
       CPX_ZP (Cycles, bus, memory, cpu);
@@ -393,7 +393,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       SHIFTS / ROTATES
       ──────────────────────────────────*/
     case INS_ASL_ACC:
-      ASL_ACC (Cycles, memory, cpu);
+      ASL_ACC (Cycles, bus, memory, cpu);
       break;
     case INS_ASL_ZP:
       ASL_ZP (Cycles, bus, memory, cpu);
@@ -463,7 +463,7 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       NOP (Cycles);
       break;
     case INS_BRK:
-      BRK (Cycles, memory, cpu);
+      BRK (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────

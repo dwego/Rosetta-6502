@@ -34,9 +34,9 @@ CPYSetStatus (Byte Result, CPU6502 *cpu)
    Fetches a byte from memory, compares it with Y, and updates status flags.
 */
 static inline void
-CPY_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CPY_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, memory, cpu);
+  Byte Value = FetchByte (Cycles, bus, memory, cpu);
   Byte Result = cpu->Y - Value;
   CPYSetStatus (Result, cpu);
   spend_cycles (2);
@@ -50,7 +50,7 @@ CPY_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 CPY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
   Byte Result = cpu->Y - bus->data;
   CPYSetStatus (Result, cpu);
@@ -65,7 +65,7 @@ CPY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 CPY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, Absolute, Cycles);
   Byte Result = cpu->Y - bus->data;
   CPYSetStatus (Result, cpu);

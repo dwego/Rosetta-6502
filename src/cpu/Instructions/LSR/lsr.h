@@ -56,7 +56,7 @@ LSR_ACC (Word *Cycles, CPU6502 *cpu)
 static inline void
 LSR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte addr = FetchByte (Cycles, memory, cpu);
+  Byte addr = FetchByte (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, addr, Cycles);
   Byte Value = bus->data;
   cpu_write (bus, memory, addr, Value >> 1, Cycles);
@@ -74,7 +74,7 @@ LSR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 LSR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte addr = FetchByte (Cycles, memory, cpu);
+  Byte addr = FetchByte (Cycles, bus, memory, cpu);
   addr += cpu->X;
   (*Cycles)--;
 
@@ -96,7 +96,7 @@ LSR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 LSR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word addr = FetchWord (Cycles, memory, cpu);
+  Word addr = FetchWord (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, addr, Cycles);
   Byte Value = bus->data;
   cpu_write (bus, memory, addr, Value >> 1, Cycles);
@@ -114,7 +114,7 @@ LSR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 LSR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word addr = FetchWord (Cycles, memory, cpu);
+  Word addr = FetchWord (Cycles, bus, memory, cpu);
   addr += cpu->X;
 
   cpu_read (bus, memory, addr, Cycles);

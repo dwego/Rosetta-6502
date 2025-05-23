@@ -29,22 +29,22 @@
 */
 
 static inline void
-BRK (Word *Cycles, MEM6502 *mem, CPU6502 *cpu)
+BRK (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   cpu->PC += 2;
   (*Cycles)--;
 
-  PushPCToStack (Cycles, mem, cpu);
+  PushPCToStack (Cycles, bus, memory, cpu);
 
   Byte status_with_B = cpu->PS | 0x10;
 
-  PushByteToStack (Cycles, mem, status_with_B, cpu);
+  PushByteToStack (Cycles, bus, memory, status_with_B, cpu);
 
   cpu->Flag.I = 1;
   cpu->PS |= (1 << 2); // Set Interrupt Disable flag in PS
 
-  Byte lo = mem->Data[0xFFFE];
-  Byte hi = mem->Data[0xFFFF];
+  Byte lo = memory->Data[0xFFFE];
+  Byte hi = memory->Data[0xFFFF];
   cpu->PC = (hi << 8) | lo;
   (*Cycles) -= 2;
   spend_cycles (7);

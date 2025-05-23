@@ -5,7 +5,6 @@
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
-#include <stdlib.h>
 
 /*
    This is a header file for the BIT (Bit Test) instruction for MOS Technology
@@ -45,7 +44,7 @@ BITSetStatus (Byte Value, CPU6502 *cpu)
 static inline void
 BIT_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
   BITSetStatus (bus->data, cpu);
   spend_cycles (3);
@@ -61,7 +60,7 @@ BIT_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 BIT_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, Absolute, Cycles);
   BITSetStatus (bus->data, cpu);
   spend_cycles (4);

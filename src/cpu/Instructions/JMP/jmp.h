@@ -18,9 +18,9 @@
    It updates the cycle count accordingly.
 */
 static inline void
-JMP_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+JMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Sub_Addr = FetchWord (Cycles, memory, cpu);
+  Word Sub_Addr = FetchWord (Cycles, bus, memory, cpu);
   cpu->PC = Sub_Addr;
   spend_cycles (3);
 }
@@ -38,7 +38,7 @@ JMP_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 JMP_IND (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word PtrAddr = FetchWord (Cycles, memory, cpu);
+  Word PtrAddr = FetchWord (Cycles, bus, memory, cpu);
 
   cpu_read (bus, memory, PtrAddr, Cycles);
   Byte LoByte = bus->data;

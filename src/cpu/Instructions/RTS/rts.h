@@ -14,9 +14,9 @@
 */
 
 static inline void
-RTS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+RTS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word returnAddress = PopWordFromStack (Cycles, memory, cpu);
+  Word returnAddress = PopWordFromStack (Cycles, bus, memory, cpu);
   cpu->PC = returnAddress + 1;
   (*Cycles) -= 2;
   spend_cycles (6);

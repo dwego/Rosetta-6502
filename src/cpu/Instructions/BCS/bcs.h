@@ -18,9 +18,9 @@
 */
 
 static inline void
-BCS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+BCS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Relative = FetchByte (Cycles, memory, cpu);
+  Byte Relative = FetchByte (Cycles, bus, memory, cpu);
 
   if (cpu->Flag.C != 0)
     {

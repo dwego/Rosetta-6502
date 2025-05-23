@@ -2,7 +2,7 @@
 #include "mem6502.h"
 
 void
-cpu_read (Bus6502 *bus, MEM6502 *memory, Word address, Word *Cycles)
+cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address, Word *Cycles)
 {
   bus->address = address;
   bus->rw = true;
