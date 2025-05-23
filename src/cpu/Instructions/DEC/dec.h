@@ -40,7 +40,7 @@ DECSetStatus (Byte Value, CPU6502 *cpu)
 static inline void
 DEC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
 
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
   Byte DecrementValue = bus->data - 1;
@@ -59,7 +59,7 @@ DEC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 DEC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--;
 
@@ -80,7 +80,7 @@ DEC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 DEC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
 
   cpu_read (bus, memory, Absolute, Cycles);
   Byte DecrementValue = bus->data - 1;
@@ -99,7 +99,7 @@ DEC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 DEC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Absolute += cpu->X;
   (*Cycles)--;
 

@@ -11,7 +11,8 @@ typedef struct
   bool rw;
 } Bus6502;
 
-void cpu_read (Bus6502 *bus, MEM6502 *memory, Word address, Word *Cycles);
+void cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address,
+               Word *Cycles);
 void cpu_write (Bus6502 *bus, MEM6502 *memory, Word address, Byte data,
                 Word *Cycles);
 

@@ -80,7 +80,7 @@ WriteWord (Word *Cycles, Word Value, MEM6502 *mem, DWord Address)
 
 // Read a byte of data from emulated memory at the specified address.
 Byte
-ReadByte (Word *Cycles, Word Address, MEM6502 *memory)
+ReadByte (Word *Cycles, Word Address, const MEM6502 *memory)
 {
   // Read the byte from memory.
   Byte Data = memory->Data[Address];
@@ -93,7 +93,7 @@ ReadByte (Word *Cycles, Word Address, MEM6502 *memory)
 
 // Read a 16-bit word of data from emulated memory at the specified address.
 Word
-ReadWord (Word *Cycles, Word Address, MEM6502 *memory)
+ReadWord (Word *Cycles, Word Address, const MEM6502 *memory)
 {
   // Read the low byte.
   Byte LoByte = ReadByte (Cycles, Address, memory);

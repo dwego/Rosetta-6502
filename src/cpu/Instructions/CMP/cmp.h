@@ -34,9 +34,9 @@ CMPSetStatus (Byte Result, CPU6502 *cpu)
    Fetches a byte from memory, compares it with A, and updates status flags.
 */
 static inline void
-CMP_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CMP_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, memory, cpu);
+  Byte Value = FetchByte (Cycles, bus, memory, cpu);
   Byte Result = cpu->A - Value;
   CMPSetStatus (Result, cpu);
   spend_cycles (2);
@@ -50,7 +50,7 @@ CMP_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 CMP_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
@@ -65,7 +65,7 @@ CMP_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 CMP_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--;
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
@@ -82,7 +82,7 @@ CMP_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 CMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, Absolute, Cycles);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
@@ -98,7 +98,7 @@ CMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 CMP_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Word NewAddress = Absolute + cpu->X;
 
   if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
@@ -122,7 +122,7 @@ CMP_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 CMP_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Word NewAddress = Absolute + cpu->Y;
 
   if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))

@@ -5,7 +5,6 @@
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
-#include <stdlib.h>
 
 /*
    This is a header file for the ASL (Arithmetic Shift Left) instruction for
@@ -50,9 +49,9 @@ ASLSetStatus (Byte value, CPU6502 *cpu)
 */
 
 static inline void
-ASL_ACC (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ASL_ACC (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte value = FetchByte (Cycles, memory, cpu);
+  Byte value = FetchByte (Cycles, bus, memory, cpu);
   cpu->A = value << 1;
   ASLSetStatus (value, cpu);
 }
@@ -68,7 +67,7 @@ ASL_ACC (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ASL_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zero_page_addr = FetchByte (Cycles, memory, cpu);
+  Byte zero_page_addr = FetchByte (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, zero_page_addr, Cycles);
   Byte value = bus->data;
 
@@ -88,7 +87,7 @@ ASL_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ASL_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zero_page_addr = FetchByte (Cycles, memory, cpu);
+  Byte zero_page_addr = FetchByte (Cycles, bus, memory, cpu);
   zero_page_addr += cpu->X;
   (*Cycles)--;
 
@@ -110,7 +109,7 @@ ASL_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ASL_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word absolute = FetchWord (Cycles, memory, cpu);
+  Word absolute = FetchWord (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, absolute, Cycles);
   Byte value = bus->data;
 
@@ -130,7 +129,7 @@ ASL_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ASL_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word absolute = FetchWord (Cycles, memory, cpu);
+  Word absolute = FetchWord (Cycles, bus, memory, cpu);
   absolute += cpu->X;
 
   cpu_read (bus, memory, absolute, Cycles);

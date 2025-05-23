@@ -39,9 +39,9 @@ ORASetStatus (CPU6502 *cpu)
    Fetches an immediate byte, ORs it with A, updates A and sets status flags.
 */
 static inline void
-ORA_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ORA_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, memory, cpu);
+  Byte Value = FetchByte (Cycles, bus, memory, cpu);
   cpu->A |= Value;
   ORASetStatus (cpu);
   spend_cycles (2);
@@ -55,7 +55,7 @@ ORA_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ORA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
@@ -70,7 +70,7 @@ ORA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ORA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--; // penalty cycle for zero-page wraparound handling
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
@@ -87,7 +87,7 @@ ORA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ORA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, Absolute, Cycles);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
@@ -102,7 +102,7 @@ ORA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ORA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Word AddressWithX = Absolute + cpu->X;
 
   if ((Absolute & 0xFF00) != (AddressWithX & 0xFF00))
@@ -125,7 +125,7 @@ ORA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ORA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Word AddressWithY = Absolute + cpu->Y;
 
   if ((Absolute & 0xFF00) != (AddressWithY & 0xFF00))

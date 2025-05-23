@@ -22,9 +22,9 @@
    It does not modify the status flags.
 */
 static inline void
-PHA (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+PHA (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  PushByteToStack (Cycles, memory, cpu->A, cpu);
+  PushByteToStack (Cycles, bus, memory, cpu->A, cpu);
   spend_cycles (3); // PHA takes 3 cycles
 }
 

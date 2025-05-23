@@ -36,9 +36,9 @@ PLASetStatus (CPU6502 *cpu)
 */
 
 static inline void
-PLA (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+PLA (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = PopByteFromStack (Cycles, memory,
+  Byte Value = PopByteFromStack (Cycles, bus, memory,
                                  cpu); // Use a PopByteFromStack if available
   cpu->A = Value;
   PLASetStatus (cpu);

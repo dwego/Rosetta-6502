@@ -39,9 +39,9 @@ SBCSetStatus (CPU6502 *cpu, Byte before, Byte value, Byte result)
 */
 
 static inline void
-SBC_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+SBC_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, memory, cpu);
+  Byte Value = FetchByte (Cycles, bus, memory, cpu);
   Byte Before = cpu->A;
 
   // Perform subtraction via ADC with complemented value
@@ -62,7 +62,7 @@ SBC_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 SBC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
   Byte Value = bus->data;
   Byte Before = cpu->A;
@@ -84,7 +84,7 @@ SBC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 SBC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
 
   cpu_read (bus, memory, ZeroPageAddr, Cycles);
@@ -108,7 +108,7 @@ SBC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 SBC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
 
   cpu_read (bus, memory, Absolute, Cycles);
   Byte Value = bus->data;
@@ -132,7 +132,7 @@ SBC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 SBC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Word NewAddress = Absolute + cpu->X;
 
   if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
@@ -163,7 +163,7 @@ SBC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 SBC_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Word NewAddress = Absolute + cpu->Y;
 
   if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
