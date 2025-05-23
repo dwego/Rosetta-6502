@@ -1,6 +1,7 @@
 #ifndef STA_H
 #define STA_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -25,10 +26,10 @@
 */
 
 static inline void
-STA_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  WriteByte (Cycles, cpu->A, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->A, Cycles);
   spend_cycles (3);
 }
 
@@ -39,11 +40,11 @@ STA_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STA_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
-  WriteByte (Cycles, cpu->A, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->A, Cycles);
   spend_cycles (4);
 }
 
@@ -54,10 +55,10 @@ STA_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STA_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  WriteByte (Cycles, cpu->A, memory, Absolute);
+  cpu_write (bus, memory, Absolute, cpu->A, Cycles);
   spend_cycles (4);
 }
 
@@ -68,11 +69,11 @@ STA_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Absolute += cpu->X;
-  WriteByte (Cycles, cpu->A, memory, Absolute);
+  cpu_write (bus, memory, Absolute, cpu->A, Cycles);
   spend_cycles (5);
 }
 
@@ -83,11 +84,11 @@ STA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STA_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Absolute += cpu->Y;
-  WriteByte (Cycles, cpu->A, memory, Absolute);
+  cpu_write (bus, memory, Absolute, cpu->A, Cycles);
   spend_cycles (5);
 }
 

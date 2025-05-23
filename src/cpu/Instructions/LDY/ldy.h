@@ -1,6 +1,7 @@
 #ifndef LDY_H
 #define LDY_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -52,10 +53,11 @@ LDY_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDY_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  cpu->Y = ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu->Y = bus->data;
   LDYSetStatus (cpu);
   spend_cycles (3);
 }
@@ -68,12 +70,13 @@ LDY_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDY_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDY_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--;
-  cpu->Y = ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu->Y = bus->data;
   LDYSetStatus (cpu);
   spend_cycles (4);
 }
@@ -86,10 +89,11 @@ LDY_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDY_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  cpu->Y = ReadByte (Cycles, Absolute, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->Y = bus->data;
   LDYSetStatus (cpu);
   spend_cycles (4);
 }
@@ -102,7 +106,7 @@ LDY_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDY_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDY_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
 
@@ -117,7 +121,8 @@ LDY_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu->Y = ReadByte (Cycles, Absolute, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->Y = bus->data;
   LDYSetStatus (cpu);
   spend_cycles (4);
 }

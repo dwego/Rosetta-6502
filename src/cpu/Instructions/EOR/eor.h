@@ -1,6 +1,7 @@
 #ifndef EOR_H
 #define EOR_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -53,10 +54,11 @@ EOR_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    flags accordingly.
 */
 static inline void
-EOR_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+EOR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  cpu->A ^= ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (3);
 }
@@ -67,12 +69,13 @@ EOR_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    reading. It adjusts the cycle count accordingly and sets the status flags.
 */
 static inline void
-EOR_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+EOR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--;
-  cpu->A ^= ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
 }
@@ -84,10 +87,11 @@ EOR_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    status flags.
 */
 static inline void
-EOR_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+EOR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  cpu->A ^= ReadByte (Cycles, Absolute, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
 }
@@ -99,7 +103,7 @@ EOR_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    cycle count. It then sets the status flags.
 */
 static inline void
-EOR_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+EOR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
 
@@ -113,7 +117,8 @@ EOR_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu->A ^= ReadByte (Cycles, Absolute, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
 }
@@ -125,7 +130,7 @@ EOR_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    cycle count. It then sets the status flags.
 */
 static inline void
-EOR_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+EOR_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
 
@@ -139,7 +144,8 @@ EOR_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu->A ^= ReadByte (Cycles, Absolute, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
 }

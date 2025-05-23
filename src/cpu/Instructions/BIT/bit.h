@@ -1,9 +1,11 @@
 #ifndef BIT_H
 #define BIT_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
+#include <stdlib.h>
 
 /*
    This is a header file for the BIT (Bit Test) instruction for MOS Technology
@@ -41,11 +43,11 @@ BITSetStatus (Byte Value, CPU6502 *cpu)
 */
 
 static inline void
-BIT_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+BIT_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
-  BITSetStatus (Value, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  BITSetStatus (bus->data, cpu);
   spend_cycles (3);
 }
 
@@ -57,11 +59,11 @@ BIT_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-BIT_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+BIT_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  Byte Value = ReadByte (Cycles, Absolute, memory);
-  BITSetStatus (Value, cpu);
+  cpu_read (bus, memory, Absolute, Cycles);
+  BITSetStatus (bus->data, cpu);
   spend_cycles (4);
 }
 

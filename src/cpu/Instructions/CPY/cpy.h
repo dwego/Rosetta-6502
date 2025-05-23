@@ -1,6 +1,7 @@
 #ifndef CPY_H
 #define CPY_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -47,11 +48,11 @@ CPY_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    compares it with Y, and updates status flags.
 */
 static inline void
-CPY_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CPY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  Byte Data = ReadByte (Cycles, ZeroPageAddr, memory);
-  Byte Result = cpu->Y - Data;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte Result = cpu->Y - bus->data;
   CPYSetStatus (Result, cpu);
   spend_cycles (3);
 }
@@ -62,11 +63,11 @@ CPY_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    compares it with Y, and updates status flags.
 */
 static inline void
-CPY_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CPY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  Byte Data = ReadByte (Cycles, Absolute, memory);
-  Byte Result = cpu->Y - Data;
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte Result = cpu->Y - bus->data;
   CPYSetStatus (Result, cpu);
   spend_cycles (4);
 }

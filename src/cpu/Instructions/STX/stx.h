@@ -1,6 +1,7 @@
 #ifndef STX_H
 #define STX_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -24,10 +25,10 @@
 */
 
 static inline void
-STX_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STX_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  WriteByte (Cycles, cpu->X, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->X, Cycles);
   spend_cycles (3);
 }
 
@@ -38,11 +39,11 @@ STX_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STX_ZPY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STX_ZPY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->Y;
-  WriteByte (Cycles, cpu->X, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->X, Cycles);
   spend_cycles (4);
 }
 
@@ -53,10 +54,10 @@ STX_ZPY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STX_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STX_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  WriteByte (Cycles, cpu->X, memory, Absolute);
+  cpu_write (bus, memory, Absolute, cpu->X, Cycles);
   spend_cycles (4);
 }
 

@@ -1,6 +1,7 @@
 #ifndef DEC_H
 #define DEC_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -37,15 +38,14 @@ DECSetStatus (Byte Value, CPU6502 *cpu)
    writes the result back, and sets the status flags.
 */
 static inline void
-DEC_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+DEC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
 
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
-  Byte DecrementValue = Value - 1;
-  (*Cycles)--;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte DecrementValue = bus->data - 1;
 
-  WriteByte (Cycles, DecrementValue, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, DecrementValue, Cycles);
   DECSetStatus (DecrementValue, cpu);
   spend_cycles (5);
 }
@@ -57,17 +57,16 @@ DEC_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    decrements it by 1, writes the result back, and sets the status flags.
 */
 static inline void
-DEC_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+DEC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--;
 
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
-  Byte DecrementValue = Value - 1;
-  (*Cycles)--;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte DecrementValue = bus->data - 1;
 
-  WriteByte (Cycles, DecrementValue, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, DecrementValue, Cycles);
   DECSetStatus (DecrementValue, cpu);
   spend_cycles (6);
 }
@@ -79,15 +78,14 @@ DEC_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    writes the result back, and sets the status flags.
 */
 static inline void
-DEC_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+DEC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
 
-  Byte Value = ReadByte (Cycles, Absolute, memory);
-  Byte DecrementValue = Value - 1;
-  (*Cycles)--;
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte DecrementValue = bus->data - 1;
 
-  WriteByte (Cycles, DecrementValue, memory, Absolute);
+  cpu_write (bus, memory, Absolute, DecrementValue, Cycles);
   DECSetStatus (DecrementValue, cpu);
   spend_cycles (6);
 }
@@ -99,17 +97,16 @@ DEC_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    decrements it by 1, writes the result back, and sets the status flags.
 */
 static inline void
-DEC_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+DEC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Absolute += cpu->X;
   (*Cycles)--;
 
-  Byte Value = ReadByte (Cycles, Absolute, memory);
-  Byte DecrementValue = Value - 1;
-  (*Cycles)--;
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte DecrementValue = bus->data - 1;
 
-  WriteByte (Cycles, DecrementValue, memory, Absolute);
+  cpu_write (bus, memory, Absolute, DecrementValue, Cycles);
   DECSetStatus (DecrementValue, cpu);
   spend_cycles (6);
 }

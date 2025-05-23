@@ -1,9 +1,11 @@
 #ifndef INC_H
 #define INC_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
+#include <complex.h>
 
 /*
    This is a header file for the INC (Increment Memory) instruction for MOS
@@ -37,13 +39,13 @@ INCSetStatus (CPU6502 *cpu, Byte value)
    increments it by one, writes it back to memory, then updates the flags.
 */
 static inline void
-INC_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+INC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
-  Byte IncrementedValue = Value + 1;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte IncrementedValue = bus->data + 1;
 
-  WriteByte (Cycles, IncrementedValue, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, Cycles);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (5);
 }
@@ -54,15 +56,14 @@ INC_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    increments it, writes it back, then updates the flags.
 */
 static inline void
-INC_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+INC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte IncrementedValue = bus->data + 1;
 
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
-  Byte IncrementedValue = Value + 1;
-
-  WriteByte (Cycles, IncrementedValue, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, Cycles);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }
@@ -73,13 +74,13 @@ INC_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    increments it, writes it back, then updates the flags.
 */
 static inline void
-INC_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+INC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  Byte Value = ReadByte (Cycles, Absolute, memory);
-  Byte IncrementedValue = Value + 1;
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte IncrementedValue = bus->data + 1;
 
-  WriteByte (Cycles, IncrementedValue, memory, Absolute);
+  cpu_write (bus, memory, Absolute, I, Cycles);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }
@@ -90,15 +91,15 @@ INC_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    reads the value, increments it, writes it back, then updates the flags.
 */
 static inline void
-INC_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+INC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Absolute += cpu->X;
 
-  Byte Value = ReadByte (Cycles, Absolute, memory);
-  Byte IncrementedValue = Value + 1;
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte IncrementedValue = bus->data + 1;
 
-  WriteByte (Cycles, IncrementedValue, memory, Absolute);
+  cpu_write (bus, memory, Absolute, IncrementedValue, Cycles);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }

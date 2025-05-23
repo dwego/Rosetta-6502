@@ -1,6 +1,7 @@
 #ifndef ORA_H
 #define ORA_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -52,11 +53,11 @@ ORA_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    flags.
 */
 static inline void
-ORA_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ORA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
-  cpu->A |= Value;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (3);
 }
@@ -67,13 +68,13 @@ ORA_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    flags.
 */
 static inline void
-ORA_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ORA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--; // penalty cycle for zero-page wraparound handling
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
-  cpu->A |= Value;
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
 }
@@ -84,11 +85,11 @@ ORA_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    flags.
 */
 static inline void
-ORA_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ORA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  Byte Value = ReadByte (Cycles, Absolute, memory);
-  cpu->A |= Value;
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
 }
@@ -99,7 +100,7 @@ ORA_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    Reads value at new address, ORs with A, updates A and flags.
 */
 static inline void
-ORA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ORA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Word AddressWithX = Absolute + cpu->X;
@@ -110,8 +111,8 @@ ORA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle (); // page boundary crossed
     }
 
-  Byte Value = ReadByte (Cycles, AddressWithX, memory);
-  cpu->A |= Value;
+  cpu_read (bus, memory, AddressWithX, Cycles);
+  cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
 }
@@ -122,7 +123,7 @@ ORA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    Reads value at new address, ORs with A, updates A and flags.
 */
 static inline void
-ORA_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ORA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Word AddressWithY = Absolute + cpu->Y;
@@ -133,8 +134,8 @@ ORA_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle (); // page boundary crossed
     }
 
-  Byte Value = ReadByte (Cycles, AddressWithY, memory);
-  cpu->A |= Value;
+  cpu_read (bus, memory, AddressWithY, Cycles);
+  cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
 }

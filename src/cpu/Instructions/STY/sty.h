@@ -1,6 +1,7 @@
 #ifndef STY_H
 #define STY_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -23,10 +24,10 @@
    of Y into that address. It consumes 3 CPU cycles.
 */
 static inline void
-STY_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  WriteByte (Cycles, cpu->Y, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, Cycles);
   spend_cycles (3);
 }
 
@@ -36,11 +37,11 @@ STY_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    writes Y to the resulting address. It consumes 4 CPU cycles.
 */
 static inline void
-STY_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STY_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
-  WriteByte (Cycles, cpu->Y, memory, ZeroPageAddr);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, Cycles);
   spend_cycles (4);
 }
 
@@ -50,10 +51,10 @@ STY_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    to that address. It consumes 4 CPU cycles.
 */
 static inline void
-STY_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+STY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
-  WriteByte (Cycles, cpu->Y, memory, Absolute);
+  cpu_write (bus, memory, Absolute, cpu->Y, Cycles);
   spend_cycles (4);
 }
 

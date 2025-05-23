@@ -1,9 +1,11 @@
 #ifndef SBC_H
 #define SBC_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
+#include <stdatomic.h>
 
 /*
    This is a header file for the SBC (Subtract with Carry) instruction for MOS
@@ -58,10 +60,11 @@ SBC_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-SBC_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+SBC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte Value = bus->data;
   Byte Before = cpu->A;
 
   Byte Result = cpu->A + (~Value) + cpu->Flag.C;
@@ -79,12 +82,13 @@ SBC_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-SBC_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+SBC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
   ZeroPageAddr += cpu->X;
 
-  Byte Value = ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte Value = bus->data;
   Byte Before = cpu->A;
 
   Byte Result = cpu->A + (~Value) + cpu->Flag.C;
@@ -102,11 +106,12 @@ SBC_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-SBC_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+SBC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
 
-  Byte Value = ReadByte (Cycles, Absolute, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte Value = bus->data;
   Byte Before = cpu->A;
 
   Byte Result = cpu->A + (~Value) + cpu->Flag.C;
@@ -125,7 +130,7 @@ SBC_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-SBC_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+SBC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Word NewAddress = Absolute + cpu->X;
@@ -136,7 +141,8 @@ SBC_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  Byte Value = ReadByte (Cycles, NewAddress, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte Value = bus->data;
   Byte Before = cpu->A;
 
   Byte Result = cpu->A + (~Value) + cpu->Flag.C;
@@ -155,7 +161,7 @@ SBC_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-SBC_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+SBC_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, memory, cpu);
   Word NewAddress = Absolute + cpu->Y;
@@ -166,7 +172,8 @@ SBC_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  Byte Value = ReadByte (Cycles, NewAddress, memory);
+  cpu_read (bus, memory, NewAddress, Cycles);
+  Byte Value = bus->data;
   Byte Before = cpu->A;
 
   Byte Result = cpu->A + (~Value) + cpu->Flag.C;
