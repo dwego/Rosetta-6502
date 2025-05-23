@@ -1,4 +1,7 @@
+#include "config.h"
 #include "cpu_exec.h"
+#include "mem6502.h"
+#include <stdio.h>
 
 int
 main (void)
@@ -7,7 +10,8 @@ main (void)
   CPU6502 cpu;
   MEM6502 mem;
   Bus6502 bus;
-  Byte test;
+  Word test;
+  Byte acc;
   Word Cycles = 20;
 
   open_log ("cpu_log.txt");
@@ -44,8 +48,12 @@ main (void)
   goto end;
 
 end:
-  test = cpu.A;
-  printf ("stored value in: Accumulator is: %u\n", test);
+  test = 15;
+  acc = cpu.A;
+  cpu_read (&bus, &mem, 0x42, &test);
+  printf ("stored value in: Accumulator is: %u\n", acc);
+  printf ("stored value in Address 0x42 is: %u\n", bus.data);
+
   freeMem6502 (&mem);
   close_log ();
   return 0;
