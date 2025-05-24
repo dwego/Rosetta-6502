@@ -2,7 +2,7 @@
  * Testes da instrução ld (6502) – modos: Immediate, ZP, ZP,X
  */
 
-#include "ld_helpers.h" /* já define cpu, mem, bus, cycles, setUp/tearDown */
+#include "instructions/ld/ld_helpers.h"
 
 const ld_case_t ld_cases[] = { { "positive", 0x10, false, false },
                                { "zero", 0x00, true, false },
@@ -87,6 +87,36 @@ test_ld_zpx (Byte *reg, Instruction ins)
 
       resetCPU (&cpu, &mem);
       cpu.X = 0; /* limpa X p/ próxima vez  */
+    }
+}
+
+/* ----------------------------------------------------------
+ * Zero Page,X ($B5)
+ * ---------------------------------------------------------- */
+void
+test_ld_zpy (Byte *reg, Instruction ins)
+{
+  const Byte base = 0x80;
+  const Byte offset = 0x01;
+  const Byte addr = base + offset;
+
+  for (size_t i = 0; i < N_CASES; ++i)
+    {
+      cpu.Y = offset; /* deslocamento X          */
+      mem.Data[addr] = ld_cases[i].value;
+
+      const Byte prog[] = { ins, base };
+      load_and_run (prog, sizeof prog, 4); /* ld zp,X = 4 ciclos     */
+
+      char msg[32];
+      sprintf (msg, "ZPY %s", ld_cases[i].label);
+
+      TEST_ASSERT_EQUAL_UINT8_MESSAGE (ld_cases[i].value, *reg, msg);
+      TEST_ASSERT_EQUAL_MESSAGE (ld_cases[i].expectZ, cpu.Flag.Z, "Z flag");
+      TEST_ASSERT_EQUAL_MESSAGE (ld_cases[i].expectN, cpu.Flag.N, "N flag");
+
+      resetCPU (&cpu, &mem);
+      cpu.Y = 0; /* limpa X p/ próxima vez  */
     }
 }
 

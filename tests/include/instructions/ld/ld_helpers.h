@@ -5,7 +5,7 @@
  * Testes da instrução LDA (6502) – modos: Immediate, ZP, ZP,X
  */
 
-#include "test_template.h"
+#include "test_config.h"
 
 /* ----------------------------------------------------------
  * Helpers
@@ -40,6 +40,12 @@ void test_ld_zp (Byte *reg, Instruction ins);
  * Zero Page,X ($B5)
  * ---------------------------------------------------------- */
 void test_ld_zpx (Byte *reg, Instruction ins);
+
+/* ----------------------------------------------------------
+ * Zero Page,Y ($B5)
+ * ---------------------------------------------------------- */
+
+void test_ld_zpy (Byte *reg, Instruction ins);
 
 /* ----------------------------------------------------------
  * ABS ($AD)
