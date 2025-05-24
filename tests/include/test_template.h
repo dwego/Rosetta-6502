@@ -2,14 +2,10 @@
 #ifndef TEST_TEMPLATE_H
 #define TEST_TEMPLATE_H
 
-#include "../include/cpu_exec.h"
-#include "../unity/Unity/src/unity.h"
+#include "test_config.h"
 
-extern CPU6502 cpu;
-extern Bus6502 bus;
-extern MEM6502 mem;
-extern Word cycles;
+void setUp (void);
 
-void load_and_run (const Byte *prog, size_t len, Word expected_cycles);
+void tearDown (void);
 
 #endif /* TEST_TEMPLATE_H */
