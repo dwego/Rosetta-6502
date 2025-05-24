@@ -1,4 +1,4 @@
-#include "instructions/ld/test_lda.h"
+#include "instructions/ld/test_ld.h"
 #include "test_template.h"
 
 int
