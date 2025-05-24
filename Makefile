@@ -1,7 +1,7 @@
 CC = clang
 CFLAGS = -Iinclude -Wall -Wextra -g
 
-SRCS := $(shell find . -name '*.c')
+SRCS := $(shell find . -name '*.c' -not -path './tests/*' -not -path './libs/*')
 OBJS := $(SRCS:%=build/%.o)
 
 EXEC = main
