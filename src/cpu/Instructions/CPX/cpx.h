@@ -1,6 +1,7 @@
 #ifndef CPX_H
 #define CPX_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -33,9 +34,9 @@ CPXSetStatus (Byte Result, CPU6502 *cpu)
    Fetches a byte from memory, compares it with X, and updates status flags.
 */
 static inline void
-CPX_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CPX_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, memory, cpu);
+  Byte Value = FetchByte (Cycles, bus, memory, cpu);
   Byte Result = cpu->X - Value;
   CPXSetStatus (Result, cpu);
   spend_cycles (2);
@@ -47,11 +48,11 @@ CPX_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    compares it with X, and updates status flags.
 */
 static inline void
-CPX_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CPX_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  Byte Data = ReadByte (Cycles, ZeroPageAddr, memory);
-  Byte Result = cpu->X - Data;
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  Byte Result = cpu->X - bus->data;
   CPXSetStatus (Result, cpu);
   spend_cycles (3);
 }
@@ -62,11 +63,11 @@ CPX_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
    compares it with X, and updates status flags.
 */
 static inline void
-CPX_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+CPX_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
-  Byte Data = ReadByte (Cycles, Absolute, memory);
-  Byte Result = cpu->X - Data;
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, Cycles);
+  Byte Result = cpu->X - bus->data;
   CPXSetStatus (Result, cpu);
   spend_cycles (4);
 }

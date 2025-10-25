@@ -1,6 +1,7 @@
 #ifndef LDA_H
 #define LDA_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -36,9 +37,9 @@ LDASetStatus (CPU6502 *cpu)
 */
 
 static inline void
-LDA_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDA_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, memory, cpu);
+  Byte Value = FetchByte (Cycles, bus, memory, cpu);
   ;
   cpu->A = Value;
   LDASetStatus (cpu);
@@ -53,10 +54,11 @@ LDA_IM (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDA_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
-  cpu->A = ReadByte (Cycles, ZeroPageAddr, memory);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu->A = bus->data;
   LDASetStatus (cpu);
   spend_cycles (3);
 }
@@ -69,12 +71,13 @@ LDA_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDA_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--;
-  cpu->A = ReadByte (Cycles, ZeroPageAddr, memory);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu->A = bus->data;
   LDASetStatus (cpu);
   spend_cycles (4);
 }
@@ -87,10 +90,11 @@ LDA_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDA_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
-  cpu->A = ReadByte (Cycles, Absolute, memory);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->A = bus->data;
   LDASetStatus (cpu);
   spend_cycles (4);
 }
@@ -103,9 +107,9 @@ LDA_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Word OldPage = Absolute & 0xFF00;
   Absolute += cpu->X;
   Word NewPage = Absolute & 0xFF00;
@@ -115,7 +119,8 @@ LDA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu->A = ReadByte (Cycles, Absolute, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->A = bus->data;
   LDASetStatus (cpu);
   spend_cycles (4);
 }
@@ -128,9 +133,9 @@ LDA_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDA_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+LDA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, memory, cpu);
+  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
 
   Word OldPage = Absolute & 0xFF00;
   Absolute += cpu->Y;
@@ -143,7 +148,8 @@ LDA_ABSY (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu->A = ReadByte (Cycles, Absolute, memory);
+  cpu_read (bus, memory, Absolute, Cycles);
+  cpu->A = bus->data;
   LDASetStatus (cpu);
   spend_cycles (4);
 }

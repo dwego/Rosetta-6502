@@ -21,11 +21,11 @@
 */
 
 static inline void
-BMI (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+BMI (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   if (cpu->Flag.N != 0)
     {
-      Byte relative_offset = FetchByte (Cycles, memory, cpu);
+      Byte relative_offset = FetchByte (Cycles, bus, memory, cpu);
       Word old_pc = cpu->PC;
       cpu->PC += (char)relative_offset;
 

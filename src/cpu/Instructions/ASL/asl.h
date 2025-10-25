@@ -1,6 +1,7 @@
 #ifndef ASL_H
 #define ASL_H
 
+#include "bus.h"
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
@@ -48,9 +49,9 @@ ASLSetStatus (Byte value, CPU6502 *cpu)
 */
 
 static inline void
-ASL_ACC (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ASL_ACC (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte value = FetchByte (Cycles, memory, cpu);
+  Byte value = FetchByte (Cycles, bus, memory, cpu);
   cpu->A = value << 1;
   ASLSetStatus (value, cpu);
 }
@@ -64,10 +65,11 @@ ASL_ACC (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ASL_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ASL_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zero_page_addr = FetchByte (Cycles, memory, cpu);
-  Byte value = ReadByte (Cycles, zero_page_addr, memory);
+  Byte zero_page_addr = FetchByte (Cycles, bus, memory, cpu);
+  cpu_read (bus, memory, zero_page_addr, Cycles);
+  Byte value = bus->data;
 
   cpu->A = value << 1;
   (*Cycles) -= 2;
@@ -83,13 +85,14 @@ ASL_ZP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ASL_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ASL_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zero_page_addr = FetchByte (Cycles, memory, cpu);
+  Byte zero_page_addr = FetchByte (Cycles, bus, memory, cpu);
   zero_page_addr += cpu->X;
   (*Cycles)--;
 
-  Byte value = ReadByte (Cycles, zero_page_addr, memory);
+  cpu_read (bus, memory, zero_page_addr, Cycles);
+  Byte value = bus->data;
   cpu->A = value << 1;
   (*Cycles) -= 2;
   ASLSetStatus (value, cpu);
@@ -104,10 +107,11 @@ ASL_ZPX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ASL_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ASL_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word absolute = FetchWord (Cycles, memory, cpu);
-  Byte value = ReadByte (Cycles, absolute, memory);
+  Word absolute = FetchWord (Cycles, bus, memory, cpu);
+  cpu_read (bus, memory, absolute, Cycles);
+  Byte value = bus->data;
 
   cpu->A = value << 1;
   (*Cycles) -= 2;
@@ -123,12 +127,13 @@ ASL_ABS (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ASL_ABSX (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+ASL_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word absolute = FetchWord (Cycles, memory, cpu);
+  Word absolute = FetchWord (Cycles, bus, memory, cpu);
   absolute += cpu->X;
 
-  Byte value = ReadByte (Cycles, absolute, memory);
+  cpu_read (bus, memory, absolute, Cycles);
+  Byte value = bus->data;
   cpu->A = value << 1;
   (*Cycles) -= 3;
   ASLSetStatus (value, cpu);
