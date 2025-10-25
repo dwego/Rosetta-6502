@@ -37,10 +37,10 @@ PHPSetStatus (CPU6502 *cpu)
 */
 
 static inline void
-PHP (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+PHP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   PHPSetStatus (cpu);
-  PushByteToStack (Cycles, memory, cpu->PS, cpu);
+  PushByteToStack (Cycles, bus, memory, cpu->PS, cpu);
   spend_cycles (3);
 }
 

@@ -1,7 +1,9 @@
 CC = clang
-CFLAGS = -Iinclude -Wall -Wextra -g
+CFLAGS = -Iinclude -Isrc/utils -Wall -Wextra -g
 
-SRCS := $(shell find . -name '*.c')
+LDFLAGS = -lncurses
+
+SRCS := $(shell find . -name '*.c' -not -path './tests/*' -not -path './libs/*')
 OBJS := $(SRCS:%=build/%.o)
 
 EXEC = main
@@ -9,7 +11,7 @@ EXEC = main
 all: $(EXEC)
 
 $(EXEC): $(OBJS)
-	$(CC) $(OBJS) -o $@
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
 build/%.c.o: %.c
 	@mkdir -p $(dir $@)

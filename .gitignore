@@ -6,3 +6,7 @@ compile_commands.json
 layout.txt
 main
 cpu_log.txt
+tests/.cache/
+tests/build/
+tests/compile_commands.json
+tests/test

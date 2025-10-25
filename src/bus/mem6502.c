@@ -49,10 +49,7 @@ initializeMem6502 (MEM6502 *memory)
     }
 
   // Initialize memory with zeros.
-  for (DWord i = 0; i < MAX_MEM; i++)
-    {
-      memory->Data[i] = 0;
-    }
+  memset (memory->Data, 0, MAX_MEM);
 }
 
 // Frees 65 Kilobytes of RAM.
@@ -64,23 +61,9 @@ freeMem6502 (MEM6502 *memory)
       = NULL; // Optional: define data as null after freeing the memory.
 }
 
-// Write a 16-bit word of data to emulated memory at the specified address.
-void
-WriteWord (Word *Cycles, Word Value, MEM6502 *mem, DWord Address)
-{
-  // Write the low byte.
-  mem->Data[Address] = Value & 0xFF;
-
-  // Write the high byte.
-  mem->Data[Address + 1] = (Value >> 8);
-
-  // Adjust the cycle count.
-  (*Cycles) -= 2;
-}
-
 // Read a byte of data from emulated memory at the specified address.
-Byte
-ReadByte (Word *Cycles, Word Address, MEM6502 *memory)
+static Byte
+ReadByte (Word *Cycles, Word Address, const MEM6502 *memory)
 {
   // Read the byte from memory.
   Byte Data = memory->Data[Address];
@@ -91,22 +74,8 @@ ReadByte (Word *Cycles, Word Address, MEM6502 *memory)
   return Data;
 }
 
-// Read a 16-bit word of data from emulated memory at the specified address.
-Word
-ReadWord (Word *Cycles, Word Address, MEM6502 *memory)
-{
-  // Read the low byte.
-  Byte LoByte = ReadByte (Cycles, Address, memory);
-
-  // Read the high byte.
-  Byte HiByte = ReadByte (Cycles, Address + 1, memory);
-
-  // Combine the bytes into a 16-bit word.
-  return LoByte | (HiByte << 8);
-}
-
 // Write a byte of data to emulated memory at the specified address.
-void
+static void
 WriteByte (Word *Cycles, Word Value, MEM6502 *mem, DWord Address)
 {
   // Write the byte to memory.
@@ -114,4 +83,22 @@ WriteByte (Word *Cycles, Word Value, MEM6502 *mem, DWord Address)
 
   // Adjust the cycle count.
   (*Cycles)--;
+}
+
+void
+cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address, Word *Cycles)
+{
+  bus->address = address;
+  bus->rw = true;
+  bus->data = ReadByte (Cycles, address, memory);
+}
+
+void
+cpu_write (Bus6502 *bus, MEM6502 *memory, Word address, Byte data,
+           Word *Cycles)
+{
+  bus->address = address;
+  bus->data = data;
+  bus->rw = false;
+  WriteByte (Cycles, bus->data, memory, bus->address);
 }

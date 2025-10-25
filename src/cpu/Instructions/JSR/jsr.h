@@ -23,15 +23,15 @@
 */
 
 static inline void
-JSR (Word *Cycles, MEM6502 *memory, CPU6502 *cpu)
+JSR (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word SubAddr = FetchWord (Cycles, memory, cpu);
+  Word SubAddr = FetchWord (Cycles, bus, memory, cpu);
 
   // Push the return address (PC - 1) onto the stack.
   // This is because RTS will pull the return address and add 1 before resuming
   // execution.
   Word ReturnAddr = cpu->PC - 1;
-  PushWordToStack (Cycles, memory, ReturnAddr, cpu);
+  PushWordToStack (Cycles, bus, memory, ReturnAddr, cpu);
 
   // Set the program counter to the target subroutine address.
   cpu->PC = SubAddr;
