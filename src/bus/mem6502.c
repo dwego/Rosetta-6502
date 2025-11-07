@@ -85,6 +85,7 @@ WriteByte (Word *Cycles, Word Value, MEM6502 *mem, DWord Address)
   (*Cycles)--;
 }
 void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, AccessType accessType)
+void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, AccessType accessType)
 {
     bus->address = addr;
     bus->rw = true;
@@ -92,7 +93,7 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, Acce
     // MMIO: requer permissão explícita
     if (addr >= MMIO_START && addr <= MMIO_END) {
         if (!(accessType & ACCESS_MMIO)) {
-            fprintf(stderr, "🚫 Acesso MMIO sem permissão em %04X\n", addr);
+            fprintf(stderr, "MMIO access denied %04X\n", addr);
             bus->data = 0xFF;
             return;
         }
@@ -114,7 +115,7 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, Acce
     }
 
     // Address out of map
-    fprintf(stderr, "⚠️ Leitura fora da memória: %04X\n", addr);
+    fprintf(stderr, "Memory read out of bounds: %04X\n", addr);
     bus->data = 0xFF;
 }
 
@@ -128,17 +129,17 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data,
     // MMIO: Permission required
     if (addr >= MMIO_START && addr <= MMIO_END) {
         if (!(accessType & ACCESS_MMIO)) {
-            fprintf(stderr, "🚫 Escrita MMIO sem permissão em %04X\n", addr);
+            fprintf(stderr, "MMIO write without permission %04X\n", addr);
             return;
         }
         // Real MMIO handler would go here in the future
-        printf("🛰️ MMIO write %04X = %02X\n", addr, data);
+        printf("MMIO write %04X = %02X\n", addr, data);
         return;
     }
 
     // ROM: Writing is blocked
     if (addr >= ROM_START && addr <= ROM_END) {
-        printf("⚠️ Escrita ignorada em ROM %04X = %02X\n", addr, data);
+        printf("ROM write ignored %04X = %02X\n", addr, data);
         return;
     }
 
@@ -148,5 +149,5 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data,
         return;
     }
 
-    fprintf(stderr, "⚠️ Escrita fora do mapa: %04X\n", addr);
+    fprintf(stderr, "Memory write out of bounds: %04X\n", addr);
 }
