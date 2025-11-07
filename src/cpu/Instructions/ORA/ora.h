@@ -56,7 +56,7 @@ static inline void
 ORA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (3);
@@ -73,7 +73,7 @@ ORA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--; // penalty cycle for zero-page wraparound handling
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -88,7 +88,7 @@ static inline void
 ORA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles);
+  cpu_read (bus, memory, Absolute, Cycles, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -111,7 +111,7 @@ ORA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle (); // page boundary crossed
     }
 
-  cpu_read (bus, memory, AddressWithX, Cycles);
+  cpu_read (bus, memory, AddressWithX, Cycles, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -134,7 +134,7 @@ ORA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle (); // page boundary crossed
     }
 
-  cpu_read (bus, memory, AddressWithY, Cycles);
+  cpu_read (bus, memory, AddressWithY, Cycles, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);

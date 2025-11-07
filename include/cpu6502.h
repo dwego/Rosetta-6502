@@ -2,8 +2,10 @@
 #define CPU6502_H
 
 #include "bus.h"
-#include "config.h"
-#include "mem6502.h"
+#include "access_type.h"
+#include "memory_map.h"
+
+typedef struct MEM6502 MEM6502;
 
 /*
    CPU6502 - 6502 Emulated CPU
@@ -39,7 +41,7 @@ typedef struct StatusFlags
   Byte B : 1;      // 4: Break
   Byte Unused : 1; // 5: Unused
   Byte V : 1;      // 6: Overflow
-  Byte N : 1;      // 7: Negative
+  Byte N : 1;      // 7: Negaxtive
 } StatusFlags;
 
 /*
@@ -48,7 +50,7 @@ typedef struct StatusFlags
    The structure represents the CPU state for the MOS Technology 6502.
 */
 
-typedef struct
+typedef struct CPU6502
 {
   Byte A, X, Y; // registers
   Byte SP;      // stack pointer
@@ -60,6 +62,8 @@ typedef struct
     Byte PS;          // Processor Status (PC)
     StatusFlags Flag; // Flags
   };
+
+  AccessType CurrentAccess; // Current access type (RAM, ROM, MMIO)
 } CPU6502;
 
 /*
