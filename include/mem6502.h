@@ -2,14 +2,19 @@
 #define MEM6502_H
 
 #include "bus.h"
+#include "memory_map.h"
 #include "config.h"
 
 #define RAM_SIZE 65536
 
-#define STACK_START 0x100
-#define STACK_END 0x1FF
-
 #define ROM_SIZE 4096
+
+typedef enum {
+    ACCESS_NONE   = 0,
+    ACCESS_RAM    = 1 << 0,
+    ACCESS_ROM    = 1 << 1,
+    ACCESS_MMIO   = 1 << 2
+} AccessType;
 
 /*
    MEM6502 - 6502 Emulated Memory
