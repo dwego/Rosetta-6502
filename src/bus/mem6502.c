@@ -1,4 +1,5 @@
 #include "mem6502.h"
+#include "cpu6502.h"
 
 // Maximum memory size for the 6502 system.
 const DWord MAX_MEM = 1024 * 64;
@@ -84,9 +85,10 @@ WriteByte (Word *Cycles, Word Value, MEM6502 *mem, DWord Address)
   // Adjust the cycle count.
   (*Cycles)--;
 }
-void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, AccessType accessType)
-void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, AccessType accessType)
+
+void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, CPU6502 *cpu)
 {
+    AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
     bus->rw = true;
 
@@ -119,9 +121,9 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, Acce
     bus->data = 0xFF;
 }
 
-void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data,
-               Word *Cycles, AccessType accessType)
+void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, Word *Cycles, CPU6502 *cpu)
 {
+    AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
     bus->data = data;
     bus->rw = false;
@@ -145,7 +147,7 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data,
 
     // Default RAM
     if (addr <= RAM_END) {
-        WriteByte(Cycles, addr, data, memory);
+        WriteByte (Cycles, data, memory, addr);
         return;
     }
 

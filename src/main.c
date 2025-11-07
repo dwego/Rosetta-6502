@@ -61,18 +61,19 @@ main (int argc, char *argv[])
   program_start = 0x8000;
   mem.Data[0xFFFC] = program_start & 0xFF;
   mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
-  mem.Data[0xFFFE] = 0x10;
-  mem.Data[0xFFFF] = 0x80;
+  program_start = 0x8000;
 
-  mem.Data[0x8000] = INS_BRK;
-  mem.Data[0x8001] = 0x00;
-  mem.Data[0x8002] = INS_PHA;
-  mem.Data[0x8003] = INS_LDA_IM;
-  mem.Data[0x8004] = 0x20;
-  mem.Data[0x8005] = INS_PHA;
-  mem.Data[0x8006] = INS_STA_ZP;
-  mem.Data[0x8007] = 0x42;
-  mem.Data[0x8008] = 0x02;
+// vetor de reset aponta para 0x8000
+mem.Data[0xFFFC] = program_start & 0xFF;
+mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
+
+// programa:
+mem.Data[0x8000] = INS_LDA_IM;   // opcode LDA imediato
+mem.Data[0x8001] = 0xAA;         // valor 0xAA
+mem.Data[0x8002] = INS_STA_ABS;  // opcode STA absoluto
+mem.Data[0x8003] = 0x00;         // low byte do endereço $E000
+mem.Data[0x8004] = 0xE0;         // high byte do endereço $E000
+mem.Data[0x8005] = INS_BRK;  
 
   // Break ASM because "0x02" isn't a instruction
   mem.Data[0x8010] = 0x02;
@@ -100,7 +101,7 @@ main (int argc, char *argv[])
 end:
   test = 15;
   acc = cpu.A;
-  cpu_read (&bus, &mem, 0x42, &test);
+  cpu_read (&bus, &mem, 0x42, &test, &cpu);
   printf ("stored value in: Accumulator is: %u\n", acc);
   printf ("stored value in Address 0x42 is: %u\n", bus.data);
 
@@ -109,4 +110,3 @@ end:
   close_log ();
   return 0;
 }
-
