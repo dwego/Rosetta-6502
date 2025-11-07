@@ -84,21 +84,69 @@ WriteByte (Word *Cycles, Word Value, MEM6502 *mem, DWord Address)
   // Adjust the cycle count.
   (*Cycles)--;
 }
-
-void
-cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address, Word *Cycles)
+void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, AccessType accessType)
 {
-  bus->address = address;
-  bus->rw = true;
-  bus->data = ReadByte (Cycles, address, memory);
+    bus->address = addr;
+    bus->rw = true;
+
+    // MMIO: requer permissão explícita
+    if (addr >= MMIO_START && addr <= MMIO_END) {
+        if (!(accessType & ACCESS_MMIO)) {
+            fprintf(stderr, "🚫 Acesso MMIO sem permissão em %04X\n", addr);
+            bus->data = 0xFF;
+            return;
+        }
+        // Real MMIO handler would go here in the future
+        bus->data = 0x00;  // placeholder
+        return;
+    }
+
+    // ROM: Read always allowed
+    if (addr >= ROM_START && addr <= ROM_END) {
+        bus->data = ReadByte(Cycles, addr, memory);
+        return;
+    }
+
+    // Default RAM
+    if (addr <= RAM_END) {
+        bus->data = ReadByte(Cycles, addr, memory);
+        return;
+    }
+
+    // Address out of map
+    fprintf(stderr, "⚠️ Leitura fora da memória: %04X\n", addr);
+    bus->data = 0xFF;
 }
 
-void
-cpu_write (Bus6502 *bus, MEM6502 *memory, Word address, Byte data,
-           Word *Cycles)
+void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data,
+               Word *Cycles, AccessType accessType)
 {
-  bus->address = address;
-  bus->data = data;
-  bus->rw = false;
-  WriteByte (Cycles, bus->data, memory, bus->address);
+    bus->address = addr;
+    bus->data = data;
+    bus->rw = false;
+
+    // MMIO: Permission required
+    if (addr >= MMIO_START && addr <= MMIO_END) {
+        if (!(accessType & ACCESS_MMIO)) {
+            fprintf(stderr, "🚫 Escrita MMIO sem permissão em %04X\n", addr);
+            return;
+        }
+        // Real MMIO handler would go here in the future
+        printf("🛰️ MMIO write %04X = %02X\n", addr, data);
+        return;
+    }
+
+    // ROM: Writing is blocked
+    if (addr >= ROM_START && addr <= ROM_END) {
+        printf("⚠️ Escrita ignorada em ROM %04X = %02X\n", addr, data);
+        return;
+    }
+
+    // Default RAM
+    if (addr <= RAM_END) {
+        WriteByte(Cycles, addr, data, memory);
+        return;
+    }
+
+    fprintf(stderr, "⚠️ Escrita fora do mapa: %04X\n", addr);
 }
