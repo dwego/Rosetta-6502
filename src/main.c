@@ -14,13 +14,42 @@ main (int argc, char *argv[])
   Byte acc;
   Word Cycles = 20;
 
+  FILE *fptr;
   int enable_ram_view = 0;
+  char *input_file = NULL;
 
   for (int i = 1; i < argc; i++)
     {
       if (strcmp (argv[i], "--ram") == 0 || strcmp (argv[i], "-r") == 0)
         {
           enable_ram_view = 1;
+        }
+      if (strcmp (argv[i], "--input") == 0 || strcmp (argv[i], "-i") == 0)
+        {
+          input_file = malloc(strlen(argv[i + 1] + 1));
+          strcpy(input_file, argv[i + 1]);
+          printf("%s\n", input_file);
+          FILE *fptr;
+          char linhas[1000][300];
+          int i = 0;
+
+          fptr = fopen(input_file, "r");
+          if (fptr == NULL) {
+              perror("Error to open this file");
+              return 1;
+          }
+
+          while (fgets(linhas[i], MAX_LINE_SIZE, fptr) != NULL && i < MAX_LINES) {
+              linhas[i][strcspn(linhas[i], "\n")] = '\0';
+              i++;
+          }
+
+          fclose(fptr);
+
+          printf("File content:\n");
+          for (int j = 0; j < i; j++) {
+              printf("Line %d: %s\n", j + 1, linhas[j]);
+          }
         }
     }
 
@@ -76,6 +105,8 @@ end:
   printf ("stored value in Address 0x42 is: %u\n", bus.data);
 
   freeMem6502 (&mem);
+  free(input_file);
   close_log ();
   return 0;
 }
+
