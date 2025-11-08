@@ -30,11 +30,11 @@ TXASetStatus (CPU6502 *cpu)
    Consumes 2 CPU cycles.
 */
 static inline void
-TXA (Word *Cycles, CPU6502 *cpu)
+TXA (CPU6502 *cpu)
 {
   cpu->A = cpu->X;
   TXASetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

@@ -64,29 +64,29 @@ freeMem6502 (MEM6502 *memory)
 
 // Read a byte of data from emulated memory at the specified address.
 static Byte
-ReadByte (Word *Cycles, Word Address, const MEM6502 *memory)
+ReadByte (Word Address, const MEM6502 *memory)
 {
   // Read the byte from memory.
   Byte Data = memory->Data[Address];
 
   // Adjust the cycle count.
-  (*Cycles)--;
+  
 
   return Data;
 }
 
 // Write a byte of data to emulated memory at the specified address.
 static void
-WriteByte (Word *Cycles, Word Value, MEM6502 *mem, DWord Address)
+WriteByte (Word Value, MEM6502 *mem, DWord Address)
 {
   // Write the byte to memory.
   mem->Data[Address] = Value;
 
   // Adjust the cycle count.
-  (*Cycles)--;
+  
 }
 
-void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, CPU6502 *cpu)
+void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, CPU6502 *cpu)
 {
     AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
@@ -106,13 +106,13 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, CPU6
 
     // ROM: Read always allowed
     if (addr >= ROM_START && addr <= ROM_END) {
-        bus->data = ReadByte(Cycles, addr, memory);
+        bus->data = ReadByte(addr, memory);
         return;
     }
 
     // Default RAM
     if (addr <= RAM_END) {
-        bus->data = ReadByte(Cycles, addr, memory);
+        bus->data = ReadByte(addr, memory);
         return;
     }
 
@@ -121,7 +121,7 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, Word *Cycles, CPU6
     bus->data = 0xFF;
 }
 
-void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, Word *Cycles, CPU6502 *cpu)
+void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, CPU6502 *cpu)
 {
     AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
@@ -147,7 +147,7 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, Word *Cycles
 
     // Default RAM
     if (addr <= RAM_END) {
-        WriteByte (Cycles, data, memory, addr);
+        WriteByte(data, memory, addr);
         return;
     }
 

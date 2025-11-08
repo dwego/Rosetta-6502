@@ -34,9 +34,9 @@ CPYSetStatus (Byte Result, CPU6502 *cpu)
    Fetches a byte from memory, compares it with Y, and updates status flags.
 */
 static inline void
-CPY_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CPY_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, bus, memory, cpu);
+  Byte Value = FetchByte (bus, memory, cpu);
   Byte Result = cpu->Y - Value;
   CPYSetStatus (Result, cpu);
   spend_cycles (2);
@@ -48,10 +48,10 @@ CPY_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    compares it with Y, and updates status flags.
 */
 static inline void
-CPY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CPY_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   Byte Result = cpu->Y - bus->data;
   CPYSetStatus (Result, cpu);
   spend_cycles (3);
@@ -63,10 +63,10 @@ CPY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    compares it with Y, and updates status flags.
 */
 static inline void
-CPY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CPY_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   Byte Result = cpu->Y - bus->data;
   CPYSetStatus (Result, cpu);
   spend_cycles (4);

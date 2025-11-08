@@ -39,9 +39,9 @@ ORASetStatus (CPU6502 *cpu)
    Fetches an immediate byte, ORs it with A, updates A and sets status flags.
 */
 static inline void
-ORA_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ORA_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, bus, memory, cpu);
+  Byte Value = FetchByte (bus, memory, cpu);
   cpu->A |= Value;
   ORASetStatus (cpu);
   spend_cycles (2);
@@ -53,10 +53,10 @@ ORA_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    flags.
 */
 static inline void
-ORA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ORA_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (3);
@@ -68,12 +68,12 @@ ORA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    flags.
 */
 static inline void
-ORA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ORA_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  (*Cycles)--; // penalty cycle for zero-page wraparound handling
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+   // penalty cycle for zero-page wraparound handling
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -85,10 +85,10 @@ ORA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    flags.
 */
 static inline void
-ORA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ORA_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -100,18 +100,18 @@ ORA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    Reads value at new address, ORs with A, updates A and flags.
 */
 static inline void
-ORA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ORA_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Word AddressWithX = Absolute + cpu->X;
 
   if ((Absolute & 0xFF00) != (AddressWithX & 0xFF00))
     {
-      (*Cycles)++;
+      
       spend_cycle (); // page boundary crossed
     }
 
-  cpu_read (bus, memory, AddressWithX, Cycles, cpu);
+  cpu_read (bus, memory, AddressWithX, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -123,21 +123,73 @@ ORA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    Reads value at new address, ORs with A, updates A and flags.
 */
 static inline void
-ORA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ORA_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Word AddressWithY = Absolute + cpu->Y;
 
   if ((Absolute & 0xFF00) != (AddressWithY & 0xFF00))
     {
-      (*Cycles)++;
+      
       spend_cycle (); // page boundary crossed
     }
 
-  cpu_read (bus, memory, AddressWithY, Cycles, cpu);
+  cpu_read (bus, memory, AddressWithY, cpu);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
+}
+
+/*
+   ORA_INDX - OR Accumulator with (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page base address. The X register is
+   added to this base address (wrapping within zero-page) to get a new pointer.
+   The two bytes at that pointer form the low/high bytes of the effective
+   address. The value at that address is ORed with A.
+*/
+
+static inline void
+ORA_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (bus, memory, cpu);
+  zp += cpu->X; // zero-page wraparound
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_read (bus, memory, addr, cpu);
+  cpu->A |= bus->data;
+  ORASetStatus (cpu);
+  spend_cycles (6);
+}
+
+/*
+   ORA_INDY - OR Accumulator with (Indirect), Y addressing mode.
+   The operand is a zero-page address that points to a 16-bit base address.
+   The Y register is added to this base to form the effective address.
+   If a page boundary is crossed, one extra cycle is used.
+   The value at the effective address is ORed with A.
+*/
+
+static inline void
+ORA_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
+    {
+      
+      spend_cycle ();
+    }
+
+  cpu_read (bus, memory, addr, cpu);
+  cpu->A |= bus->data;
+  ORASetStatus (cpu);
+  spend_cycles (5);
 }
 
 #endif // ORA_H
