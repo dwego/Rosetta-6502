@@ -129,6 +129,7 @@ EOR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    before reading. If the addition crosses a page boundary, it adjusts the
    cycle count. It then sets the status flags.
 */
+
 static inline void
 EOR_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
@@ -150,4 +151,57 @@ EOR_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   spend_cycles (4);
 }
 
+/*
+   EOR_INDX - Exclusive OR using (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page base address. The X register is
+   added to this base address (wrapping within zero-page) to locate a 16-bit
+   pointer. The value read from that pointer's target address is XORed with
+   the Accumulator (A). 
+*/
+
+static inline void
+EOR_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  zp += cpu->X; // apply X offset (wrap-around zero page)
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu->A ^= bus->data;
+  EORSetStatus (cpu);
+  spend_cycles (6);
+}
+
+/*
+   EOR_INDY - Exclusive OR using (Indirect), Y addressing mode.
+   In this mode, the operand is a zero-page address pointing to a 16-bit base
+   address. The Y register is added to this base address to get the effective
+   address. The value read from that effective address is XORed with the
+   Accumulator (A).
+*/
+
+static inline void
+EOR_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
+    {
+      (*Cycles)++;
+      spend_cycle ();
+    }
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu->A ^= bus->data;
+  EORSetStatus (cpu);
+  spend_cycles (5);
+}
+
 #endif // EOR_H
+

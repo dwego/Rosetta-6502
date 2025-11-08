@@ -140,4 +140,56 @@ ORA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   spend_cycles (4);
 }
 
+/*
+   ORA_INDX - OR Accumulator with (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page base address. The X register is
+   added to this base address (wrapping within zero-page) to get a new pointer.
+   The two bytes at that pointer form the low/high bytes of the effective
+   address. The value at that address is ORed with A.
+*/
+
+static inline void
+ORA_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  zp += cpu->X; // zero-page wraparound
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu->A |= bus->data;
+  ORASetStatus (cpu);
+  spend_cycles (6);
+}
+
+/*
+   ORA_INDY - OR Accumulator with (Indirect), Y addressing mode.
+   The operand is a zero-page address that points to a 16-bit base address.
+   The Y register is added to this base to form the effective address.
+   If a page boundary is crossed, one extra cycle is used.
+   The value at the effective address is ORed with A.
+*/
+
+static inline void
+ORA_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
+    {
+      (*Cycles)++;
+      spend_cycle ();
+    }
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu->A |= bus->data;
+  ORASetStatus (cpu);
+  spend_cycles (5);
+}
+
 #endif // ORA_H
