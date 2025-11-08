@@ -1,10 +1,92 @@
 #include "cpu_exec.h"
+#include "cpu6502.h"
+#include <stdio.h>
+
+static AccessType
+get_instruction_access_type (Byte opcode)
+{
+    switch (opcode)
+    {
+        /* ────────────────
+           Read memory (RAM/MMIO)
+           ──────────────── */
+        case INS_LDA_IM: case INS_LDA_ZP: case INS_LDA_ABS: case INS_LDA_ABSX: case INS_LDA_ABSY:
+        case INS_LDA_ZPX: case INS_LDA_INDX: case INS_LDA_INDY:        // LDA
+        case INS_LDX_IM: case INS_LDX_ZP: case INS_LDX_ABS: case INS_LDX_ZPY: case INS_LDX_ABSY: // LDX
+        case INS_LDY_IM: case INS_LDY_ZP: case INS_LDY_ABS: case INS_LDY_ABSX: case INS_LDY_ZPX: // LDY
+        case INS_ADC_IM: case INS_ADC_ZP: case INS_ADC_ABS: case INS_ADC_ABSX: case INS_ADC_ABSY:
+        case INS_ADC_ZPX: case INS_ADC_INDX: case INS_ADC_INDY:        // ADC
+        case INS_SBC_IM: case INS_SBC_ZP: case INS_SBC_ABS: case INS_SBC_ABSX: case INS_SBC_ABSY:
+        case INS_SBC_ZPX: case INS_SBC_INDX: case INS_SBC_INDY:        // SBC
+        case INS_CMP_IM: case INS_CMP_ZP: case INS_CMP_ABS: case INS_CMP_ABSX: case INS_CMP_ABSY:
+        case INS_CMP_ZPX: case INS_CMP_INDX: case INS_CMP_INDY:        // CMP
+        case INS_CPX: case INS_CPX_ZP: case INS_CPX_ABS:            // CPX
+        case INS_CPY: case INS_CPY_ZP: case INS_CPY_ABS:            // CPY
+        case INS_BIT_ZP: case INS_BIT_ABS:                             // BIT
+            return ACCESS_RAM | ACCESS_MMIO;
+
+        /* ────────────────
+           Escrita em memória (RAM/MMIO)
+           ──────────────── */
+        case INS_STA_ZP: case INS_STA_ZPX: case INS_STA_ABS: case INS_STA_ABSX: case INS_STA_ABSY:
+        case INS_STA_INDX: case INS_STA_INDY:        // STA
+        case INS_STX_ZP: case INS_STX_ZPY: case INS_STX_ABS:        // STX
+        case INS_STY_ZP: case INS_STY_ZPX: case INS_STY_ABS:        // STY
+        case INS_INC_ZP: case INS_INC_ZPX: case INS_INC_ABS: case INS_INC_ABSX: // INC
+        case INS_DEC_ZP: case INS_DEC_ZPX: case INS_DEC_ABS: case INS_DEC_ABSX: // DEC
+        case INS_ASL_ZP: case INS_ASL_ZPX: case INS_ASL_ABS: case INS_ASL_ABSX: // ASL
+        case INS_LSR_ZP: case INS_LSR_ZPX: case INS_LSR_ABS: case INS_LSR_ABSX: // LSR
+        case INS_ROL_ZP: case INS_ROL_ZPX: case INS_ROL_ABS: case INS_ROL_ABSX: // ROL
+        case INS_ROR_ZP: case INS_ROR_ZPX: case INS_ROR_ABS: case INS_ROR_ABSX: // ROR
+            return ACCESS_RAM | ACCESS_MMIO;
+
+        /* ────────────────
+           Stack / sistema (RAM)
+           ──────────────── */
+        case INS_PHP: case INS_PLP:                   // PHP, PLP
+        case INS_PHA: case INS_PLA:                   // PHA, PLA
+        case INS_BRK:                              // BRK
+        case INS_JSR: case INS_RTS:                   // JSR, RTS
+        case INS_RTI:                              // RTI
+            return ACCESS_RAM;
+
+        /* ────────────────
+           Controle interno / flags / registradores
+           ──────────────── */
+        case INS_CLC: case INS_SEC:                   // CLC, SEC
+        case INS_CLI: case INS_SEI:                   // CLI, SEI
+        case INS_CLV:                              // CLV
+        case INS_CLD: case INS_SED:                   // CLD, SED
+        case INS_NOP:                              // NOP
+        case INS_TAX: case INS_TAY: case INS_TXA: case INS_TYA: // TAX,TAY,TXA,TYA
+        case INS_TSX: case INS_TXS:                   // TSX,TXS
+        case INS_DEX: case INS_DEY:                   // DEX,DEY
+        case INS_INX: case INS_INY:                   // INX,INY
+            return ACCESS_NONE;
+
+        /* ────────────────
+           Branches e jumps (somente leitura de PC/ROM)
+           ──────────────── */
+        case INS_JMP_ABS: case INS_JMP_IND:                   // JMP abs, ind
+        case INS_BPL: case INS_BMI: case INS_BVC: case INS_BVS:
+        case INS_BCC: case INS_BCS: case INS_BNE: case INS_BEQ: // branches
+            return ACCESS_NONE; // ROM é usada no fetch, não aqui
+
+        default:
+            // Instrução não reconhecida (ou futura expansão)
+            return ACCESS_NONE;
+    }
+}
+
 
 void
 run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
 
   Byte Ins = FetchByte (Cycles, bus, memory, cpu);
+  AccessType accessType = get_instruction_access_type (Ins);
+  cpu->CurrentAccess = accessType;
+  
 
   switch (Ins)
     {
@@ -474,4 +556,6 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       (*Cycles) = 0;
       break;
     }
+    
+    cpu->CurrentAccess = ACCESS_NONE;
 }

@@ -27,7 +27,7 @@ static inline void
 STY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, Cycles);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, Cycles, cpu);
   spend_cycles (3);
 }
 
@@ -41,7 +41,7 @@ STY_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, Cycles);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, Cycles, cpu);
   spend_cycles (4);
 }
 
@@ -54,7 +54,7 @@ static inline void
 STY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_write (bus, memory, Absolute, cpu->Y, Cycles);
+  cpu_write (bus, memory, Absolute, cpu->Y, Cycles, cpu);
   spend_cycles (4);
 }
 

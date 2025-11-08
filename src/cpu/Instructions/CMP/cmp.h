@@ -51,7 +51,7 @@ static inline void
 CMP_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (3);
@@ -68,7 +68,7 @@ CMP_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
   (*Cycles)--;
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
@@ -83,7 +83,7 @@ static inline void
 CMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles);
+  cpu_read (bus, memory, Absolute, Cycles, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
@@ -107,7 +107,7 @@ CMP_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, NewAddress, Cycles);
+  cpu_read (bus, memory, NewAddress, Cycles, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
@@ -131,7 +131,7 @@ CMP_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, NewAddress, Cycles);
+  cpu_read (bus, memory, NewAddress, Cycles, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
