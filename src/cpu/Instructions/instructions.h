@@ -225,8 +225,8 @@ typedef enum {
     INS_SBC_ABS = 0xED, // done
     INS_SBC_ABSX = 0xFD, // done
     INS_SBC_ABSY = 0xF9, // done
-    INS_SBC_INDX = 0xE1,
-    INS_SBC_INDY = 0xF1,
+    INS_SBC_INDX = 0xE1, // done
+    INS_SBC_INDY = 0xF1, // done
 
     // Register Comparison
     INS_CMP_IM = 0xC9, // done
