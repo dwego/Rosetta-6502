@@ -154,4 +154,57 @@ LDA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   spend_cycles (4);
 }
 
+
+/*
+   LDA_INDX - Load Accumulator from (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page address. The X register is added
+   to this base zero-page address to get a new zero-page location. The low and
+   high bytes of the final target address are read from this zero-page pair,
+   forming a 16-bit effective address.
+*/
+
+static inline void
+LDA_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  zp += cpu->X;  // add X offset (wraps within zero page)
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu->A = bus->data;
+  LDASetStatus (cpu);
+  spend_cycles (6);
+}
+
+/*
+   LDA_INDY - Load Accumulator from (Indirect), Y addressing mode.
+   In this mode, the operand is a zero-page address that points to a 16-bit
+   base address. The Y register is then added to this base address to form
+   the final effective address. If this addition crosses a page boundary,
+   one extra cycle is added. 
+*/
+
+static inline void
+LDA_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  if ((base & 0xFF00) != (addr & 0xFF00))  // page boundary crossed
+    {
+      (*Cycles)++;
+      spend_cycle ();
+    }
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu->A = bus->data;
+  LDASetStatus (cpu);
+  spend_cycles (5);
+}
+
 #endif // LDA_H
