@@ -18,9 +18,9 @@
    It updates the cycle count accordingly.
 */
 static inline void
-JMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+JMP_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Sub_Addr = FetchWord (Cycles, bus, memory, cpu);
+  Word Sub_Addr = FetchWord (bus, memory, cpu);
   cpu->PC = Sub_Addr;
   spend_cycles (3);
 }
@@ -36,11 +36,11 @@ JMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    Cycle count is adjusted accordingly.
 */
 static inline void
-JMP_IND (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+JMP_IND (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word PtrAddr = FetchWord (Cycles, bus, memory, cpu);
+  Word PtrAddr = FetchWord (bus, memory, cpu);
 
-  cpu_read (bus, memory, PtrAddr, Cycles, cpu);
+  cpu_read (bus, memory, PtrAddr, cpu);
   Byte LoByte = bus->data;
 
   if ((PtrAddr & 0x00FF) == 0x00FF)
@@ -48,13 +48,13 @@ JMP_IND (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       // Emulate page boundary bug: high byte read wraps around in the same
       // page
 
-      cpu_read (bus, memory, PtrAddr & 0xFF00, Cycles, cpu);
+      cpu_read (bus, memory, PtrAddr & 0xFF00, cpu);
     }
   else
     {
       // Normal case: high byte read from next address
 
-      cpu_read (bus, memory, PtrAddr + 1, Cycles, cpu);
+      cpu_read (bus, memory, PtrAddr + 1, cpu);
     }
 
   Byte HiByte = bus->data;

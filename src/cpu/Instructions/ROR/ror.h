@@ -41,14 +41,14 @@ RORSetStatus (Byte originalValue, Byte result, CPU6502 *cpu)
    updates the accumulator, sets status flags, and spends cycles.
 */
 static inline void
-ROR_ACC (Word *Cycles, CPU6502 *cpu)
+ROR_ACC (CPU6502 *cpu)
 {
   Byte original = cpu->A;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
   cpu->A = result;
-  (*Cycles)--;
+  
 
   RORSetStatus (original, result, cpu);
 }
@@ -60,16 +60,16 @@ ROR_ACC (Word *Cycles, CPU6502 *cpu)
    writes the result back, updates status flags, and spends cycles.
 */
 static inline void
-ROR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ROR_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte addr = FetchByte (Cycles, bus, memory, cpu);
+  Byte addr = FetchByte (bus, memory, cpu);
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
-  cpu_write (bus, memory, addr, result, Cycles, cpu);
+  cpu_write (bus, memory, addr, result, cpu);
 
   RORSetStatus (original, result, cpu);
 }
@@ -80,18 +80,18 @@ ROR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    rotation.
 */
 static inline void
-ROR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ROR_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte addr = FetchByte (Cycles, bus, memory, cpu);
+  Byte addr = FetchByte (bus, memory, cpu);
   addr += cpu->X;
-  (*Cycles)--;
+  
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
-  cpu_write (bus, memory, addr, result, Cycles, cpu);
+  cpu_write (bus, memory, addr, result, cpu);
 
   RORSetStatus (original, result, cpu);
 }
@@ -103,16 +103,16 @@ ROR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    writes the result back, sets flags, and spends cycles.
 */
 static inline void
-ROR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ROR_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word addr = FetchWord (Cycles, bus, memory, cpu);
+  Word addr = FetchWord (bus, memory, cpu);
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
-  cpu_write (bus, memory, addr, result, Cycles, cpu);
+  cpu_write (bus, memory, addr, result, cpu);
 
   RORSetStatus (original, result, cpu);
 }
@@ -123,17 +123,17 @@ ROR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    rotation.
 */
 static inline void
-ROR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ROR_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word addr = FetchWord (Cycles, bus, memory, cpu);
+  Word addr = FetchWord (bus, memory, cpu);
   addr += cpu->X;
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original >> 1) | (oldCarry << 7);
-  cpu_write (bus, memory, addr, result, Cycles, cpu);
+  cpu_write (bus, memory, addr, result, cpu);
 
   RORSetStatus (original, result, cpu);
 }

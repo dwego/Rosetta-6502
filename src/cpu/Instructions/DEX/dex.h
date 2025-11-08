@@ -33,11 +33,11 @@ DEXSetStatus (CPU6502 *cpu)
    sets the status flags, and spends the required CPU cycles.
 */
 static inline void
-DEX (Word *Cycles, CPU6502 *cpu)
+DEX (CPU6502 *cpu)
 {
   cpu->X--;
   DEXSetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

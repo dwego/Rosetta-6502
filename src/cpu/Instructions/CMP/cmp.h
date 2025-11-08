@@ -34,9 +34,9 @@ CMPSetStatus (Byte Result, CPU6502 *cpu)
    Fetches a byte from memory, compares it with A, and updates status flags.
 */
 static inline void
-CMP_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CMP_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, bus, memory, cpu);
+  Byte Value = FetchByte (bus, memory, cpu);
   Byte Result = cpu->A - Value;
   CMPSetStatus (Result, cpu);
   spend_cycles (2);
@@ -48,10 +48,10 @@ CMP_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    compares it with A, and updates status flags.
 */
 static inline void
-CMP_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CMP_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (3);
@@ -63,12 +63,12 @@ CMP_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    it with A and updates status flags.
 */
 static inline void
-CMP_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CMP_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  (*Cycles)--;
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
@@ -80,10 +80,10 @@ CMP_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    compares it with A, and updates status flags.
 */
 static inline void
-CMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CMP_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
@@ -96,18 +96,18 @@ CMP_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    status flags.
 */
 static inline void
-CMP_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CMP_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Word NewAddress = Absolute + cpu->X;
 
   if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, NewAddress, Cycles, cpu);
+  cpu_read (bus, memory, NewAddress, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
@@ -120,18 +120,18 @@ CMP_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    status flags.
 */
 static inline void
-CMP_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CMP_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Word NewAddress = Absolute + cpu->Y;
 
   if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, NewAddress, Cycles, cpu);
+  cpu_read (bus, memory, NewAddress, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (4);
@@ -146,15 +146,15 @@ CMP_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-CMP_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CMP_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte zp = FetchByte (bus, memory, cpu);
   zp += cpu->X; // zero-page wraparound
   Byte lo = memory->Data[zp];
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word addr = (hi << 8) | lo;
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (6);
@@ -170,9 +170,9 @@ CMP_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-CMP_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+CMP_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte zp = FetchByte (bus, memory, cpu);
   Byte lo = memory->Data[zp];
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word base = (hi << 8) | lo;
@@ -180,11 +180,11 @@ CMP_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
   if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte Result = cpu->A - bus->data;
   CMPSetStatus (Result, cpu);
   spend_cycles (5);

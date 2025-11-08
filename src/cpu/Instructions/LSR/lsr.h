@@ -40,11 +40,11 @@ LSRSetStatus (Byte Value, CPU6502 *cpu)
    Performs the shift directly on the A register.
 */
 static inline void
-LSR_ACC (Word *Cycles, CPU6502 *cpu)
+LSR_ACC (CPU6502 *cpu)
 {
   Byte Value = cpu->A;
   LSRSetStatus (Value, cpu);
-  (*Cycles) -= 2;
+  ;
   spend_cycles (2);
 }
 
@@ -54,12 +54,12 @@ LSR_ACC (Word *Cycles, CPU6502 *cpu)
    and updates flags accordingly.
 */
 static inline void
-LSR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LSR_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte addr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  Byte addr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte Value = bus->data;
-  cpu_write (bus, memory, addr, Value >> 1, Cycles, cpu);
+  cpu_write (bus, memory, addr, Value >> 1, cpu);
 
   cpu->Flag.C = Value & 0x01;
   cpu->Flag.Z = ((Value >> 1) == 0);
@@ -72,15 +72,15 @@ LSR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    Applies wrapping within 0x00–0xFF.
 */
 static inline void
-LSR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LSR_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte addr = FetchByte (Cycles, bus, memory, cpu);
+  Byte addr = FetchByte (bus, memory, cpu);
   addr += cpu->X;
-  (*Cycles)--;
+  
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte Value = bus->data;
-  cpu_write (bus, memory, addr, Value >> 1, Cycles, cpu);
+  cpu_write (bus, memory, addr, Value >> 1, cpu);
 
   cpu->Flag.C = Value & 0x01;
   cpu->Flag.Z = ((Value >> 1) == 0);
@@ -94,12 +94,12 @@ LSR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    result.
 */
 static inline void
-LSR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LSR_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word addr = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  Word addr = FetchWord (bus, memory, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte Value = bus->data;
-  cpu_write (bus, memory, addr, Value >> 1, Cycles, cpu);
+  cpu_write (bus, memory, addr, Value >> 1, cpu);
 
   cpu->Flag.C = Value & 0x01;
   cpu->Flag.Z = ((Value >> 1) == 0);
@@ -112,14 +112,14 @@ LSR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    Reads the address, adds X, performs the shift, and writes the result back.
 */
 static inline void
-LSR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LSR_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word addr = FetchWord (Cycles, bus, memory, cpu);
+  Word addr = FetchWord (bus, memory, cpu);
   addr += cpu->X;
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte Value = bus->data;
-  cpu_write (bus, memory, addr, Value >> 1, Cycles, cpu);
+  cpu_write (bus, memory, addr, Value >> 1, cpu);
 
   cpu->Flag.C = Value & 0x01;
   cpu->Flag.Z = ((Value >> 1) == 0);

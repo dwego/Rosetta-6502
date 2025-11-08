@@ -19,9 +19,9 @@
 */
 
 static inline void
-NOP (Word *Cycles)
+NOP ()
 {
-  (*Cycles)--;      // Decrease the cycle count by one
+        // Decrease the cycle count by one
   spend_cycles (2); // Simulate 2 CPU cycles typically used by NOP
 }
 

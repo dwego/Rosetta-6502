@@ -39,9 +39,9 @@ EORSetStatus (CPU6502 *cpu)
    (A), then sets the status flags accordingly.
 */
 static inline void
-EOR_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+EOR_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, bus, memory, cpu);
+  Byte Value = FetchByte (bus, memory, cpu);
   cpu->A ^= Value;
   EORSetStatus (cpu);
   spend_cycles (2);
@@ -54,10 +54,10 @@ EOR_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    flags accordingly.
 */
 static inline void
-EOR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+EOR_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (3);
@@ -69,12 +69,12 @@ EOR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    reading. It adjusts the cycle count accordingly and sets the status flags.
 */
 static inline void
-EOR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+EOR_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  (*Cycles)--;
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
@@ -87,10 +87,10 @@ EOR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    status flags.
 */
 static inline void
-EOR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+EOR_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
@@ -103,9 +103,9 @@ EOR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    cycle count. It then sets the status flags.
 */
 static inline void
-EOR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+EOR_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
 
   Word OldPage = Absolute & 0xFF00;
   Absolute += cpu->X;
@@ -113,11 +113,11 @@ EOR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
   if (OldPage != NewPage)
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
@@ -131,9 +131,9 @@ EOR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-EOR_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+EOR_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
 
   Word OldPage = Absolute & 0xFF00;
   Absolute += cpu->Y;
@@ -141,11 +141,11 @@ EOR_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
   if (OldPage != NewPage)
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
@@ -160,15 +160,15 @@ EOR_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-EOR_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+EOR_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte zp = FetchByte (bus, memory, cpu);
   zp += cpu->X; // apply X offset (wrap-around zero page)
   Byte lo = memory->Data[zp];
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word addr = (hi << 8) | lo;
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   cpu->A ^= bus->data;
   EORSetStatus (cpu);
   spend_cycles (6);
@@ -183,9 +183,9 @@ EOR_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-EOR_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+EOR_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte zp = FetchByte (bus, memory, cpu);
   Byte lo = memory->Data[zp];
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word base = (hi << 8) | lo;
@@ -193,11 +193,11 @@ EOR_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
   if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   cpu->A ^= bus->data;
   EORSetStatus (cpu);
   spend_cycles (5);
