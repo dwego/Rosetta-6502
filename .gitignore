@@ -12,3 +12,4 @@ tests/compile_commands.json
 tests/test
 .vscode/
 test.asm
+a.out
