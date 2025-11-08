@@ -40,7 +40,7 @@ JMP_IND (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word PtrAddr = FetchWord (Cycles, bus, memory, cpu);
 
-  cpu_read (bus, memory, PtrAddr, Cycles);
+  cpu_read (bus, memory, PtrAddr, Cycles, cpu);
   Byte LoByte = bus->data;
 
   if ((PtrAddr & 0x00FF) == 0x00FF)
@@ -48,13 +48,13 @@ JMP_IND (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       // Emulate page boundary bug: high byte read wraps around in the same
       // page
 
-      cpu_read (bus, memory, PtrAddr & 0xFF00, Cycles);
+      cpu_read (bus, memory, PtrAddr & 0xFF00, Cycles, cpu);
     }
   else
     {
       // Normal case: high byte read from next address
 
-      cpu_read (bus, memory, PtrAddr + 1, Cycles);
+      cpu_read (bus, memory, PtrAddr + 1, Cycles, cpu);
     }
 
   Byte HiByte = bus->data;

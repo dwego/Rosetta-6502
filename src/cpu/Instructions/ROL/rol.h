@@ -65,12 +65,12 @@ ROL_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte addr = FetchByte (Cycles, bus, memory, cpu);
 
-  cpu_read (bus, memory, addr, Cycles);
+  cpu_read (bus, memory, addr, Cycles, cpu);
   Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original << 1) | oldCarry;
-  cpu_write (bus, memory, addr, result, Cycles);
+  cpu_write (bus, memory, addr, result, Cycles, cpu);
 
   ROLSetStatus (original, result, cpu);
   spend_cycles (5);
@@ -88,12 +88,12 @@ ROL_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   addr += cpu->X;
   (*Cycles)--;
 
-  cpu_read (bus, memory, addr, Cycles);
+  cpu_read (bus, memory, addr, Cycles, cpu);
   Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original << 1) | oldCarry;
-  cpu_write (bus, memory, addr, result, Cycles);
+  cpu_write (bus, memory, addr, result, Cycles, cpu);
 
   ROLSetStatus (original, result, cpu);
   spend_cycles (6);
@@ -110,12 +110,12 @@ ROL_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word addr = FetchWord (Cycles, bus, memory, cpu);
 
-  cpu_read (bus, memory, addr, Cycles);
+  cpu_read (bus, memory, addr, Cycles, cpu);
   Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original << 1) | oldCarry;
-  cpu_write (bus, memory, addr, result, Cycles);
+  cpu_write (bus, memory, addr, result, Cycles, cpu);
 
   ROLSetStatus (original, result, cpu);
   spend_cycles (6);
@@ -132,12 +132,12 @@ ROL_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Word addr = FetchWord (Cycles, bus, memory, cpu);
   addr += cpu->X;
 
-  cpu_read (bus, memory, addr, Cycles);
+  cpu_read (bus, memory, addr, Cycles, cpu);
   Byte original = bus->data;
   Byte oldCarry = cpu->Flag.C;
 
   Byte result = (original << 1) | oldCarry;
-  cpu_write (bus, memory, addr, result, Cycles);
+  cpu_write (bus, memory, addr, result, Cycles, cpu);
 
   ROLSetStatus (original, result, cpu);
   spend_cycles (7);

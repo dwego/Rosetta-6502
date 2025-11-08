@@ -63,7 +63,7 @@ static inline void
 SBC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   Byte Value = bus->data;
   Byte Before = cpu->A;
 
@@ -87,7 +87,7 @@ SBC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
 
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   Byte Value = bus->data;
   Byte Before = cpu->A;
 
@@ -110,7 +110,7 @@ SBC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, bus, memory, cpu);
 
-  cpu_read (bus, memory, Absolute, Cycles);
+  cpu_read (bus, memory, Absolute, Cycles, cpu);
   Byte Value = bus->data;
   Byte Before = cpu->A;
 
@@ -141,7 +141,7 @@ SBC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, Cycles);
+  cpu_read (bus, memory, Absolute, Cycles, cpu);
   Byte Value = bus->data;
   Byte Before = cpu->A;
 
@@ -172,7 +172,7 @@ SBC_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, NewAddress, Cycles);
+  cpu_read (bus, memory, NewAddress, Cycles, cpu);
   Byte Value = bus->data;
   Byte Before = cpu->A;
 

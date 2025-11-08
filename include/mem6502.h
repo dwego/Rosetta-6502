@@ -1,13 +1,14 @@
 #ifndef MEM6502_H
 #define MEM6502_H
 
+
 #include "bus.h"
+#include "memory_map.h"
 #include "config.h"
+#include "access_type.h"
+typedef struct CPU6502 CPU6502;
 
 #define RAM_SIZE 65536
-
-#define STACK_START 0x100
-#define STACK_END 0x1FF
 
 #define ROM_SIZE 4096
 
@@ -33,7 +34,7 @@
 extern const DWord MAX_MEM;
 
 // Structure representing the memory for the 6502 system.
-typedef struct
+typedef struct MEM6502
 {
   Byte *Data; // Emulates RAM to allocate 65 Kilobytes for storing data.
 } MEM6502;
@@ -44,10 +45,7 @@ void initializeMem6502 (MEM6502 *memory);
 // Frees 65 Kilobytes of RAM.
 void freeMem6502 (MEM6502 *memory);
 
-void cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address,
-               Word *Cycles);
-
-void cpu_write (Bus6502 *bus, MEM6502 *memory, Word address, Byte data,
-                Word *Cycles);
+void cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address, Word *Cycles, CPU6502 *cpu);
+void cpu_write (Bus6502 *bus, MEM6502 *memory, Word address, Byte data, Word *Cycles, CPU6502 *cpu);
 
 #endif // MEM6502_H
