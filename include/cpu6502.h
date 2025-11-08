@@ -112,12 +112,12 @@ void resetCPU (CPU6502 *cpu, MEM6502 *memory);
 
 // This function fetches a byte of data from the memory using the program
 // counter (PC).
-Byte FetchByte (Word *Cycles, Bus6502 *bus, const MEM6502 *memory,
+Byte FetchByte (Bus6502 *bus, const MEM6502 *memory,
                 CPU6502 *cpu);
 
 // This function fetches a 16-bit word of data from the memory using the
 // program counter (PC).
-Word FetchWord (Word *Cycles, Bus6502 *bus, const MEM6502 *memory,
+Word FetchWord (Bus6502 *bus, const MEM6502 *memory,
                 CPU6502 *cpu);
 
 // This function converts the Stack Pointer (SP) value to a memory address.
@@ -126,21 +126,21 @@ Word SPToAddress (CPU6502 *cpu);
 // Stacks:
 
 // This function pushes a 8-bit Byte onto the stack.
-void PushByteToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, Word Value,
+void PushByteToStack (Bus6502 *bus, MEM6502 *memory, Word Value,
                       CPU6502 *cpu);
 
 // This function pushes a 16-bit word onto the stack.
-void PushWordToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, Word Value,
+void PushWordToStack (Bus6502 *bus, MEM6502 *memory, Word Value,
                       CPU6502 *cpu);
 
 // This function pushes the Program Counter (PC) onto the stack.
-void PushPCToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu);
+void PushPCToStack (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu);
 
 // This function pops a 16-bit word from the stack.
-Word PopWordFromStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory,
+Word PopWordFromStack (Bus6502 *bus, MEM6502 *memory,
                        CPU6502 *cpu);
 
-Byte PopByteFromStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory,
+Byte PopByteFromStack (Bus6502 *bus, MEM6502 *memory,
                        CPU6502 *cpu);
 
 #endif // CPU6502_H

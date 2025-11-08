@@ -35,11 +35,11 @@ TAXSetStatus (CPU6502 *cpu)
    Consumes 2 CPU cycles.
 */
 static inline void
-TAX (Word *Cycles, CPU6502 *cpu)
+TAX (CPU6502 *cpu)
 {
   cpu->X = cpu->A;
   TAXSetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

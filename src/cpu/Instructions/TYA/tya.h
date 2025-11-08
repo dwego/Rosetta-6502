@@ -30,11 +30,11 @@ TYASetStatus (CPU6502 *cpu)
    Consumes 2 CPU cycles.
 */
 static inline void
-TYA (Word *Cycles, CPU6502 *cpu)
+TYA (CPU6502 *cpu)
 {
   cpu->A = cpu->Y;
   TYASetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

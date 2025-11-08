@@ -34,9 +34,9 @@ ADCSetStatus (CPU6502 *cpu, Byte before, Byte value)
 */
 
 static inline void
-ADC_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, bus, memory, cpu);
+  Byte Value = FetchByte (bus, memory, cpu);
 
   Byte Before = cpu->A;
   cpu->A += Value + cpu->Flag.C;
@@ -52,10 +52,10 @@ ADC_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
 
   Byte Before = cpu->A;
   cpu->A += bus->data + cpu->Flag.C;
@@ -72,12 +72,12 @@ ADC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
 
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
 
   Byte Before = cpu->A;
   cpu->A += bus->data + cpu->Flag.C;
@@ -93,11 +93,11 @@ ADC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
 
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   Byte Before = cpu->A;
   cpu->A += bus->data + cpu->Flag.C;
   ADCSetStatus (cpu, Before, bus->data);
@@ -113,18 +113,18 @@ ADC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Word NewAddress = Absolute + cpu->X;
 
   if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, NewAddress, Cycles, cpu);
+  cpu_read (bus, memory, NewAddress, cpu);
   Byte Before = cpu->A;
   cpu->A += bus->data + cpu->Flag.C;
   ADCSetStatus (cpu, Before, bus->data);
@@ -140,18 +140,18 @@ ADC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Word NewAddress = Absolute + cpu->Y;
 
   if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, NewAddress, Cycles, cpu);
+  cpu_read (bus, memory, NewAddress, cpu);
   Byte Before = cpu->A;
   cpu->A += bus->data + cpu->Flag.C;
   ADCSetStatus (cpu, Before, bus->data);
@@ -167,15 +167,15 @@ ADC_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte zp = FetchByte (bus, memory, cpu);
   zp += cpu->X; // zero-page wrap
   Byte lo = memory->Data[zp];
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word addr = (hi << 8) | lo;
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte Value = bus->data;
   Byte Before = cpu->A;
 
@@ -193,9 +193,9 @@ ADC_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte zp = FetchByte (bus, memory, cpu);
   Byte lo = memory->Data[zp];
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word base = (hi << 8) | lo;
@@ -203,11 +203,11 @@ ADC_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
   if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, addr, Cycles, cpu);
+  cpu_read (bus, memory, addr, cpu);
   Byte Value = bus->data;
   Byte Before = cpu->A;
 

@@ -16,10 +16,9 @@ load_and_run (const Byte *prog, size_t len, Word expected_cycles)
     }
 
   memcpy (&mem.Data[0x8000], prog, len);
-  cycles = expected_cycles;
 
   clock_init ();
-  while (cycles)
+  while (1)
     run_cpu_instruction (&cycles, &bus, &mem, &cpu);
 }
 

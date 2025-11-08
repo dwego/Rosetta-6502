@@ -37,9 +37,9 @@ PLPSetStatus (CPU6502 *cpu)
 */
 
 static inline void
-PLP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+PLP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = PopByteFromStack (Cycles, bus, memory, cpu);
+  Byte Value = PopByteFromStack (bus, memory, cpu);
   cpu->PS = Value;
   PLPSetStatus (cpu);
   spend_cycles (4);

@@ -33,11 +33,11 @@ DEYSetStatus (CPU6502 *cpu)
    sets the status flags, and spends the required CPU cycles.
 */
 static inline void
-DEY (Word *Cycles, CPU6502 *cpu)
+DEY (CPU6502 *cpu)
 {
   cpu->Y--;
   DEYSetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

@@ -29,16 +29,16 @@
 */
 
 static inline void
-BRK (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+BRK (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   cpu->PC += 2;
-  (*Cycles)--;
+  
 
-  PushPCToStack (Cycles, bus, memory, cpu);
+  PushPCToStack (bus, memory, cpu);
 
   Byte status_with_B = cpu->PS | 0x10;
 
-  PushByteToStack (Cycles, bus, memory, status_with_B, cpu);
+  PushByteToStack (bus, memory, status_with_B, cpu);
 
   cpu->Flag.I = 1;
   cpu->PS |= (1 << 2); // Set Interrupt Disable flag in PS
@@ -46,7 +46,7 @@ BRK (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte lo = memory->Data[0xFFFE];
   Byte hi = memory->Data[0xFFFF];
   cpu->PC = (hi << 8) | lo;
-  (*Cycles) -= 2;
+  ;
   spend_cycles (7);
 }
 
