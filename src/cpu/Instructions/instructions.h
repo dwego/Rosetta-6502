@@ -160,8 +160,8 @@ typedef enum {
     INS_EOR_ABS = 0x4D, // done
     INS_EOR_ABSX = 0x5D, // done
     INS_EOR_ABSY = 0x59, // done
-    INS_EOR_INDX = 0x41,
-    INS_EOR_INDY = 0x51,
+    INS_EOR_INDX = 0x41, // done
+    INS_EOR_INDY = 0x51, // done
 
     //BIT
 
