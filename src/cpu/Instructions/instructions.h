@@ -149,8 +149,8 @@ typedef enum {
     INS_ORA_ABS = 0x0D, // done
     INS_ORA_ABSX = 0x1D, // done
     INS_ORA_ABSY = 0x19, // done
-    INS_ORA_INDX = 0x01,
-    INS_ORA_INDY = 0x11,
+    INS_ORA_INDX = 0x01, // done
+    INS_ORA_INDY = 0x11, // done
 
     //EOR
 
@@ -158,7 +158,7 @@ typedef enum {
     INS_EOR_ZP = 0x45, // done
     INS_EOR_ZPX = 0x55, // done
     INS_EOR_ABS = 0x4D, // done
-    INS_EOR_ABSX = 0x5D, // done // done
+    INS_EOR_ABSX = 0x5D, // done
     INS_EOR_ABSY = 0x59, // done
     INS_EOR_INDX = 0x41,
     INS_EOR_INDY = 0x51,
