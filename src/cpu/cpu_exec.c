@@ -590,6 +590,9 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
     /*──────────────────────────────────
       MISC
       ──────────────────────────────────*/
+    case INS_RTI:
+      RTI (Cycles, bus, memory, cpu);
+      break;
     case INS_NOP:
       NOP (Cycles);
       break;
