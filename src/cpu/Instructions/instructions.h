@@ -103,8 +103,8 @@ typedef enum {
     INS_STA_ABS = 0x8D, // done
     INS_STA_ABSX = 0x9D, // done
     INS_STA_ABSY = 0x99, // done
-    INS_STA_INDX = 0x81, //done
-    INS_STA_INDY = 0x91, //done
+    INS_STA_INDX = 0x81, // done
+    INS_STA_INDY = 0x91, // done
 
     //STX
     INS_STX_ZP = 0x86, // done
@@ -138,8 +138,8 @@ typedef enum {
     INS_AND_ABS = 0x2D, // done
     INS_AND_ABSX = 0x3D, // done
     INS_AND_ABSY = 0x39, // done
-    INS_AND_INDX = 0x21,
-    INS_AND_INDY = 0x31,
+    INS_AND_INDX = 0x21, // done
+    INS_AND_INDY = 0x31, // done
 
     //ORA
 
