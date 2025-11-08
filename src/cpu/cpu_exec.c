@@ -111,6 +111,12 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
     case INS_LDA_ABSY:
       LDA_ABSY (Cycles, bus, memory, cpu);
       break;
+    case INS_LDA_INDX:
+      LDA_INDX (Cycles, bus, memory, cpu);
+      break;
+    case INS_LDA_INDY:
+      LDA_INDY (Cycles, bus, memory, cpu);
+      break;
 
     case INS_LDX_IM:
       LDX_IM (Cycles, bus, memory, cpu);
@@ -158,6 +164,12 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
     case INS_STA_ABSY:
       STA_ABSY (Cycles, bus, memory, cpu);
+      break;
+    case INS_STA_INDX:
+      STA_INDX (Cycles, bus, memory, cpu);
+      break;
+    case INS_STA_INDY:
+      STA_INDY (Cycles, bus, memory, cpu);
       break;
 
     case INS_STX_ZP:
@@ -252,6 +264,13 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
     case INS_AND_ABSY:
       AND_ABSY (Cycles, bus, memory, cpu);
       break;
+    case INS_AND_INDX:
+      AND_INDX (Cycles, bus, memory, cpu);
+      break;
+    case INS_AND_INDY:
+      AND_INDY (Cycles, bus, memory, cpu);
+      break;
+    
 
     case INS_ORA_IM:
       ORA_IM (Cycles, bus, memory, cpu);
@@ -271,6 +290,12 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
     case INS_ORA_ABSY:
       ORA_ABSY (Cycles, bus, memory, cpu);
       break;
+    case INS_ORA_INDX:
+      ORA_INDX (Cycles, bus, memory, cpu);
+      break;
+    case INS_ORA_INDY:
+      ORA_INDY (Cycles, bus, memory, cpu);
+      break;
 
     case INS_EOR_IM:
       EOR_IM (Cycles, bus, memory, cpu);
@@ -289,6 +314,12 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
     case INS_EOR_ABSY:
       EOR_ABSY (Cycles, bus, memory, cpu);
+      break;
+    case INS_EOR_INDX:
+      EOR_INDX (Cycles, bus, memory, cpu);
+      break;
+    case INS_EOR_INDY:
+      EOR_INDY (Cycles, bus, memory, cpu);
       break;
 
     case INS_BIT_ZP:
@@ -410,6 +441,12 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
     case INS_ADC_ABSY:
       ADC_ABSY (Cycles, bus, memory, cpu);
       break;
+    case INS_ADC_INDX:
+      ADC_INDX (Cycles, bus, memory, cpu);
+      break;
+    case INS_ADC_INDY:
+      ADC_INDY (Cycles, bus, memory, cpu);
+      break;
 
     case INS_SBC_IM:
       SBC_IM (Cycles, bus, memory, cpu);
@@ -428,6 +465,12 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
     case INS_SBC_ABSY:
       SBC_ABSY (Cycles, bus, memory, cpu);
+      break;
+    case INS_SBC_INDX:
+      SBC_INDX (Cycles, bus, memory, cpu);
+      break;
+    case INS_SBC_INDY:
+      SBC_INDY (Cycles, bus, memory, cpu);
       break;
 
     /*──────────────────────────────────
@@ -450,6 +493,12 @@ run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
     case INS_CMP_ABSY:
       CMP_ABSY (Cycles, bus, memory, cpu);
+      break;
+    case INS_CMP_INDX:
+      CMP_INDX (Cycles, bus, memory, cpu);
+      break;
+    case INS_CMP_INDY:
+      CMP_INDY (Cycles, bus, memory, cpu);
       break;
 
     case INS_CPX:
