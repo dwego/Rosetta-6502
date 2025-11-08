@@ -63,19 +63,18 @@ main (int argc, char *argv[])
   mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
   program_start = 0x8000;
 
-// vetor de reset aponta para 0x8000
-mem.Data[0xFFFC] = program_start & 0xFF;
-mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
+  // vetor de reset aponta para 0x8000
+  mem.Data[0xFFFC] = program_start & 0xFF;
+  mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
 
-// programa:
-mem.Data[0x8000] = INS_LDA_IM;   // opcode LDA imediato
-mem.Data[0x8001] = 0xAA;         // valor 0xAA
-mem.Data[0x8002] = INS_STA_ABS;  // opcode STA absoluto
-mem.Data[0x8003] = 0x00;         // low byte do endereço $E000
-mem.Data[0x8004] = 0xE0;         // high byte do endereço $E000
-mem.Data[0x8005] = INS_BRK;  
+  // programa:
+  mem.Data[0x8000] = INS_LDA_IM;   // opcode LDA imediato
+  mem.Data[0x8001] = 0xAA;         // valor 0xAA
+  mem.Data[0x8002] = INS_STA_ABS;  // opcode STA absoluto
+  mem.Data[0x8003] = 0x00;         // low byte do endereço $E000
+  mem.Data[0x8004] = 0xE0;         // high byte do endereço $E000
+  mem.Data[0x8005] = INS_BRK;  
 
-  // Break ASM because "0x02" isn't a instruction
   mem.Data[0x8010] = 0x02;
 
   // printf ("PC before reset: 0x%04X\n", cpu.PC);
