@@ -10,9 +10,7 @@ main (int argc, char *argv[])
   CPU6502 cpu;
   MEM6502 mem;
   Bus6502 bus;
-  Word test;
   Byte acc;
-  Word Cycles = 20;
 
   FILE *fptr;
   int enable_ram_view = 0;
@@ -85,10 +83,7 @@ main (int argc, char *argv[])
   // init sync clock
   clock_init ();
 
-  while (Cycles > 0)
-    {
-      run_cpu_instruction (&Cycles, &bus, &mem, &cpu);
-    }
+  while (run_cpu_instruction(&bus, &mem, &cpu)); // sai automaticamente no BRK
 
   if (enable_ram_view)
     {
@@ -98,14 +93,18 @@ main (int argc, char *argv[])
   goto end;
 
 end:
-  test = 15;
   acc = cpu.A;
-  cpu_read (&bus, &mem, 0x42, &test, &cpu);
-  printf ("stored value in: Accumulator is: %u\n", acc);
-  printf ("stored value in Address 0x42 is: %u\n", bus.data);
 
-  freeMem6502 (&mem);
-  free(input_file);
-  close_log ();
+  cpu_read(&bus, &mem, 0x42, &cpu);
+
+  printf("stored value in: Accumulator is: %u\n", acc);
+  printf("stored value in Address 0x42 is: %u\n", bus.data);
+
+  freeMem6502(&mem);
+
+  if (input_file)
+      free(input_file);
+
+  close_log();
   return 0;
 }

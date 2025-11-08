@@ -24,10 +24,10 @@
    Consumes 2 CPU cycles.
 */
 static inline void
-TXS (Word *Cycles, CPU6502 *cpu)
+TXS (CPU6502 *cpu)
 {
   cpu->SP = cpu->X;
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

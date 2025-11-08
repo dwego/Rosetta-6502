@@ -25,10 +25,10 @@
 */
 
 static inline void
-STX_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STX_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_write (bus, memory, ZeroPageAddr, cpu->X, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->X, cpu);
   spend_cycles (3);
 }
 
@@ -39,11 +39,11 @@ STX_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STX_ZPY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STX_ZPY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->Y;
-  cpu_write (bus, memory, ZeroPageAddr, cpu->X, Cycles, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->X, cpu);
   spend_cycles (4);
 }
 
@@ -54,10 +54,10 @@ STX_ZPY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STX_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STX_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_write (bus, memory, Absolute, cpu->X, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_write (bus, memory, Absolute, cpu->X, cpu);
   spend_cycles (4);
 }
 

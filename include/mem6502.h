@@ -45,7 +45,7 @@ void initializeMem6502 (MEM6502 *memory);
 // Frees 65 Kilobytes of RAM.
 void freeMem6502 (MEM6502 *memory);
 
-void cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address, Word *Cycles, CPU6502 *cpu);
-void cpu_write (Bus6502 *bus, MEM6502 *memory, Word address, Byte data, Word *Cycles, CPU6502 *cpu);
+void cpu_read (Bus6502 *bus, const MEM6502 *memory, Word address, CPU6502 *cpu);
+void cpu_write (Bus6502 *bus, MEM6502 *memory, Word address, Byte data, CPU6502 *cpu);
 
 #endif // MEM6502_H

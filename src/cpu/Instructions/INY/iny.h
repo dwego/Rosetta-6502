@@ -29,12 +29,12 @@ INYSetStatus (CPU6502 *cpu)
    and spends the required CPU cycles.
 */
 static inline void
-INY (Word *Cycles, CPU6502 *cpu)
+INY (CPU6502 *cpu)
 {
   cpu->Y++;
   INYSetStatus (cpu);
   spend_cycles (2);
-  (*Cycles) -= 2;
+  ;
 }
 
 #endif // INY_H

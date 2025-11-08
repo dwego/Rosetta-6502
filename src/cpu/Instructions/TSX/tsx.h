@@ -29,11 +29,11 @@ TSXSetStatus (CPU6502 *cpu)
    Consumes 2 CPU cycles.
 */
 static inline void
-TSX (Word *Cycles, CPU6502 *cpu)
+TSX (CPU6502 *cpu)
 {
   cpu->X = cpu->SP;
   TSXSetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

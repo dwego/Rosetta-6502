@@ -33,20 +33,20 @@
 */
 
 static inline void
-BCC (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+BCC (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Relative = FetchByte (Cycles, bus, memory, cpu);
+  Byte Relative = FetchByte (bus, memory, cpu);
   if (cpu->Flag.C == 0)
     {
       Word OldPC = cpu->PC;
       cpu->PC += (SignedByte)Relative;
 
-      (*Cycles)--;
+      
       spend_cycle ();
 
       if ((OldPC & 0xFF00) != (cpu->PC & 0xFF00))
         {
-          (*Cycles)--;
+          
           spend_cycle ();
         }
     }

@@ -39,13 +39,13 @@ INCSetStatus (CPU6502 *cpu, Byte value)
    increments it by one, writes it back to memory, then updates the flags.
 */
 static inline void
-INC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+INC_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   Byte IncrementedValue = bus->data + 1;
 
-  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, Cycles, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, cpu);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (5);
 }
@@ -56,14 +56,14 @@ INC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    increments it, writes it back, then updates the flags.
 */
 static inline void
-INC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+INC_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   Byte IncrementedValue = bus->data + 1;
 
-  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, Cycles, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, cpu);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }
@@ -74,13 +74,13 @@ INC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    increments it, writes it back, then updates the flags.
 */
 static inline void
-INC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+INC_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   Byte IncrementedValue = bus->data + 1;
 
-  cpu_write (bus, memory, Absolute, I, Cycles, cpu);
+  cpu_write (bus, memory, Absolute, I, cpu);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }
@@ -91,15 +91,15 @@ INC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    reads the value, increments it, writes it back, then updates the flags.
 */
 static inline void
-INC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+INC_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Absolute += cpu->X;
 
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   Byte IncrementedValue = bus->data + 1;
 
-  cpu_write (bus, memory, Absolute, IncrementedValue, Cycles, cpu);
+  cpu_write (bus, memory, Absolute, IncrementedValue, cpu);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }

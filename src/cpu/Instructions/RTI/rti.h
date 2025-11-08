@@ -11,10 +11,10 @@
    Used to return from BRK, IRQ, or NMI interrupts.
 */
 static inline void
-RTI (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+RTI (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu->PS = PopByteFromStack (Cycles, bus, memory, cpu);
-  cpu->PC = PopWordFromStack (Cycles, bus, memory, cpu);
+  cpu->PS = PopByteFromStack (bus, memory, cpu);
+  cpu->PC = PopWordFromStack (bus, memory, cpu);
 
   spend_cycles (6);
 }
