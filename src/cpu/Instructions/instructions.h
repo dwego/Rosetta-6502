@@ -271,10 +271,10 @@ typedef enum {
     INS_ROR_ABSX = 0x7E,  // done
 
     //misc
-    INS_NOP = 0xEA,
+    INS_NOP = 0xEA, // done
     INS_BRK = 0x00, // done
-    INS_RTI = 0x40,
-    
+    INS_RTI = 0x40, // done
+
 } Instruction;
 
 
