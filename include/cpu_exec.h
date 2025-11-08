@@ -6,8 +6,9 @@
 #include "config.h"
 #include "cpu6502.h"
 #include "mem6502.h"
+#include <stdbool.h>
 
-void run_cpu_instruction (Word *Cycles, Bus6502 *bus, MEM6502 *memory,
+bool run_cpu_instruction (Bus6502 *bus, MEM6502 *memory,
                           CPU6502 *cpu);
 
 #endif // CPU_EXEC_H

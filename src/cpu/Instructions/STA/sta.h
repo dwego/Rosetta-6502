@@ -26,10 +26,10 @@
 */
 
 static inline void
-STA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STA_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_write (bus, memory, ZeroPageAddr, cpu->A, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->A, cpu);
   spend_cycles (3);
 }
 
@@ -40,11 +40,11 @@ STA_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STA_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  cpu_write (bus, memory, ZeroPageAddr, cpu->A, Cycles, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->A, cpu);
   spend_cycles (4);
 }
 
@@ -55,10 +55,10 @@ STA_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STA_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_write (bus, memory, Absolute, cpu->A, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_write (bus, memory, Absolute, cpu->A, cpu);
   spend_cycles (4);
 }
 
@@ -69,11 +69,11 @@ STA_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STA_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Absolute += cpu->X;
-  cpu_write (bus, memory, Absolute, cpu->A, Cycles, cpu);
+  cpu_write (bus, memory, Absolute, cpu->A, cpu);
   spend_cycles (5);
 }
 
@@ -84,12 +84,54 @@ STA_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-STA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STA_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
   Absolute += cpu->Y;
-  cpu_write (bus, memory, Absolute, cpu->A, Cycles, cpu);
+  cpu_write (bus, memory, Absolute, cpu->A, cpu);
   spend_cycles (5);
+}
+
+/*
+   STA_INDX - Store Accumulator using (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page base address. The X register
+   is added to this base address (wrapping in zero-page), forming a new
+   zero-page pointer location. The two bytes at that location are used
+   as the low/high bytes of the effective 16-bit address where the value
+   of A will be stored.
+*/
+
+static inline void
+STA_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (bus, memory, cpu);
+  zp += cpu->X;  // zero-page wraparound
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_write (bus, memory, addr, cpu->A, cpu);
+  spend_cycles (6);
+}
+
+/*
+   STA_INDY - Store Accumulator using (Indirect), Y addressing mode.
+   In this mode, the operand is a zero-page address pointing to a 16-bit base
+   address. The Y register is then added to that base to form the final target
+   address.
+*/
+
+static inline void
+STA_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  cpu_write (bus, memory, addr, cpu->A, cpu);
+  spend_cycles (6);
 }
 
 #endif // STA_H

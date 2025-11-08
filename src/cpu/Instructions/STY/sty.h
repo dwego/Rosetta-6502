@@ -24,10 +24,10 @@
    of Y into that address. It consumes 3 CPU cycles.
 */
 static inline void
-STY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STY_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, cpu);
   spend_cycles (3);
 }
 
@@ -37,11 +37,11 @@ STY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    writes Y to the resulting address. It consumes 4 CPU cycles.
 */
 static inline void
-STY_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STY_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, Cycles, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->Y, cpu);
   spend_cycles (4);
 }
 
@@ -51,10 +51,10 @@ STY_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    to that address. It consumes 4 CPU cycles.
 */
 static inline void
-STY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+STY_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_write (bus, memory, Absolute, cpu->Y, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_write (bus, memory, Absolute, cpu->Y, cpu);
   spend_cycles (4);
 }
 

@@ -7,7 +7,6 @@
 extern CPU6502 cpu;
 extern Bus6502 bus;
 extern MEM6502 mem;
-extern Word cycles;
 
 void load_and_run (const Byte *prog, size_t len, Word expected_cycles);
 

@@ -39,9 +39,9 @@ ANDSetStatus (CPU6502 *cpu)
 */
 
 static inline void
-AND_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+AND_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu->A &= FetchByte (Cycles, bus, memory, cpu);
+  cpu->A &= FetchByte (bus, memory, cpu);
   ANDSetStatus (cpu);
   spend_cycles (2);
 }
@@ -53,10 +53,10 @@ AND_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    value in the Accumulator. It then sets the status flags using ANDSetStatus.
 */
 static inline void
-AND_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+AND_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   cpu->A &= bus->data;
   ANDSetStatus (cpu);
   spend_cycles (3);
@@ -70,13 +70,13 @@ AND_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    Accumulator. It then sets the status flags using ANDSetStatus.
 */
 static inline void
-AND_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+AND_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   cpu->A &= bus->data;
-  (*Cycles)--;
+  
   ANDSetStatus (cpu);
   spend_cycles (4);
 }
@@ -88,10 +88,10 @@ AND_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    in the Accumulator. It then sets the status flags using ANDSetStatus.
 */
 static inline void
-AND_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+AND_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->A &= bus->data;
 
   ANDSetStatus (cpu);
@@ -107,9 +107,9 @@ AND_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-AND_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+AND_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
 
   Word OldPage = Absolute & 0xFF00;
   Absolute += cpu->X;
@@ -117,11 +117,11 @@ AND_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
   if (OldPage != NewPage)
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->A &= bus->data;
   ANDSetStatus (cpu);
   spend_cycles (4);
@@ -135,9 +135,9 @@ AND_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
    the status flags using ANDSetStatus.
 */
 static inline void
-AND_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+AND_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
 
   Word OldPage = Absolute & 0xFF00;
   Absolute += cpu->Y;
@@ -145,14 +145,65 @@ AND_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
   if (OldPage != NewPage)
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->A &= bus->data;
   ANDSetStatus (cpu);
   spend_cycles (4);
+}
+
+/*
+   AND_INDX - And with Accumulator using (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page address. The X register is added
+   to this base zero-page address (with wraparound), forming a new zero-page
+   location. The two bytes read from that location represent the low/high bytes
+   of the effective address.
+*/
+
+static inline void
+AND_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (bus, memory, cpu);
+  zp += cpu->X;  // zero-page wraparound
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_read (bus, memory, addr, cpu);
+  cpu->A &= bus->data;
+  ANDSetStatus (cpu);
+  spend_cycles (6);
+}
+
+/*
+   AND_INDY - And with Accumulator using (Indirect), Y addressing mode.
+   The operand is a zero-page address that points to a 16-bit base address.
+   The Y register is added to this base to form the final effective address.
+   If a page boundary is crossed, one extra cycle is used.
+*/
+
+static inline void
+AND_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  if ((base & 0xFF00) != (addr & 0xFF00))  // page boundary crossed
+    {
+      
+      spend_cycle ();
+    }
+
+  cpu_read (bus, memory, addr, cpu);
+  cpu->A &= bus->data;
+  ANDSetStatus (cpu);
+  spend_cycles (5);
 }
 
 #endif // AND_H

@@ -22,19 +22,19 @@
 */
 
 static inline void
-BPL (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+BPL (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   if (cpu->Flag.N == 0)
     {
-      Byte relative_offset = FetchByte (Cycles, bus, memory, cpu);
+      Byte relative_offset = FetchByte (bus, memory, cpu);
       Word old_pc = cpu->PC;
       cpu->PC += (char)relative_offset;
 
-      (*Cycles)--;
+      
       spend_cycle ();
       if ((old_pc & 0xFF00) != (cpu->PC & 0xFF00))
         {
-          (*Cycles)--;
+          
           spend_cycle ();
         }
     }

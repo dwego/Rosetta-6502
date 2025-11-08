@@ -57,6 +57,7 @@
 #include "TYA/tya.h"
 #include "BRK/brk.h"
 #include "EOR/eor.h"
+#include "RTI/rti.h"
 
 /* 
    This enumeration defines opcodes for various instructions supported by the MOS Technology 6502 processor.
@@ -80,8 +81,8 @@ typedef enum {
     INS_LDA_ABS = 0xAD, // done
     INS_LDA_ABSX = 0xBD, // done
     INS_LDA_ABSY = 0xB9, // done
-    INS_LDA_INDX = 0xA1,
-    INS_LDA_INDY = 0xB1,
+    INS_LDA_INDX = 0xA1, // done
+    INS_LDA_INDY = 0xB1, // done
 
     //LDX
     INS_LDX_IM = 0xA2, // done
@@ -103,8 +104,8 @@ typedef enum {
     INS_STA_ABS = 0x8D, // done
     INS_STA_ABSX = 0x9D, // done
     INS_STA_ABSY = 0x99, // done
-    INS_STA_INDX = 0x81,
-    INS_STA_INDY = 0x91,
+    INS_STA_INDX = 0x81, // done
+    INS_STA_INDY = 0x91, // done
 
     //STX
     INS_STX_ZP = 0x86, // done
@@ -138,8 +139,8 @@ typedef enum {
     INS_AND_ABS = 0x2D, // done
     INS_AND_ABSX = 0x3D, // done
     INS_AND_ABSY = 0x39, // done
-    INS_AND_INDX = 0x21,
-    INS_AND_INDY = 0x31,
+    INS_AND_INDX = 0x21, // done
+    INS_AND_INDY = 0x31, // done
 
     //ORA
 
@@ -149,8 +150,8 @@ typedef enum {
     INS_ORA_ABS = 0x0D, // done
     INS_ORA_ABSX = 0x1D, // done
     INS_ORA_ABSY = 0x19, // done
-    INS_ORA_INDX = 0x01,
-    INS_ORA_INDY = 0x11,
+    INS_ORA_INDX = 0x01, // done
+    INS_ORA_INDY = 0x11, // done
 
     //EOR
 
@@ -158,10 +159,10 @@ typedef enum {
     INS_EOR_ZP = 0x45, // done
     INS_EOR_ZPX = 0x55, // done
     INS_EOR_ABS = 0x4D, // done
-    INS_EOR_ABSX = 0x5D, // done // done
+    INS_EOR_ABSX = 0x5D, // done
     INS_EOR_ABSY = 0x59, // done
-    INS_EOR_INDX = 0x41,
-    INS_EOR_INDY = 0x51,
+    INS_EOR_INDX = 0x41, // done
+    INS_EOR_INDY = 0x51, // done
 
     //BIT
 
@@ -216,7 +217,7 @@ typedef enum {
     INS_ADC_ABS = 0x6D, // done
     INS_ADC_ABSX = 0x7D, // done
     INS_ADC_ABSY = 0x79, // done
-    INS_ADC_INDX = 0x61,
+    INS_ADC_INDX = 0x61, 
     INS_ADC_INDY = 0x71,
 
     INS_SBC_IM = 0xE9, // done
@@ -225,8 +226,8 @@ typedef enum {
     INS_SBC_ABS = 0xED, // done
     INS_SBC_ABSX = 0xFD, // done
     INS_SBC_ABSY = 0xF9, // done
-    INS_SBC_INDX = 0xE1,
-    INS_SBC_INDY = 0xF1,
+    INS_SBC_INDX = 0xE1, // done
+    INS_SBC_INDY = 0xF1, // done
 
     // Register Comparison
     INS_CMP_IM = 0xC9, // done
@@ -235,8 +236,8 @@ typedef enum {
     INS_CMP_ABS = 0xCD, // done
     INS_CMP_ABSX = 0xDD, // done
     INS_CMP_ABSY = 0xD9, // done
-    INS_CMP_INDX = 0xC1,
-    INS_CMP_INDY = 0xD1,
+    INS_CMP_INDX = 0xC1, // done
+    INS_CMP_INDY = 0xD1, // done
 
     INS_CPX = 0xE0, // done
     INS_CPY = 0xC0, // done
@@ -271,10 +272,10 @@ typedef enum {
     INS_ROR_ABSX = 0x7E,  // done
 
     //misc
-    INS_NOP = 0xEA,
+    INS_NOP = 0xEA, // done
     INS_BRK = 0x00, // done
-    INS_RTI = 0x40,
-    
+    INS_RTI = 0x40, // done
+
 } Instruction;
 
 
