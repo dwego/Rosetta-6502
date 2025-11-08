@@ -24,10 +24,10 @@ CLISetStatus (CPU6502 *cpu)
 }
 
 static inline void
-CLI (Word *Cycles, CPU6502 *cpu)
+CLI (CPU6502 *cpu)
 {
   CLISetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

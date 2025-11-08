@@ -37,9 +37,9 @@ LDYSetStatus (CPU6502 *cpu)
 */
 
 static inline void
-LDY_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LDY_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (Cycles, bus, memory, cpu);
+  Byte Value = FetchByte (bus, memory, cpu);
   cpu->Y = Value;
   LDYSetStatus (cpu);
   spend_cycles (2);
@@ -53,10 +53,10 @@ LDY_IM (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LDY_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   cpu->Y = bus->data;
   LDYSetStatus (cpu);
   spend_cycles (3);
@@ -70,12 +70,12 @@ LDY_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDY_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LDY_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
+  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  (*Cycles)--;
-  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
+  
+  cpu_read (bus, memory, ZeroPageAddr, cpu);
   cpu->Y = bus->data;
   LDYSetStatus (cpu);
   spend_cycles (4);
@@ -89,10 +89,10 @@ LDY_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LDY_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->Y = bus->data;
   LDYSetStatus (cpu);
   spend_cycles (4);
@@ -106,9 +106,9 @@ LDY_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-LDY_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+LDY_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Word Absolute = FetchWord (Cycles, bus, memory, cpu);
+  Word Absolute = FetchWord (bus, memory, cpu);
 
   Word OldPage = Absolute & 0xFF00;
   Absolute += cpu->X;
@@ -117,11 +117,11 @@ LDY_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   // Add an extra cycle if page is crossed
   if (OldPage != NewPage)
     {
-      (*Cycles)++;
+      
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, Cycles, cpu);
+  cpu_read (bus, memory, Absolute, cpu);
   cpu->Y = bus->data;
   LDYSetStatus (cpu);
   spend_cycles (4);

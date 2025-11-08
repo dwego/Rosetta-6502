@@ -24,10 +24,10 @@ CLDSetStatus (CPU6502 *cpu)
 }
 
 static inline void
-CLD (Word *Cycles, CPU6502 *cpu)
+CLD (CPU6502 *cpu)
 {
   CLDSetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

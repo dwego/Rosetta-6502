@@ -35,11 +35,11 @@ TAYSetStatus (CPU6502 *cpu)
    Consumes 2 CPU cycles.
 */
 static inline void
-TAY (Word *Cycles, CPU6502 *cpu)
+TAY (CPU6502 *cpu)
 {
   cpu->Y = cpu->A;
   TAYSetStatus (cpu);
-  (*Cycles)--;
+  
   spend_cycles (2);
 }
 

@@ -29,12 +29,12 @@ INXSetStatus (CPU6502 *cpu)
    and spends the required CPU cycles.
 */
 static inline void
-INX (Word *Cycles, CPU6502 *cpu)
+INX (CPU6502 *cpu)
 {
   cpu->X++;
   INXSetStatus (cpu);
   spend_cycles (2);
-  (*Cycles) -= 2; // or decrement accordingly, depending on your cycle tracking
+  ; // or decrement accordingly, depending on your cycle tracking
                   // system
 }
 

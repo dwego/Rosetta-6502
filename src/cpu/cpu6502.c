@@ -140,12 +140,12 @@ resetCPU (CPU6502 *cpu, MEM6502 *memory)
 // Fetch a byte from memory at the current program counter (PC),
 // increment PC by 1, and decrement the cycle count.
 Byte
-FetchByte (Word *Cycles, Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
+FetchByte (Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 {
 
   cpu->CurrentAccess = ACCESS_ROM;
 
-  cpu_read (bus, memory, cpu->PC, Cycles, cpu);
+  cpu_read (bus, memory, cpu->PC, cpu);
   cpu->PC++;
   return bus->data;
 }
@@ -153,17 +153,17 @@ FetchByte (Word *Cycles, Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 // Fetch a 16-bit word (little-endian) from memory at the current PC,
 // increment PC by 2, and decrement cycles by 2.
 Word
-FetchWord (Word *Cycles, Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
+FetchWord (Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 {
   cpu->CurrentAccess = ACCESS_ROM;
 
-  cpu_read (bus, memory, cpu->PC, Cycles, cpu);
+  cpu_read (bus, memory, cpu->PC, cpu);
   Word Value = bus->data;
   cpu->PC++;
-  cpu_read (bus, memory, cpu->PC, Cycles, cpu);
+  cpu_read (bus, memory, cpu->PC, cpu);
   Value |= (bus->data << 8);
   cpu->PC++;
-  (*Cycles) -= 2;
+  ;
   return Value;
 }
 
@@ -178,10 +178,10 @@ SPToAddress (CPU6502 *cpu)
 // Push a byte onto the stack, write it to memory at the stack address,
 // and decrement the stack pointer.
 void
-PushByteToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, Word Value,
+PushByteToStack (Bus6502 *bus, MEM6502 *memory, Word Value,
                  CPU6502 *cpu)
 {
-  cpu_write (bus, memory, SPToAddress (cpu), Value, Cycles, cpu);
+  cpu_write (bus, memory, SPToAddress (cpu), Value, cpu);
   cpu->SP--;
 }
 
@@ -189,19 +189,19 @@ PushByteToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, Word Value,
 // decrementing the stack pointer accordingly.
 // Note: The 6502 stack grows downward.
 void
-PushWordToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, Word Value,
+PushWordToStack (Bus6502 *bus, MEM6502 *memory, Word Value,
                  CPU6502 *cpu)
 {
 
-  PushByteToStack (Cycles, bus, memory, Value >> 8, cpu);
-  PushByteToStack (Cycles, bus, memory, Value & 0xFF, cpu);
+  PushByteToStack (bus, memory, Value >> 8, cpu);
+  PushByteToStack (bus, memory, Value & 0xFF, cpu);
 }
 
 // Push the current program counter (PC) onto the stack.
 void
-PushPCToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+PushPCToStack (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  PushWordToStack (Cycles, bus, memory, cpu->PC, cpu);
+  PushWordToStack (bus, memory, cpu->PC, cpu);
 }
 
 // Pop a 16-bit word from the stack.
@@ -209,15 +209,15 @@ PushPCToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 // Note: Stack pointer handling must be managed accordingly outside this
 // function.
 Word
-PopWordFromStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+PopWordFromStack (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu_read (bus, memory, SPToAddress (cpu), Cycles, cpu);
+  cpu_read (bus, memory, SPToAddress (cpu), cpu);
   Byte LoByte = bus->data;
-  cpu_read (bus, memory, SPToAddress (cpu) + 1, Cycles, cpu);
+  cpu_read (bus, memory, SPToAddress (cpu) + 1, cpu);
   Byte HiByte = bus->data;
 
-  cpu_write (bus, memory, SPToAddress (cpu), 0, Cycles, cpu);
-  cpu_write (bus, memory, SPToAddress (cpu) + 1, 0, Cycles, cpu);
+  cpu_write (bus, memory, SPToAddress (cpu), 0, cpu);
+  cpu_write (bus, memory, SPToAddress (cpu) + 1, 0, cpu);
   cpu->SP = +2;
   return LoByte | (HiByte << 8);
 }
@@ -225,11 +225,11 @@ PopWordFromStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 // Pop a byte from the stack, clear the byte in memory (optional),
 // and decrement the stack pointer.
 Byte
-PopByteFromStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+PopByteFromStack (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu_read (bus, memory, SPToAddress (cpu), Cycles, cpu);
+  cpu_read (bus, memory, SPToAddress (cpu), cpu);
   Byte ValueFromStack = bus->data;
-  cpu_write (bus, memory, SPToAddress (cpu), 0, Cycles, cpu);
+  cpu_write (bus, memory, SPToAddress (cpu), 0, cpu);
   cpu->SP++;
   return ValueFromStack;
 }

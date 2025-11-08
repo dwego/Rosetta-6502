@@ -20,20 +20,20 @@
 */
 
 static inline void
-BVC (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+BVC (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   if (cpu->Flag.V == 0)
     {
-      Byte Sub_Addr = FetchByte (Cycles, bus, memory, cpu);
+      Byte Sub_Addr = FetchByte (bus, memory, cpu);
       Word old_pc = cpu->PC;
       cpu->PC += (SignedByte)Sub_Addr;
 
-      (*Cycles)--;
+      
       spend_cycle ();
 
       if ((old_pc & 0xFF00) != (cpu->PC & 0xFF00))
         {
-          (*Cycles)--;
+          
           spend_cycle ();
         }
     }
