@@ -235,8 +235,8 @@ typedef enum {
     INS_CMP_ABS = 0xCD, // done
     INS_CMP_ABSX = 0xDD, // done
     INS_CMP_ABSY = 0xD9, // done
-    INS_CMP_INDX = 0xC1,
-    INS_CMP_INDY = 0xD1,
+    INS_CMP_INDX = 0xC1, // done
+    INS_CMP_INDY = 0xD1, // done
 
     INS_CPX = 0xE0, // done
     INS_CPY = 0xC0, // done

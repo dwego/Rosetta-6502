@@ -137,4 +137,57 @@ CMP_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   spend_cycles (4);
 }
 
+/*
+   CMP_INDX - Compare Accumulator with value using (Indirect, X) addressing mode.
+   The operand is a zero-page address. The X register is added to this address
+   (wrapping within zero-page) to form a new pointer location. The two bytes
+   read from this pointer form the 16-bit effective address. The byte at that
+   address is compared with A. Updates Carry, Zero, and Negative flags.
+*/
+
+static inline void
+CMP_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  zp += cpu->X; // zero-page wraparound
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  Byte Result = cpu->A - bus->data;
+  CMPSetStatus (Result, cpu);
+  spend_cycles (6);
+}
+
+/*
+   CMP_INDY - Compare Accumulator with value using (Indirect), Y addressing mode.
+   The operand is a zero-page address pointing to a 16-bit base address.
+   The Y register is added to that base to form the effective address.
+   If the addition crosses a page boundary, one extra cycle is consumed.
+   The value read from that address is compared with A.
+   Updates Carry, Zero, and Negative flags.
+*/
+
+static inline void
+CMP_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
+    {
+      (*Cycles)++;
+      spend_cycle ();
+    }
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  Byte Result = cpu->A - bus->data;
+  CMPSetStatus (Result, cpu);
+  spend_cycles (5);
+}
+
 #endif // CMP_H
