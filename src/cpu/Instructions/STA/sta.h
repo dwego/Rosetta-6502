@@ -92,4 +92,46 @@ STA_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   spend_cycles (5);
 }
 
+/*
+   STA_INDX - Store Accumulator using (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page base address. The X register
+   is added to this base address (wrapping in zero-page), forming a new
+   zero-page pointer location. The two bytes at that location are used
+   as the low/high bytes of the effective 16-bit address where the value
+   of A will be stored.
+*/
+
+static inline void
+STA_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  zp += cpu->X;  // zero-page wraparound
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_write (bus, memory, addr, cpu->A, Cycles, cpu);
+  spend_cycles (6);
+}
+
+/*
+   STA_INDY - Store Accumulator using (Indirect), Y addressing mode.
+   In this mode, the operand is a zero-page address pointing to a 16-bit base
+   address. The Y register is then added to that base to form the final target
+   address.
+*/
+
+static inline void
+STA_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  cpu_write (bus, memory, addr, cpu->A, Cycles, cpu);
+  spend_cycles (6);
+}
+
 #endif // STA_H
