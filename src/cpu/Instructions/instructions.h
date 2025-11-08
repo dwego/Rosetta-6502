@@ -80,8 +80,8 @@ typedef enum {
     INS_LDA_ABS = 0xAD, // done
     INS_LDA_ABSX = 0xBD, // done
     INS_LDA_ABSY = 0xB9, // done
-    INS_LDA_INDX = 0xA1,
-    INS_LDA_INDY = 0xB1,
+    INS_LDA_INDX = 0xA1, // done
+    INS_LDA_INDY = 0xB1, // done
 
     //LDX
     INS_LDX_IM = 0xA2, // done
@@ -103,8 +103,8 @@ typedef enum {
     INS_STA_ABS = 0x8D, // done
     INS_STA_ABSX = 0x9D, // done
     INS_STA_ABSY = 0x99, // done
-    INS_STA_INDX = 0x81,
-    INS_STA_INDY = 0x91,
+    INS_STA_INDX = 0x81, //done
+    INS_STA_INDY = 0x91, //done
 
     //STX
     INS_STX_ZP = 0x86, // done
