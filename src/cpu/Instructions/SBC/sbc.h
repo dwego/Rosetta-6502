@@ -183,4 +183,65 @@ SBC_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   spend_cycles (4);
 }
 
+/*
+   SBC_INDX - Subtract using (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page base address. The X register is
+   added to this base address (wrapping in zero page) to get a new zero-page
+   location. The two bytes read from that location form the effective 16-bit
+   address.
+*/
+
+static inline void
+SBC_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  zp += cpu->X; // zero-page wrap
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  Byte Value = bus->data;
+  Byte Before = cpu->A;
+
+  Byte Result = cpu->A + (~Value) + cpu->Flag.C;
+  cpu->A = Result;
+
+  SBCSetStatus (cpu, Before, Value, Result);
+  spend_cycles (6);
+}
+
+/*
+   SBC_INDY - Subtract using (Indirect), Y addressing mode.
+   The operand is a zero-page pointer to a 16-bit base address.
+   The Y register is added to this base address to form the effective
+   target address. The byte from that address is subtracted from A with Carry.
+*/
+
+static inline void
+SBC_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  if ((base & 0xFF00) != (addr & 0xFF00)) // page crossed
+    {
+      (*Cycles)++;
+      spend_cycle ();
+    }
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  Byte Value = bus->data;
+  Byte Before = cpu->A;
+
+  Byte Result = cpu->A + (~Value) + cpu->Flag.C;
+  cpu->A = Result;
+
+  SBCSetStatus (cpu, Before, Value, Result);
+  spend_cycles (5);
+}
+
 #endif // SBC_H
