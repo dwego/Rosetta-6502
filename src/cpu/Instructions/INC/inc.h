@@ -42,10 +42,10 @@ static inline void
 INC_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   Byte IncrementedValue = bus->data + 1;
 
-  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, Cycles);
+  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, Cycles, cpu);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (5);
 }
@@ -60,10 +60,10 @@ INC_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   Byte IncrementedValue = bus->data + 1;
 
-  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, Cycles);
+  cpu_write (bus, memory, ZeroPageAddr, IncrementedValue, Cycles, cpu);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }
@@ -77,10 +77,10 @@ static inline void
 INC_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles);
+  cpu_read (bus, memory, Absolute, Cycles, cpu);
   Byte IncrementedValue = bus->data + 1;
 
-  cpu_write (bus, memory, Absolute, I, Cycles);
+  cpu_write (bus, memory, Absolute, I, Cycles, cpu);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }
@@ -96,10 +96,10 @@ INC_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Word Absolute = FetchWord (Cycles, bus, memory, cpu);
   Absolute += cpu->X;
 
-  cpu_read (bus, memory, Absolute, Cycles);
+  cpu_read (bus, memory, Absolute, Cycles, cpu);
   Byte IncrementedValue = bus->data + 1;
 
-  cpu_write (bus, memory, Absolute, IncrementedValue, Cycles);
+  cpu_write (bus, memory, Absolute, IncrementedValue, Cycles, cpu);
   INCSetStatus (cpu, IncrementedValue);
   spend_cycles (6);
 }

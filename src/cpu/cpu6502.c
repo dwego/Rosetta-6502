@@ -1,7 +1,7 @@
-#include "cpu6502.h"
 #include "bus.h"
 #include "config.h"
-#include <time.h>
+#include "mem6502.h"
+#include "cpu6502.h"
 
 /*
    CPU6502 - MOS Technology 6502 CPU Emulator
@@ -142,7 +142,10 @@ resetCPU (CPU6502 *cpu, MEM6502 *memory)
 Byte
 FetchByte (Word *Cycles, Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu_read (bus, memory, cpu->PC, Cycles);
+
+  cpu->CurrentAccess = ACCESS_ROM;
+
+  cpu_read (bus, memory, cpu->PC, Cycles, cpu);
   cpu->PC++;
   return bus->data;
 }
@@ -152,10 +155,12 @@ FetchByte (Word *Cycles, Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 Word
 FetchWord (Word *Cycles, Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu_read (bus, memory, cpu->PC, Cycles);
+  cpu->CurrentAccess = ACCESS_ROM;
+
+  cpu_read (bus, memory, cpu->PC, Cycles, cpu);
   Word Value = bus->data;
   cpu->PC++;
-  cpu_read (bus, memory, cpu->PC, Cycles);
+  cpu_read (bus, memory, cpu->PC, Cycles, cpu);
   Value |= (bus->data << 8);
   cpu->PC++;
   (*Cycles) -= 2;
@@ -176,7 +181,7 @@ void
 PushByteToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, Word Value,
                  CPU6502 *cpu)
 {
-  cpu_write (bus, memory, SPToAddress (cpu), Value, Cycles);
+  cpu_write (bus, memory, SPToAddress (cpu), Value, Cycles, cpu);
   cpu->SP--;
 }
 
@@ -206,13 +211,13 @@ PushPCToStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 Word
 PopWordFromStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu_read (bus, memory, SPToAddress (cpu), Cycles);
+  cpu_read (bus, memory, SPToAddress (cpu), Cycles, cpu);
   Byte LoByte = bus->data;
-  cpu_read (bus, memory, SPToAddress (cpu) + 1, Cycles);
+  cpu_read (bus, memory, SPToAddress (cpu) + 1, Cycles, cpu);
   Byte HiByte = bus->data;
 
-  cpu_write (bus, memory, SPToAddress (cpu), 0, Cycles);
-  cpu_write (bus, memory, SPToAddress (cpu) + 1, 0, Cycles);
+  cpu_write (bus, memory, SPToAddress (cpu), 0, Cycles, cpu);
+  cpu_write (bus, memory, SPToAddress (cpu) + 1, 0, Cycles, cpu);
   cpu->SP = +2;
   return LoByte | (HiByte << 8);
 }
@@ -222,9 +227,9 @@ PopWordFromStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 Byte
 PopByteFromStack (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu_read (bus, memory, SPToAddress (cpu), Cycles);
+  cpu_read (bus, memory, SPToAddress (cpu), Cycles, cpu);
   Byte ValueFromStack = bus->data;
-  cpu_write (bus, memory, SPToAddress (cpu), 0, Cycles);
+  cpu_write (bus, memory, SPToAddress (cpu), 0, Cycles, cpu);
   cpu->SP++;
   return ValueFromStack;
 }

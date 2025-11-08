@@ -51,7 +51,7 @@ static inline void
 CPX_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, Cycles);
+  cpu_read (bus, memory, ZeroPageAddr, Cycles, cpu);
   Byte Result = cpu->X - bus->data;
   CPXSetStatus (Result, cpu);
   spend_cycles (3);
@@ -66,7 +66,7 @@ static inline void
 CPX_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, Cycles);
+  cpu_read (bus, memory, Absolute, Cycles, cpu);
   Byte Result = cpu->X - bus->data;
   CPXSetStatus (Result, cpu);
   spend_cycles (4);

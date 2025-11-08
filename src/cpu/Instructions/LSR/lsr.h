@@ -57,9 +57,9 @@ static inline void
 LSR_ZP (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte addr = FetchByte (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, addr, Cycles);
+  cpu_read (bus, memory, addr, Cycles, cpu);
   Byte Value = bus->data;
-  cpu_write (bus, memory, addr, Value >> 1, Cycles);
+  cpu_write (bus, memory, addr, Value >> 1, Cycles, cpu);
 
   cpu->Flag.C = Value & 0x01;
   cpu->Flag.Z = ((Value >> 1) == 0);
@@ -78,9 +78,9 @@ LSR_ZPX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   addr += cpu->X;
   (*Cycles)--;
 
-  cpu_read (bus, memory, addr, Cycles);
+  cpu_read (bus, memory, addr, Cycles, cpu);
   Byte Value = bus->data;
-  cpu_write (bus, memory, addr, Value >> 1, Cycles);
+  cpu_write (bus, memory, addr, Value >> 1, Cycles, cpu);
 
   cpu->Flag.C = Value & 0x01;
   cpu->Flag.Z = ((Value >> 1) == 0);
@@ -97,9 +97,9 @@ static inline void
 LSR_ABS (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word addr = FetchWord (Cycles, bus, memory, cpu);
-  cpu_read (bus, memory, addr, Cycles);
+  cpu_read (bus, memory, addr, Cycles, cpu);
   Byte Value = bus->data;
-  cpu_write (bus, memory, addr, Value >> 1, Cycles);
+  cpu_write (bus, memory, addr, Value >> 1, Cycles, cpu);
 
   cpu->Flag.C = Value & 0x01;
   cpu->Flag.Z = ((Value >> 1) == 0);
@@ -117,9 +117,9 @@ LSR_ABSX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Word addr = FetchWord (Cycles, bus, memory, cpu);
   addr += cpu->X;
 
-  cpu_read (bus, memory, addr, Cycles);
+  cpu_read (bus, memory, addr, Cycles, cpu);
   Byte Value = bus->data;
-  cpu_write (bus, memory, addr, Value >> 1, Cycles);
+  cpu_write (bus, memory, addr, Value >> 1, Cycles, cpu);
 
   cpu->Flag.C = Value & 0x01;
   cpu->Flag.Z = ((Value >> 1) == 0);
