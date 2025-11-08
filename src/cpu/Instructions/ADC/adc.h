@@ -158,4 +158,62 @@ ADC_ABSY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   spend_cycles (4);
 }
 
-#endif
+/*
+   ADC_INDX - Add with Carry using (Indirect, X) addressing mode.
+   In this mode, the operand is a zero-page base address. The X register is
+   added to this address (with wrap-around) to get a new zero-page pointer.
+   The two bytes read from that pointer form the effective 16-bit address.
+   The value at that address is added to A along with the Carry flag.
+*/
+
+static inline void
+ADC_INDX (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  zp += cpu->X; // zero-page wrap
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word addr = (hi << 8) | lo;
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  Byte Value = bus->data;
+  Byte Before = cpu->A;
+
+  cpu->A += Value + cpu->Flag.C;
+  ADCSetStatus (cpu, Before, Value);
+  spend_cycles (6);
+}
+
+/*
+   ADC_INDY - Add with Carry using (Indirect), Y addressing mode.
+   The operand is a zero-page pointer to a 16-bit base address.
+   The Y register is added to this base to form the effective address.
+   The byte read from that address is added to A along with the Carry flag.
+   If a page boundary is crossed, one extra cycle is consumed.
+*/
+
+static inline void
+ADC_INDY (Word *Cycles, Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+{
+  Byte zp = FetchByte (Cycles, bus, memory, cpu);
+  Byte lo = memory->Data[zp];
+  Byte hi = memory->Data[(Byte)(zp + 1)];
+  Word base = (hi << 8) | lo;
+  Word addr = base + cpu->Y;
+
+  if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
+    {
+      (*Cycles)++;
+      spend_cycle ();
+    }
+
+  cpu_read (bus, memory, addr, Cycles, cpu);
+  Byte Value = bus->data;
+  Byte Before = cpu->A;
+
+  cpu->A += Value + cpu->Flag.C;
+  ADCSetStatus (cpu, Before, Value);
+  spend_cycles (5);
+}
+
+#endif // ADC_H

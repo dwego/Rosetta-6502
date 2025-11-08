@@ -57,6 +57,7 @@
 #include "TYA/tya.h"
 #include "BRK/brk.h"
 #include "EOR/eor.h"
+#include "RTI/rti.h"
 
 /* 
    This enumeration defines opcodes for various instructions supported by the MOS Technology 6502 processor.
@@ -216,7 +217,7 @@ typedef enum {
     INS_ADC_ABS = 0x6D, // done
     INS_ADC_ABSX = 0x7D, // done
     INS_ADC_ABSY = 0x79, // done
-    INS_ADC_INDX = 0x61,
+    INS_ADC_INDX = 0x61, 
     INS_ADC_INDY = 0x71,
 
     INS_SBC_IM = 0xE9, // done
