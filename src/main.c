@@ -55,7 +55,6 @@ main (int argc, char *argv[])
   initializeMem6502 (&mem);
 
   // start - inline
-
   program_start = 0x8000;
   mem.Data[0xFFFC] = program_start & 0xFF;
   mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
