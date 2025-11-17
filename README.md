@@ -77,6 +77,7 @@ Firmware is placed at ROM address `$E000`, then executed from the 6502 reset vec
 
 * [docs/firmware.md](./docs/firmware.md) — building firmware, addressing modes, linker config
 * [docs/instructions.md](./docs/instructions.md) — detailed notes on all opcodes 
+* [docs/debug.md](./docs/debug.md) — detailed to how debug your firmware
 
 ---
 
