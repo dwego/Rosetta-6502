@@ -1,5 +1,6 @@
 #include "mem6502.h"
 #include "cpu6502.h"
+#include "debug.h"
 
 // Maximum memory size for the 6502 system.
 const DWord MAX_MEM = 1024 * 64;
@@ -91,6 +92,7 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, CPU6502 *cpu)
     AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
     bus->rw = true;
+    debug_mem_read(addr, bus->data);
 
     // MMIO: requer permissão explícita
     if (addr >= MMIO_START && addr <= MMIO_END) {
@@ -127,6 +129,8 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, CPU6502 *cpu
     bus->address = addr;
     bus->data = data;
     bus->rw = false;
+
+    debug_mem_write(addr, data);
 
     // MMIO: Permission required
     if (addr >= MMIO_START && addr <= MMIO_END) {
