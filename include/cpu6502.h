@@ -4,6 +4,8 @@
 #include "bus.h"
 #include "access_type.h"
 #include "memory_map.h"
+#include "debug.h"
+
 
 typedef struct MEM6502 MEM6502;
 
