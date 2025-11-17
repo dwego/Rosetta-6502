@@ -1,5 +1,6 @@
 #include "mem6502.h"
 #include "cpu6502.h"
+#include "debug.h"
 
 // Maximum memory size for the 6502 system.
 const DWord MAX_MEM = 1024 * 64;
