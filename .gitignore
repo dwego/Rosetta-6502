@@ -1,15 +1,31 @@
-.clang-format
-.git/
-.cache/
+# Build directories
 build/
-compile_commands.json
-layout.txt
-main
-cpu_log.txt
-tests/.cache/
+.cache/
 tests/build/
+tests/.cache/
+
+# Compilation database
+compile_commands.json
 tests/compile_commands.json
+
+# Binary and object files
+*.o
+*.bin
+main
 tests/test
+
+# Firmware files
+*.asm
+*.o
+*.bin
+*.cfg
+
+# Logs
+cpu_log.txt
+
+# Editor / Tooling configs
 .vscode/
-test.asm
-a.out
+.clang-format
+
+# Git internals
+.git/
