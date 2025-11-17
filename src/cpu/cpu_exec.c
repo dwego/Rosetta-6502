@@ -84,6 +84,7 @@ run_cpu_instruction (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
 
   Byte Ins = FetchByte (bus, memory, cpu);
+  printf("FETCH OPCODE: PC=%04X OP=%02X\n", cpu->PC - 1, Ins);
   AccessType accessType = get_instruction_access_type (Ins);
   cpu->CurrentAccess = accessType;
   
