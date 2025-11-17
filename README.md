@@ -1,48 +1,89 @@
+
 # Rosetta-6502
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Rosetta-6502** is an in-development, cycle-accurate virtual machine (VM) emulating the classic 6502 CPU architecture.  
-This project aims to build a fully faithful software implementation of the 6502 processor, including its instruction set, clock timing, memory bus, interrupts, and peripherals — enabling users to run 6502 assembly code and ROMs with precise timing and behavior.
+**Rosetta-6502** is a cycle-accurate, from-scratch implementation of the MOS 6502 CPU —  
+the legendary 8-bit processor found in the Apple II, Commodore 64, NES, Atari 2600,  
+and countless embedded systems.
+
+This project aims to be both a **faithful emulator** and a **learning tool**, offering:
+
+- A clean, modern C11 codebase
+- A modular bus and memory system
+- Extensible MMIO interfaces (software-defined hardware) - **COMING SOON**
+- A complete opcode table with per-instruction folders
+- Cycle-accurate execution and timing helpers
+- A RAM visualizer (ncurses) and execution traces for debugging
+- Support for assembling and running real 6502 firmware via `ca65`/`ld65`
+
+Rosetta-6502 is designed to act as a *bridge* (“Rosetta”) between:
+
+### **Classic 8-bit CPUs**
+Deeply accurate replication of 6502 hardware behavior.
+
+### **Modern development workflows**
+Clean architecture, test suites, modular components, and readable code.
+
+Whether you are building a retro-inspired computer, writing 6502 assembly,  
+creating BIOS routines, or studying how classic machines worked internally
 
 ---
 
-## Features (In Progress)
+## Platform Compatibility
 
-- Complete emulation of the 6502 CPU instruction set with cycle-accurate timing  
-- Memory management with configurable RAM/ROM mapping and bus interface  
-- Clock synchronization for realistic CPU timing  
-- Interrupt handling (IRQ, NMI) support  
-- Infrastructure prepared for peripherals and memory-mapped I/O devices  
-- ROM loading and configuration system planned  
-- Debugging support in development  
-- Future plans for a GUI frontend for easier interaction and visualization  
+Rosetta-6502 currently supports:
+
+- **macOS**
+- **Linux**
+
+Other platforms are not officially supported.
 
 ---
 
-## Project Goals
+# Building Rosetta-6502
 
-- Create a robust and accurate 6502 VM purely in C and C++ with some assembly for critical routines  
-- Provide a flexible and extensible architecture allowing easy customization of memory and peripherals  
-- Build a reliable platform for learning, debugging, and running 6502 software  
-- Eventually develop a graphical interface for real-time control and monitoring  
+### Prerequisites
+
+- `clang` or any C11-compatible compiler  
+- `make`  
+- `ncurses` development headers  
+- optional: `cc65` (to build custom 6502 firmware)
+
+### Build
+
+```bash
+make
+```
+
+Artifacts:
+
+* Executable: `./main`
+* Object files: `./build/**`
 
 ---
 
-## Getting Started
+# Running Custom 6502 Firmware
 
-Currently under active development — no stable releases yet. The core CPU and clock systems are functional, and memory management modules are being integrated.  
+Rosetta-6502 can load and execute **raw 6502 binaries** (produced by `ca65` + `ld65`) using:
 
-Contributions, bug reports, and suggestions are welcome!
+```bash
+./main --bin firmware.bin
+```
+
+Firmware is placed at ROM address `$E000`, then executed from the 6502 reset vector at `$FFFC`.
+
+# Documentation
+
+* [docs/firmware.md](./docs/firmware.md) — building firmware, addressing modes, linker config
+* [docs/instructions.md](./docs/instructions.md) — detailed notes on all opcodes 
 
 ---
 
-## 📜 Full 6502 Instruction Set Documentation
+# External Resources
 
-Explore the complete documentation of the MOS 6502 CPU instructions in the [Instructions](/src/cpu/Instructions/Instructions.md) file.
+* 6502 Tutorials: [http://6502.org/tutorials/](http://6502.org/tutorials/)
+* cc65 Documentation: [https://cc65.github.io/doc/](https://cc65.github.io/doc/)
+* Unity Test Framework: [https://github.com/ThrowTheSwitch/Unity](https://github.com/ThrowTheSwitch/Unity)
 
 ---
-
-## License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
