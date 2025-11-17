@@ -19,6 +19,7 @@ tests/test
 *.o
 *.bin
 *.cfg
+firmware/build.sh
 
 # Logs
 cpu_log.txt
