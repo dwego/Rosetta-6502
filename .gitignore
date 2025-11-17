@@ -11,5 +11,5 @@ tests/build/
 tests/compile_commands.json
 tests/test
 .vscode/
-test.asm
-a.out
+main_firmware.asm
+main_firmware.out

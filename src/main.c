@@ -1,3 +1,5 @@
+#include "loader.h"
+#include "memory_map.h"
 #include "config.h"
 #include "cpu_exec.h"
 #include "mem6502.h"
@@ -6,6 +8,9 @@
 int
 main (int argc, char *argv[])
 {
+  char *bin_file = NULL;
+  Word load_addr = ROM_START;
+
   int program_start;
   CPU6502 cpu;
   MEM6502 mem;
@@ -22,33 +27,11 @@ main (int argc, char *argv[])
         {
           enable_ram_view = 1;
         }
-      if (strcmp (argv[i], "--input") == 0 || strcmp (argv[i], "-i") == 0)
+      if ((strcmp(argv[i], "--bin") == 0 || strcmp(argv[i], "-b") == 0) && i + 1 < argc)
         {
-          input_file = malloc(strlen(argv[i + 1] + 1));
-          strcpy(input_file, argv[i + 1]);
-          printf("%s\n", input_file);
-          FILE *fptr;
-          char linhas[1000][300];
-          int i = 0;
-
-          fptr = fopen(input_file, "r");
-          if (fptr == NULL) {
-              perror("Error to open this file");
-              return 1;
-          }
-
-          while (fgets(linhas[i], MAX_LINE_SIZE, fptr) != NULL && i < MAX_LINES) {
-              linhas[i][strcspn(linhas[i], "\n")] = '\0';
-              i++;
-          }
-
-          fclose(fptr);
-
-          printf("File content:\n");
-          for (int j = 0; j < i; j++) {
-              printf("Line %d: %s\n", j + 1, linhas[j]);
-          }
+            bin_file = argv[++i];
         }
+
     }
 
   open_log ("cpu_log.txt");
@@ -56,24 +39,22 @@ main (int argc, char *argv[])
 
   // start - inline
 
-  program_start = 0x8000;
-  mem.Data[0xFFFC] = program_start & 0xFF;
-  mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
-  program_start = 0x8000;
+  printf("Trying to load file: %s\n", bin_file);
 
-  // vetor de reset aponta para 0x8000
-  mem.Data[0xFFFC] = program_start & 0xFF;
-  mem.Data[0xFFFD] = (program_start >> 8) & 0xFF;
+    if (!load_binary_to_memory(&mem, bin_file, load_addr)) {
+        printf("FAILED TO LOAD FILE!!!\n");
+        return 1;
+    }
 
-  // programa:
-  mem.Data[0x8000] = INS_LDA_IM;   // opcode LDA imediato
-  mem.Data[0x8001] = 0xAA;         // valor 0xAA
-  mem.Data[0x8002] = INS_STA_ABS;  // opcode STA absoluto
-  mem.Data[0x8003] = 0x00;         // low byte do endereço $E000
-  mem.Data[0x8004] = 0xE0;         // high byte do endereço $E000
-  mem.Data[0x8005] = INS_BRK;  
+    printf("Load complete!\n");
 
-  mem.Data[0x8010] = 0x02;
+
+    set_reset_vector(&mem, load_addr);
+  
+
+  printf("Memory[E007] BEFORE EXEC: %02X\n", mem.Data[0xE007]);
+  printf("Memory[E008] BEFORE EXEC: %02X\n", mem.Data[0xE008]);
+  printf("Memory[E009] BEFORE EXEC: %02X\n", mem.Data[0xE009]);
 
   // printf ("PC before reset: 0x%04X\n", cpu.PC);
   resetCPU (&cpu, &mem);
@@ -83,7 +64,11 @@ main (int argc, char *argv[])
   // init sync clock
   clock_init ();
 
-  while (run_cpu_instruction(&bus, &mem, &cpu)); // sai automaticamente no BRK
+  while (run_cpu_instruction(&bus, &mem, &cpu)) {
+    printf("PC=%04X A=%02X X=%02X Y=%02X SP=%02X\n",
+           cpu.PC, cpu.A, cpu.X, cpu.Y, cpu.SP);
+  }
+
 
   if (enable_ram_view)
     {
@@ -96,9 +81,6 @@ end:
   acc = cpu.A;
 
   cpu_read(&bus, &mem, 0x42, &cpu);
-
-  printf("stored value in: Accumulator is: %u\n", acc);
-  printf("stored value in Address 0x42 is: %u\n", bus.data);
 
   freeMem6502(&mem);
 

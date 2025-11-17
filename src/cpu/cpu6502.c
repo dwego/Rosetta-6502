@@ -108,128 +108,109 @@ spend_cycle ()
 }
 
 // Simulate the consumption of multiple CPU clock cycles.
-void
-spend_cycles (Word cycles)
-{
-  for (Word i = 0; i < cycles; i++)
-    {
-      spend_cycle ();
-    }
+void 
+spend_cycles(Word cycles) {
+    while (cycles--)
+        spend_cycle();
 }
 
 // Reset the CPU registers and flags to their power-on default state.
 // Sets the stack pointer to 0xFD as per 6502 reset behavior.
 // Reads the reset vector (0xFFFC and 0xFFFD) to set the program counter.
 void
-resetCPU (CPU6502 *cpu, MEM6502 *memory)
+resetCPU(CPU6502 *cpu, MEM6502 *memory)
 {
-  cpu->A = cpu->X = cpu->Y = 0;
-  cpu->SP = 0xFD;
+    cpu->A = cpu->X = cpu->Y = 0;
+    cpu->SP = 0xFD;
 
-  // Clear all flags: Carry, Zero, Interrupt Disable, Decimal,
-  // Break, Overflow, Negative
-  cpu->Flag.C = cpu->Flag.Z = cpu->Flag.I = cpu->Flag.D = cpu->Flag.B
-      = cpu->Flag.V = cpu->Flag.N = 0;
+    cpu->Flag.C = cpu->Flag.Z = cpu->Flag.I = cpu->Flag.D =
+    cpu->Flag.B = cpu->Flag.V = cpu->Flag.N = 0;
 
-  // Load the reset vector address (little-endian) from memory
-  Byte lo = memory->Data[0xFFFC];
-  Byte hi = memory->Data[0xFFFD];
-  cpu->PC = ((Word)hi << 8) | lo;
+    Byte lo = memory->Data[0xFFFC];
+    Byte hi = memory->Data[0xFFFD];
+    cpu->PC = ((Word)hi << 8) | lo;
 }
 
 // Fetch a byte from memory at the current program counter (PC),
 // increment PC by 1, and decrement the cycle count.
-Byte
-FetchByte (Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
+Byte 
+FetchByte(Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 {
-
-  cpu->CurrentAccess = ACCESS_ROM;
-
-  cpu_read (bus, memory, cpu->PC, cpu);
-  cpu->PC++;
-  return bus->data;
+    cpu_read(bus, memory, cpu->PC, cpu);
+    cpu->PC++;
+    return bus->data;
 }
 
 // Fetch a 16-bit word (little-endian) from memory at the current PC,
 // increment PC by 2, and decrement cycles by 2.
-Word
-FetchWord (Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
+Word 
+FetchWord(Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu->CurrentAccess = ACCESS_ROM;
-
-  cpu_read (bus, memory, cpu->PC, cpu);
-  Word Value = bus->data;
-  cpu->PC++;
-  cpu_read (bus, memory, cpu->PC, cpu);
-  Value |= (bus->data << 8);
-  cpu->PC++;
-  ;
-  return Value;
+    Byte lo = FetchByte(bus, memory, cpu);
+    Byte hi = FetchByte(bus, memory, cpu);
+    return (hi << 8) | lo;
 }
 
 // Convert the 8-bit stack pointer (SP) to the 16-bit memory address
 // in the stack page (0x0100 - 0x01FF).
-Word
-SPToAddress (CPU6502 *cpu)
+Word 
+SPToAddress(CPU6502 *cpu)
 {
-  return 0x100 + cpu->SP;
+    return 0x100 + cpu->SP;
 }
 
 // Push a byte onto the stack, write it to memory at the stack address,
 // and decrement the stack pointer.
-void
-PushByteToStack (Bus6502 *bus, MEM6502 *memory, Word Value,
-                 CPU6502 *cpu)
+void 
+PushByteToStack(Bus6502 *bus, MEM6502 *memory, Word Value, CPU6502 *cpu)
 {
-  cpu_write (bus, memory, SPToAddress (cpu), Value, cpu);
-  cpu->SP--;
+    cpu_write(bus, memory, SPToAddress(cpu), Value, cpu);
+    cpu->SP--;
 }
 
 // Push a 16-bit word onto the stack (high byte first, then low byte),
 // decrementing the stack pointer accordingly.
 // Note: The 6502 stack grows downward.
-void
-PushWordToStack (Bus6502 *bus, MEM6502 *memory, Word Value,
-                 CPU6502 *cpu)
+void 
+PushWordToStack(Bus6502 *bus, MEM6502 *memory, Word Value, CPU6502 *cpu)
 {
-
-  PushByteToStack (bus, memory, Value >> 8, cpu);
-  PushByteToStack (bus, memory, Value & 0xFF, cpu);
+    PushByteToStack(bus, memory, (Value >> 8) & 0xFF, cpu);
+    PushByteToStack(bus, memory, Value & 0xFF, cpu);
 }
 
 // Push the current program counter (PC) onto the stack.
-void
-PushPCToStack (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+void 
+PushPCToStack(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  PushWordToStack (bus, memory, cpu->PC, cpu);
+    PushWordToStack(bus, memory, cpu->PC, cpu);
 }
 
 // Pop a 16-bit word from the stack.
 // Reads from the stack memory and returns the combined word.
 // Note: Stack pointer handling must be managed accordingly outside this
 // function.
-Word
-PopWordFromStack (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+Word 
+PopWordFromStack(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu_read (bus, memory, SPToAddress (cpu), cpu);
-  Byte LoByte = bus->data;
-  cpu_read (bus, memory, SPToAddress (cpu) + 1, cpu);
-  Byte HiByte = bus->data;
+    Byte lo, hi;
 
-  cpu_write (bus, memory, SPToAddress (cpu), 0, cpu);
-  cpu_write (bus, memory, SPToAddress (cpu) + 1, 0, cpu);
-  cpu->SP = +2;
-  return LoByte | (HiByte << 8);
+    cpu->SP++;
+    cpu_read(bus, memory, SPToAddress(cpu), cpu);
+    lo = bus->data;
+
+    cpu->SP++;
+    cpu_read(bus, memory, SPToAddress(cpu), cpu);
+    hi = bus->data;
+
+    return (hi << 8) | lo;
 }
 
 // Pop a byte from the stack, clear the byte in memory (optional),
 // and decrement the stack pointer.
-Byte
-PopByteFromStack (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+Byte 
+PopByteFromStack(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  cpu_read (bus, memory, SPToAddress (cpu), cpu);
-  Byte ValueFromStack = bus->data;
-  cpu_write (bus, memory, SPToAddress (cpu), 0, cpu);
-  cpu->SP++;
-  return ValueFromStack;
+    cpu->SP++;
+    cpu_read(bus, memory, SPToAddress(cpu), cpu);
+    return bus->data;
 }
