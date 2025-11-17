@@ -1,5 +1,6 @@
 #include "mem6502.h"
 #include "cpu6502.h"
+#include "mmio.h"
 #include "debug.h"
 
 // Maximum memory size for the 6502 system.
@@ -92,7 +93,14 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, CPU6502 *cpu)
     AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
     bus->rw = true;
-    debug_mem_read(addr, bus->data);
+
+    MMIODevice *dev = mmio_find_device(addr);
+    if (dev && dev->read) {
+        Byte val = dev->read(addr);
+        bus->data = val;
+        debug_mem_read(addr, val);
+        return;
+    }
 
     // MMIO: requer permissão explícita
     if (addr >= MMIO_START && addr <= MMIO_END) {
@@ -121,6 +129,7 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, CPU6502 *cpu)
     // Address out of map
     fprintf(stderr, "Memory read out of bounds: %04X\n", addr);
     bus->data = 0xFF;
+    debug_mem_read(addr, bus->data);
 }
 
 void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, CPU6502 *cpu)
@@ -130,8 +139,13 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, CPU6502 *cpu
     bus->data = data;
     bus->rw = false;
 
-    debug_mem_write(addr, data);
-
+    MMIODevice *dev = mmio_find_device(addr);
+    if (dev && dev->write) {
+        dev->write(addr, data);
+        debug_mem_write(addr, data);
+        return;
+    }
+    
     // MMIO: Permission required
     if (addr >= MMIO_START && addr <= MMIO_END) {
         if (!(accessType & ACCESS_MMIO)) {
@@ -156,4 +170,5 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, CPU6502 *cpu
     }
 
     fprintf(stderr, "Memory write out of bounds: %04X\n", addr);
+    debug_mem_write(addr, data);
 }
