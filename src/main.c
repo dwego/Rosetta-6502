@@ -64,11 +64,7 @@ main (int argc, char *argv[])
 
   // init sync clock
   clock_init ();
-
-  while (run_cpu_instruction(&bus, &mem, &cpu)) {
-    printf("PC=%04X A=%02X X=%02X Y=%02X SP=%02X\n",
-           cpu.PC, cpu.A, cpu.X, cpu.Y, cpu.SP);
-  }
+  while (run_cpu_instruction(&bus, &mem, &cpu))
 
 
   if (enable_ram_view)
