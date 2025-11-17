@@ -4,11 +4,13 @@
 #include "cpu_exec.h"
 #include "mem6502.h"
 #include "render_ram.h"
+#include "mmio.h"
 
 
 int
 main (int argc, char *argv[])
 {
+
   char *bin_file = NULL;
   Word load_addr = ROM_START;
 
@@ -32,6 +34,10 @@ main (int argc, char *argv[])
       if ((strcmp(argv[i], "--bin") == 0 || strcmp(argv[i], "-b") == 0) && i + 1 < argc)
         {
             bin_file = argv[++i];
+        }
+      if ((strcmp(argv[i], "--mmio") == 0 || strcmp(argv[i], "-m") == 0) && i + 1 < argc)
+        {
+            mmio_load_config(argv[++i]);
         }
 
     }
