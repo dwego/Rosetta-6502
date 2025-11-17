@@ -1,5 +1,6 @@
 #include "cpu_exec.h"
 #include "cpu6502.h"
+#include "debug.h"
 #include <stdio.h>
 
 static AccessType

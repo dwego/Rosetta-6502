@@ -5,12 +5,14 @@
 #include "mem6502.h"
 #include "render_ram.h"
 
+
 int
 main (int argc, char *argv[])
 {
   char *bin_file = NULL;
   Word load_addr = ROM_START;
 
+  debug_set_level(DEBUG_TRACE);
   int program_start;
   CPU6502 cpu;
   MEM6502 mem;
