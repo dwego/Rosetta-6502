@@ -1,5 +1,6 @@
 #include "cpu_exec.h"
 #include "cpu6502.h"
+#include "debug.h"
 #include <stdio.h>
 
 static AccessType
@@ -82,9 +83,10 @@ get_instruction_access_type (Byte opcode)
 bool
 run_cpu_instruction (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-
+  
   Byte Ins = FetchByte (bus, memory, cpu);
-  printf("FETCH OPCODE: PC=%04X OP=%02X\n", cpu->PC - 1, Ins);
+  debug_opcode(cpu->PC - 1, Ins);
+  debug_cpu_state(cpu);
   AccessType accessType = get_instruction_access_type (Ins);
   cpu->CurrentAccess = accessType;
   

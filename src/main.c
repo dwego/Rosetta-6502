@@ -5,12 +5,14 @@
 #include "mem6502.h"
 #include "render_ram.h"
 
+
 int
 main (int argc, char *argv[])
 {
   char *bin_file = NULL;
   Word load_addr = ROM_START;
 
+  debug_set_level(DEBUG_TRACE);
   int program_start;
   CPU6502 cpu;
   MEM6502 mem;
@@ -64,11 +66,7 @@ main (int argc, char *argv[])
 
   // init sync clock
   clock_init ();
-
-  while (run_cpu_instruction(&bus, &mem, &cpu)) {
-    printf("PC=%04X A=%02X X=%02X Y=%02X SP=%02X\n",
-           cpu.PC, cpu.A, cpu.X, cpu.Y, cpu.SP);
-  }
+  while (run_cpu_instruction(&bus, &mem, &cpu))
 
 
   if (enable_ram_view)
