@@ -23,6 +23,7 @@ bool load_binary_to_memory(MEM6502 *memory, const char *filename, Word start_add
     return true;
 }
 
+// Sets the RESET, NMI, and IRQ vectors to point to the specified start address
 void set_reset_vector(MEM6502 *memory, Word start_addr)
 {
     memory->Data[0xFFFC] = (Byte)(start_addr & 0xFF);
