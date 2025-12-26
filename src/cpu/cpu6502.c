@@ -129,6 +129,8 @@ resetCPU(CPU6502 *cpu, MEM6502 *memory)
     Byte lo = memory->Data[0xFFFC];
     Byte hi = memory->Data[0xFFFD];
     cpu->PC = ((Word)hi << 8) | lo;
+    printf("RESET PC = %04X\n", cpu->PC);
+
 }
 
 // Fetch a byte from memory at the current program counter (PC),

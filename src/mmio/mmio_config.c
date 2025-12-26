@@ -49,18 +49,30 @@ void mmio_load_config(const char *filename) {
 
         MMIODevice dev = {0};
 
+        dev.read  = mmio_read_default;
+        dev.write = mmio_write_default;
+
         char read_handler[32] = {0};
         char write_handler[32] = {0};
 
-        sscanf(
-            line,
-            "%31s %hx %hx read=%31s write=%31s",
-            dev.name,
-            &dev.start,
-            &dev.end,
-            read_handler,
-            write_handler
-        );
+        unsigned start_hex = 0;
+        unsigned end_hex = 0;
+        
+        
+
+        int n = sscanf(line,
+            "%31s %x %x read=%31s write=%31s",
+            dev.name, &start_hex, &end_hex, read_handler, write_handler);
+        
+        if (n < 3) {
+            printf("[MMIO] Invalid line: %s", line);
+            continue;
+        }
+        
+
+        dev.start = (Word)start_hex;
+        dev.end   = (Word)end_hex;
+
 
         if (strlen(read_handler) > 0 && strcmp(read_handler, "0") != 0)
             dev.read = resolve_read(read_handler);

@@ -14,7 +14,7 @@ main (int argc, char *argv[])
   char *bin_file = NULL;
   Word load_addr = ROM_START;
 
-  debug_set_level(DEBUG_TRACE);
+  debug_set_level(DEBUG_OFF);
   int program_start;
   CPU6502 cpu;
   MEM6502 mem;
@@ -23,7 +23,7 @@ main (int argc, char *argv[])
 
   FILE *fptr;
   int enable_ram_view = 0;
-  char *input_file = NULL;
+  char *mmio_file = NULL;
 
   for (int i = 1; i < argc; i++)
     {
@@ -37,13 +37,19 @@ main (int argc, char *argv[])
         }
       if ((strcmp(argv[i], "--mmio") == 0 || strcmp(argv[i], "-m") == 0) && i + 1 < argc)
         {
-            mmio_load_config(argv[++i]);
+            mmio_file = argv[++i];
         }
 
     }
 
   open_log ("cpu_log.txt");
   initializeMem6502 (&mem);
+
+  if (mmio_file) {
+    mmio_load_config(mmio_file);
+  } else {
+      mmio_load_config("./firmware/mmio.cfg");
+  }
 
   // start - inline
 
@@ -60,10 +66,9 @@ main (int argc, char *argv[])
 
     set_reset_vector(&mem, load_addr);
   
-
-  printf("Memory[E007] BEFORE EXEC: %02X\n", mem.Data[0xE007]);
-  printf("Memory[E008] BEFORE EXEC: %02X\n", mem.Data[0xE008]);
-  printf("Memory[E009] BEFORE EXEC: %02X\n", mem.Data[0xE009]);
+  printf("Memory[E000] = %02X\n", mem.Data[0xE000]);
+  printf("Memory[E001] = %02X\n", mem.Data[0xE001]);
+  printf("Memory[E002] = %02X\n", mem.Data[0xE002]);
 
   // printf ("PC before reset: 0x%04X\n", cpu.PC);
   resetCPU (&cpu, &mem);
@@ -72,7 +77,8 @@ main (int argc, char *argv[])
 
   // init sync clock
   clock_init ();
-  while (run_cpu_instruction(&bus, &mem, &cpu))
+  while (run_cpu_instruction(&bus, &mem, &cpu)) {
+}
 
 
   if (enable_ram_view)
@@ -88,9 +94,6 @@ end:
   cpu_read(&bus, &mem, 0x42, &cpu);
 
   freeMem6502(&mem);
-
-  if (input_file)
-      free(input_file);
 
   close_log();
   return 0;
