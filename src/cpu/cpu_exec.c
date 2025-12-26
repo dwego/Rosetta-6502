@@ -86,7 +86,6 @@ run_cpu_instruction (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte Ins = FetchByte (bus, memory, cpu);
   AccessType accessType = get_instruction_access_type (Ins);
   cpu->CurrentAccess = accessType;
-  
 
   switch (Ins)
     {
@@ -598,7 +597,6 @@ run_cpu_instruction (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
     case INS_BRK:
       BRK (bus, memory, cpu);
-      return false;
       break;
 
     /*──────────────────────────────────

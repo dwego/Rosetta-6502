@@ -51,7 +51,6 @@ main (int argc, char *argv[])
       mmio_load_config("./firmware/mmio.cfg");
   }
 
-  // start - inline
 
   printf("Trying to load file: %s\n", bin_file);
 
@@ -60,25 +59,18 @@ main (int argc, char *argv[])
         return 1;
     }
 
-
     printf("Load complete!\n");
 
 
     set_reset_vector(&mem, load_addr);
-  
-  printf("Memory[E000] = %02X\n", mem.Data[0xE000]);
-  printf("Memory[E001] = %02X\n", mem.Data[0xE001]);
-  printf("Memory[E002] = %02X\n", mem.Data[0xE002]);
-
-  // printf ("PC before reset: 0x%04X\n", cpu.PC);
   resetCPU (&cpu, &mem);
-  // printf ("PC after reset: 0x%04X\n", cpu.PC);
-  // end - inline a little program
 
   // init sync clock
   clock_init ();
-  while (run_cpu_instruction(&bus, &mem, &cpu)) {
-}
+
+  // REMOVE THIS IF YOU DON'T WANT EXIT MMIO
+  while (!mmio_exit_requested && run_cpu_instruction(&bus, &mem, &cpu)) {
+  }
 
 
   if (enable_ram_view)

@@ -7,6 +7,7 @@ MMIODevice mmio_devices[64];
 int mmio_device_count = 0;
 
 // Forward declaration of handlers implemented in default_handlers.c
+extern void mmio_exit(Word addr, Byte data);
 extern Byte get_key(Word addr);
 extern void print_char(Word addr, Byte data);
 extern void vram_write(Word addr, Byte data);
@@ -22,6 +23,7 @@ static mmio_read_t resolve_read(const char *name) {
 static mmio_write_t resolve_write(const char *name) {
     if (strcmp(name, "print_char") == 0) return print_char;
     if (strcmp(name, "vram_write") == 0) return vram_write;
+    if (strcmp(name, "mmio_exit") == 0) return mmio_exit;
     return mmio_write_default;
 }
 

@@ -12,6 +12,18 @@ void mmio_write_default(Word addr, Byte data) {
 
 /* --- Example handlers --- */
 
+int mmio_exit_requested = 0;
+Byte mmio_exit_code = 0;
+
+void mmio_exit(Word addr, Byte data) {
+    (void)addr;
+    mmio_exit_code = data;
+    mmio_exit_requested = 1;
+    printf("[EXIT] requested (code=%02X)\n", data);
+    fflush(stdout);
+}
+
+
 Byte get_key(Word addr) {
     printf("[MMIO KEYBD] waiting for key...\n");
     int c = getchar();
