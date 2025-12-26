@@ -107,12 +107,14 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, CPU6502 *cpu)
     // ROM: Read always allowed
     if (addr >= ROM_START && addr <= ROM_END) {
         bus->data = ReadByte(addr, memory);
+        debug_mem_read(addr, bus->data);
         return;
     }
 
     // Default RAM
     if (addr <= RAM_END) {
         bus->data = ReadByte(addr, memory);
+        debug_mem_read(addr, bus->data);
         return;
     }
 
@@ -142,12 +144,14 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, CPU6502 *cpu
     // ROM: Writing is blocked
     if (addr >= ROM_START && addr <= ROM_END) {
         printf("ROM write ignored %04X = %02X\n", addr, data);
+        debug_mem_write(addr, data);
         return;
     }
 
     // Default RAM
     if (addr <= RAM_END) {
         WriteByte(data, memory, addr);
+        debug_mem_write(addr, data);
         return;
     }
 
