@@ -1,5 +1,6 @@
 #include "mem6502.h"
 #include "cpu6502.h"
+#include "mmio.h"
 #include "debug.h"
 
 // Maximum memory size for the 6502 system.
@@ -92,18 +93,15 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, CPU6502 *cpu)
     AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
     bus->rw = true;
-    debug_mem_read(addr, bus->data);
 
-    // MMIO: requer permissão explícita
-    if (addr >= MMIO_START && addr <= MMIO_END) {
-        if (!(accessType & ACCESS_MMIO)) {
-            fprintf(stderr, "MMIO access denied %04X\n", addr);
-            bus->data = 0xFF;
+    MMIODevice *dev = mmio_find_device(addr);
+    if (dev) {
+        if (dev->read) {
+            Byte val = dev->read(addr);
+            bus->data = val;
+            debug_mem_read(addr, val);
             return;
         }
-        // Real MMIO handler would go here in the future
-        bus->data = 0x00;  // placeholder
-        return;
     }
 
     // ROM: Read always allowed
@@ -130,16 +128,14 @@ void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, CPU6502 *cpu
     bus->data = data;
     bus->rw = false;
 
-    debug_mem_write(addr, data);
+    MMIODevice *dev = mmio_find_device(addr);
 
-    // MMIO: Permission required
-    if (addr >= MMIO_START && addr <= MMIO_END) {
-        if (!(accessType & ACCESS_MMIO)) {
-            fprintf(stderr, "MMIO write without permission %04X\n", addr);
-            return;
+    if (dev) {
+
+        if (dev->write) {
+            dev->write(addr, data);
+            debug_mem_write(addr, data);
         }
-        // Real MMIO handler would go here in the future
-        printf("MMIO write %04X = %02X\n", addr, data);
         return;
     }
 
