@@ -28,7 +28,11 @@ reset:
 
     brk
 
+brk_exit:
+    lda #$00
+    sta $D0FF        ; EXIT (code 0)
+
 .segment "VECTORS"
     .word reset      ; NMI
     .word reset      ; RESET
-    .word reset      ; IRQ/BRK
+    .word brk_exit   ; IRQ/BRK
