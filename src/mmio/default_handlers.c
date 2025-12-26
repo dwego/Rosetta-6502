@@ -13,12 +13,15 @@ void mmio_write_default(Word addr, Byte data) {
 /* --- Example handlers --- */
 
 Byte get_key(Word addr) {
+    printf("[MMIO KEYBD] waiting for key...\n");
     int c = getchar();
+    printf("[MMIO KEYBD] got '%c' (%02X)\n", c, (unsigned char)c);
     return (Byte)c;
 }
 
+
 void print_char(Word addr, Byte data) {
-    putchar(data);
+    printf("[PRINTCHAR %02X '%c']\n", data, data);
     fflush(stdout);
 }
 
