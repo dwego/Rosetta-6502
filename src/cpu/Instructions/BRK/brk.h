@@ -46,7 +46,6 @@ BRK (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte lo = memory->Data[0xFFFE];
   Byte hi = memory->Data[0xFFFF];
   cpu->PC = (hi << 8) | lo;
-  ;
   spend_cycles (7);
 }
 

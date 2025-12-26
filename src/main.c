@@ -60,16 +60,16 @@ main (int argc, char *argv[])
         return 1;
     }
 
+    printf("VECTORS: NMI=%02X%02X RESET=%02X%02X IRQ/BRK=%02X%02X\n",
+      mem.Data[0xFFFB], mem.Data[0xFFFA],
+      mem.Data[0xFFFD], mem.Data[0xFFFC],
+      mem.Data[0xFFFF], mem.Data[0xFFFE]);
+
 
     printf("Load complete!\n");
 
 
     set_reset_vector(&mem, load_addr);
-  
-  printf("Memory[E000] = %02X\n", mem.Data[0xE000]);
-  printf("Memory[E001] = %02X\n", mem.Data[0xE001]);
-  printf("Memory[E002] = %02X\n", mem.Data[0xE002]);
-
   // printf ("PC before reset: 0x%04X\n", cpu.PC);
   resetCPU (&cpu, &mem);
   // printf ("PC after reset: 0x%04X\n", cpu.PC);
