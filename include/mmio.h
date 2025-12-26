@@ -3,6 +3,9 @@
 
 #include "config.h"
 
+extern int mmio_exit_requested;
+extern Byte mmio_exit_code;
+
 typedef Byte (*mmio_read_t)(Word addr);
 typedef void (*mmio_write_t)(Word addr, Byte data);
 

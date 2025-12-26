@@ -8,18 +8,12 @@ tests/.cache/
 compile_commands.json
 tests/compile_commands.json
 
-# Binary and object files
-*.o
 *.bin
+*.o
+
+# Binary and object files
 main
 tests/test
-
-# Firmware files
-*.asm
-*.o
-*.bin
-*.cfg
-firmware/build.sh
 
 # Logs
 cpu_log.txt
