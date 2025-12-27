@@ -24,7 +24,7 @@ void mmio_exit(Word addr, Byte data) {
 }
 
 
-Byte get_key(Word addr) {
+Byte get_key() {
     printf("[MMIO KEYBD] waiting for key...\n");
     int c = getchar();
     printf("[MMIO KEYBD] got '%c' (%02X)\n", c, (unsigned char)c);
@@ -33,7 +33,7 @@ Byte get_key(Word addr) {
 
 
 void print_char(Word addr, Byte data) {
-    printf("[PRINTCHAR %02X '%c']\n", data, data);
+    printf("[PRINTCHAR %02X '%c']\n", addr, data);
     fflush(stdout);
 }
 
