@@ -88,9 +88,8 @@ WriteByte (Word Value, MEM6502 *mem, DWord Address)
   
 }
 
-void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, CPU6502 *cpu)
+void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr)
 {
-    AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
     bus->rw = true;
 
@@ -123,9 +122,8 @@ void cpu_read(Bus6502 *bus, const MEM6502 *memory, Word addr, CPU6502 *cpu)
     bus->data = 0xFF;
 }
 
-void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data, CPU6502 *cpu)
+void cpu_write(Bus6502 *bus, MEM6502 *memory, Word addr, Byte data)
 {
-    AccessType accessType = cpu->CurrentAccess;
     bus->address = addr;
     bus->data = data;
     bus->rw = false;

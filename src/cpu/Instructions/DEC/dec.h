@@ -42,10 +42,10 @@ DEC_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
 
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   Byte DecrementValue = bus->data - 1;
 
-  cpu_write (bus, memory, ZeroPageAddr, DecrementValue, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, DecrementValue);
   DECSetStatus (DecrementValue, cpu);
   spend_cycles (5);
 }
@@ -63,10 +63,10 @@ DEC_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   ZeroPageAddr += cpu->X;
   
 
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   Byte DecrementValue = bus->data - 1;
 
-  cpu_write (bus, memory, ZeroPageAddr, DecrementValue, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, DecrementValue);
   DECSetStatus (DecrementValue, cpu);
   spend_cycles (6);
 }
@@ -82,10 +82,10 @@ DEC_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
 
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   Byte DecrementValue = bus->data - 1;
 
-  cpu_write (bus, memory, Absolute, DecrementValue, cpu);
+  cpu_write (bus, memory, Absolute, DecrementValue);
   DECSetStatus (DecrementValue, cpu);
   spend_cycles (6);
 }
@@ -103,10 +103,10 @@ DEC_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Absolute += cpu->X;
   
 
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   Byte DecrementValue = bus->data - 1;
 
-  cpu_write (bus, memory, Absolute, DecrementValue, cpu);
+  cpu_write (bus, memory, Absolute, DecrementValue);
   DECSetStatus (DecrementValue, cpu);
   spend_cycles (6);
 }

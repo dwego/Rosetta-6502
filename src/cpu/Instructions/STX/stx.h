@@ -28,7 +28,7 @@ static inline void
 STX_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
-  cpu_write (bus, memory, ZeroPageAddr, cpu->X, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->X);
   spend_cycles (3);
 }
 
@@ -43,7 +43,7 @@ STX_ZPY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->Y;
-  cpu_write (bus, memory, ZeroPageAddr, cpu->X, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->X);
   spend_cycles (4);
 }
 
@@ -57,7 +57,7 @@ static inline void
 STX_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
-  cpu_write (bus, memory, Absolute, cpu->X, cpu);
+  cpu_write (bus, memory, Absolute, cpu->X);
   spend_cycles (4);
 }
 

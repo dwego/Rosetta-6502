@@ -56,7 +56,7 @@ static inline void
 LDX_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   cpu->X = bus->data;
   LDXSetStatus (cpu);
   spend_cycles (3);
@@ -75,7 +75,7 @@ LDX_ZPY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->Y;
   
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   cpu->X = bus->data;
   LDXSetStatus (cpu);
   spend_cycles (4);
@@ -92,7 +92,7 @@ static inline void
 LDX_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   cpu->X = bus->data;
   LDXSetStatus (cpu);
   spend_cycles (4);
@@ -121,7 +121,7 @@ LDX_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   cpu->X = bus->data;
   LDXSetStatus (cpu);
   spend_cycles (4);

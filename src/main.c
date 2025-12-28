@@ -15,13 +15,10 @@ main (int argc, char *argv[])
   Word load_addr = ROM_START;
 
   debug_set_level(DEBUG_OFF);
-  int program_start;
   CPU6502 cpu;
   MEM6502 mem;
   Bus6502 bus;
-  Byte acc;
 
-  FILE *fptr;
   int enable_ram_view = 0;
   char *mmio_file = NULL;
 
@@ -81,9 +78,7 @@ main (int argc, char *argv[])
   goto end;
 
 end:
-  acc = cpu.A;
-
-  cpu_read(&bus, &mem, 0x42, &cpu);
+  cpu_read(&bus, &mem, 0x42);
 
   freeMem6502(&mem);
 

@@ -68,7 +68,7 @@ static inline void
 ASL_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte zero_page_addr = FetchByte (bus, memory, cpu);
-  cpu_read (bus, memory, zero_page_addr, cpu);
+  cpu_read (bus, memory, zero_page_addr);
   Byte value = bus->data;
 
   cpu->A = value << 1;
@@ -91,7 +91,7 @@ ASL_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   zero_page_addr += cpu->X;
   
 
-  cpu_read (bus, memory, zero_page_addr, cpu);
+  cpu_read (bus, memory, zero_page_addr);
   Byte value = bus->data;
   cpu->A = value << 1;
   ;
@@ -110,7 +110,7 @@ static inline void
 ASL_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word absolute = FetchWord (bus, memory, cpu);
-  cpu_read (bus, memory, absolute, cpu);
+  cpu_read (bus, memory, absolute);
   Byte value = bus->data;
 
   cpu->A = value << 1;
@@ -132,7 +132,7 @@ ASL_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Word absolute = FetchWord (bus, memory, cpu);
   absolute += cpu->X;
 
-  cpu_read (bus, memory, absolute, cpu);
+  cpu_read (bus, memory, absolute);
   Byte value = bus->data;
   cpu->A = value << 1;
   ;
