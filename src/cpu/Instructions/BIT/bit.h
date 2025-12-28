@@ -45,7 +45,7 @@ static inline void
 BIT_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   BITSetStatus (bus->data, cpu);
   spend_cycles (3);
 }
@@ -61,7 +61,7 @@ static inline void
 BIT_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   BITSetStatus (bus->data, cpu);
   spend_cycles (4);
 }

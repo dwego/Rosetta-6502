@@ -57,7 +57,7 @@ static inline void
 EOR_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (3);
@@ -74,7 +74,7 @@ EOR_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
   
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
@@ -90,7 +90,7 @@ static inline void
 EOR_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
@@ -117,7 +117,7 @@ EOR_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
@@ -145,7 +145,7 @@ EOR_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   cpu->A = bus->data;
   EORSetStatus (cpu);
   spend_cycles (4);
@@ -168,7 +168,7 @@ EOR_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word addr = (hi << 8) | lo;
 
-  cpu_read (bus, memory, addr, cpu);
+  cpu_read (bus, memory, addr);
   cpu->A ^= bus->data;
   EORSetStatus (cpu);
   spend_cycles (6);
@@ -197,7 +197,7 @@ EOR_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, addr, cpu);
+  cpu_read (bus, memory, addr);
   cpu->A ^= bus->data;
   EORSetStatus (cpu);
   spend_cycles (5);

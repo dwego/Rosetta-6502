@@ -29,7 +29,7 @@ static inline void
 STA_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
-  cpu_write (bus, memory, ZeroPageAddr, cpu->A, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->A);
   spend_cycles (3);
 }
 
@@ -44,7 +44,7 @@ STA_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
-  cpu_write (bus, memory, ZeroPageAddr, cpu->A, cpu);
+  cpu_write (bus, memory, ZeroPageAddr, cpu->A);
   spend_cycles (4);
 }
 
@@ -58,7 +58,7 @@ static inline void
 STA_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
-  cpu_write (bus, memory, Absolute, cpu->A, cpu);
+  cpu_write (bus, memory, Absolute, cpu->A);
   spend_cycles (4);
 }
 
@@ -73,7 +73,7 @@ STA_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
   Absolute += cpu->X;
-  cpu_write (bus, memory, Absolute, cpu->A, cpu);
+  cpu_write (bus, memory, Absolute, cpu->A);
   spend_cycles (5);
 }
 
@@ -88,7 +88,7 @@ STA_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
   Absolute += cpu->Y;
-  cpu_write (bus, memory, Absolute, cpu->A, cpu);
+  cpu_write (bus, memory, Absolute, cpu->A);
   spend_cycles (5);
 }
 
@@ -110,7 +110,7 @@ STA_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word addr = (hi << 8) | lo;
 
-  cpu_write (bus, memory, addr, cpu->A, cpu);
+  cpu_write (bus, memory, addr, cpu->A);
   spend_cycles (6);
 }
 
@@ -130,7 +130,7 @@ STA_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Word base = (hi << 8) | lo;
   Word addr = base + cpu->Y;
 
-  cpu_write (bus, memory, addr, cpu->A, cpu);
+  cpu_write (bus, memory, addr, cpu->A);
   spend_cycles (6);
 }
 

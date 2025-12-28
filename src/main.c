@@ -18,7 +18,6 @@ main (int argc, char *argv[])
   CPU6502 cpu;
   MEM6502 mem;
   Bus6502 bus;
-  Byte acc;
 
   int enable_ram_view = 0;
   char *mmio_file = NULL;
@@ -79,9 +78,7 @@ main (int argc, char *argv[])
   goto end;
 
 end:
-  acc = cpu.A;
-
-  cpu_read(&bus, &mem, 0x42, &cpu);
+  cpu_read(&bus, &mem, 0x42);
 
   freeMem6502(&mem);
 

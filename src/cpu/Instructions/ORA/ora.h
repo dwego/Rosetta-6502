@@ -56,7 +56,7 @@ static inline void
 ORA_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (3);
@@ -73,7 +73,7 @@ ORA_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
   ZeroPageAddr += cpu->X;
    // penalty cycle for zero-page wraparound handling
-  cpu_read (bus, memory, ZeroPageAddr, cpu);
+  cpu_read (bus, memory, ZeroPageAddr);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -88,7 +88,7 @@ static inline void
 ORA_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
   Word Absolute = FetchWord (bus, memory, cpu);
-  cpu_read (bus, memory, Absolute, cpu);
+  cpu_read (bus, memory, Absolute);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -111,7 +111,7 @@ ORA_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle (); // page boundary crossed
     }
 
-  cpu_read (bus, memory, AddressWithX, cpu);
+  cpu_read (bus, memory, AddressWithX);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -134,7 +134,7 @@ ORA_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle (); // page boundary crossed
     }
 
-  cpu_read (bus, memory, AddressWithY, cpu);
+  cpu_read (bus, memory, AddressWithY);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (4);
@@ -157,7 +157,7 @@ ORA_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Byte hi = memory->Data[(Byte)(zp + 1)];
   Word addr = (hi << 8) | lo;
 
-  cpu_read (bus, memory, addr, cpu);
+  cpu_read (bus, memory, addr);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (6);
@@ -186,7 +186,7 @@ ORA_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       spend_cycle ();
     }
 
-  cpu_read (bus, memory, addr, cpu);
+  cpu_read (bus, memory, addr);
   cpu->A |= bus->data;
   ORASetStatus (cpu);
   spend_cycles (5);

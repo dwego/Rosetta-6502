@@ -138,7 +138,7 @@ resetCPU(CPU6502 *cpu, MEM6502 *memory)
 Byte 
 FetchByte(Bus6502 *bus, const MEM6502 *memory, CPU6502 *cpu)
 {
-    cpu_read(bus, memory, cpu->PC, cpu);
+    cpu_read(bus, memory, cpu->PC);
     cpu->PC++;
     return bus->data;
 }
@@ -166,7 +166,7 @@ SPToAddress(CPU6502 *cpu)
 void 
 PushByteToStack(Bus6502 *bus, MEM6502 *memory, Word Value, CPU6502 *cpu)
 {
-    cpu_write(bus, memory, SPToAddress(cpu), Value, cpu);
+    cpu_write(bus, memory, SPToAddress(cpu), Value);
     cpu->SP--;
 }
 
@@ -197,11 +197,11 @@ PopWordFromStack(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
     Byte lo, hi;
 
     cpu->SP++;
-    cpu_read(bus, memory, SPToAddress(cpu), cpu);
+    cpu_read(bus, memory, SPToAddress(cpu));
     lo = bus->data;
 
     cpu->SP++;
-    cpu_read(bus, memory, SPToAddress(cpu), cpu);
+    cpu_read(bus, memory, SPToAddress(cpu));
     hi = bus->data;
 
     return (hi << 8) | lo;
@@ -213,6 +213,6 @@ Byte
 PopByteFromStack(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
     cpu->SP++;
-    cpu_read(bus, memory, SPToAddress(cpu), cpu);
+    cpu_read(bus, memory, SPToAddress(cpu));
     return bus->data;
 }
