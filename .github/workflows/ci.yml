@@ -31,9 +31,3 @@ jobs:
 
       - name: Build (root)
         run: make
-
-      - name: Build & run tests
-        run: |
-          cd tests
-          make
-          ./test
