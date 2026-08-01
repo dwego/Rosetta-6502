@@ -2,6 +2,7 @@
 #include "config.h"
 #include "mem6502.h"
 #include "cpu6502.h"
+#include "cpu_vectors.h"
 
 /*
    CPU6502 - MOS Technology 6502 CPU Emulator

@@ -4,6 +4,7 @@
 #include "bus.h"
 #include "cpu6502.h"
 #include "mem6502.h"
+#include "cpu_vectors.h"
 
 /*
    CPU Interrupt Vectors
@@ -15,10 +16,6 @@
    - Low byte at VECTOR.
    - High byte at VECTOR + 1.
 */
-
-#define NMI_VECTOR 0xFFFA
-#define RESET_VECTOR 0xFFFC
-#define IRQ_VECTOR 0xFFFE
 
 /*
    cpu_set_irq - Set the current state of the external IRQ line.

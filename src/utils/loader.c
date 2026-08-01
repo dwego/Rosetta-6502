@@ -85,10 +85,44 @@ load_binary_to_memory(MEM6502 *memory,
     return true;
 }
 
-// Sets the RESET, NMI, and IRQ vectors to point to the specified start address
-void set_reset_vector(MEM6502 *memory, Word start_addr)
+/*
+   set_vector - Store a 16-bit target in a processor vector.
+
+   The 6502 reads vectors in little-endian order. The target low byte is stored
+   at vector, and the target high byte is stored at vector + 1.
+*/
+
+void
+set_vector (MEM6502 *memory, Word vector, Word target)
 {
-    memory->Data[0xFFFC] = (Byte)(start_addr & 0xFF);
-    memory->Data[0xFFFD] = (Byte)((start_addr >> 8) & 0xFF);
+  if (memory == NULL || memory->Data == NULL)
+    return;
+
+  memory->Data[vector] = (Byte)(target & 0x00FF);
+  memory->Data[(Word)(vector + 1)]
+      = (Byte)((target >> 8) & 0x00FF);
 }
 
+// Sets the RESET, NMI, and IRQ vectors to point to the specified start address
+void set_reset_vector(MEM6502 *memory, Word target)
+{
+    set_vector (memory, RESET_VECTOR, target);
+}
+
+/*
+   set_nmi_vector - Configure the address loaded when NMI is accepted.
+*/
+void
+set_nmi_vector (MEM6502 *memory, Word target)
+{
+  set_vector (memory, NMI_VECTOR, target);
+}
+
+/*
+   set_irq_vector - Configure the shared IRQ and BRK handler address.
+*/
+void
+set_irq_vector (MEM6502 *memory, Word target)
+{
+  set_vector (memory, IRQ_VECTOR, target);
+}
