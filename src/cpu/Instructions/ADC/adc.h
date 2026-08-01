@@ -27,6 +27,28 @@ ADCSetStatus (CPU6502 *cpu, Byte before, Byte value)
   cpu->Flag.C = (cpu->A < before);
 }
 
+// Helper
+
+static inline void
+ADC(CPU6502 *cpu, Byte value)
+{
+    Byte accumulator = cpu->A;
+    Byte carry_in = cpu->Flag.C;
+
+    Word sum = (Word)accumulator + (Word)value + (Word)carry_in;
+    Byte result = (Byte)(sum & 0xFF);
+
+    cpu->Flag.C = sum > 0xFF;
+
+    cpu->Flag.V =
+        ((~(accumulator ^ value) & (accumulator ^ result)) & 0x80) != 0;
+
+    cpu->Flag.Z = result == 0;
+    cpu->Flag.N = (result & 0x80) != 0;
+
+    cpu->A = result;
+}
+
 /*
    ADC_IM - Add Immediate value and the carry flag (if set) to the Accumulator.
    This function fetches a byte from memory and adds it and the carry flag (if
@@ -34,16 +56,14 @@ ADCSetStatus (CPU6502 *cpu, Byte before, Byte value)
 */
 
 static inline void
-ADC_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_IM(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte Value = FetchByte (bus, memory, cpu);
+    Byte value = FetchByte(bus, memory, cpu);
 
-  Byte Before = cpu->A;
-  cpu->A += Value + cpu->Flag.C;
-  ADCSetStatus (cpu, Before, Value);
-  spend_cycles (2);
+    ADC(cpu, value);
+
+    spend_cycles(2);
 }
-
 /*
    ADC_ZP - Add value from Zero Page and the carry flag (if set) to the
    Accumulator. This function fetches a byte representing a zero-page address
@@ -52,17 +72,15 @@ ADC_IM (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_ZP (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_ZP(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte ZeroPageAddr = FetchByte (bus, memory, cpu);
-  cpu_read (bus, memory, ZeroPageAddr);
+    Byte address = FetchByte(bus, memory, cpu);
 
-  Byte Before = cpu->A;
-  cpu->A += bus->data + cpu->Flag.C;
-  ADCSetStatus (cpu, Before, bus->data);
-  spend_cycles (3);
+    cpu_read(bus, memory, address);
+    ADC(cpu, bus->data);
+
+    spend_cycles(3);
 }
-
 /*
    ADC_ZPX - Add value from Zero Page with X Offset and the carry flag (if set)
    to the Accumulator. This function fetches a byte representing a zero-page
@@ -79,9 +97,7 @@ ADC_ZPX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
   cpu_read (bus, memory, ZeroPageAddr);
 
-  Byte Before = cpu->A;
-  cpu->A += bus->data + cpu->Flag.C;
-  ADCSetStatus (cpu, Before, bus->data);
+  ADC(cpu, bus->data);
   spend_cycles (4);
 }
 
@@ -98,9 +114,7 @@ ADC_ABS (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Word Absolute = FetchWord (bus, memory, cpu);
 
   cpu_read (bus, memory, Absolute);
-  Byte Before = cpu->A;
-  cpu->A += bus->data + cpu->Flag.C;
-  ADCSetStatus (cpu, Before, bus->data);
+  ADC(cpu, bus->data);
   spend_cycles (4);
 }
 
@@ -118,17 +132,12 @@ ADC_ABSX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Word Absolute = FetchWord (bus, memory, cpu);
   Word NewAddress = Absolute + cpu->X;
 
-  if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
-    {
-      
-      spend_cycle ();
-    }
-
   cpu_read (bus, memory, NewAddress);
-  Byte Before = cpu->A;
-  cpu->A += bus->data + cpu->Flag.C;
-  ADCSetStatus (cpu, Before, bus->data);
+  ADC(cpu, bus->data);
   spend_cycles (4);
+
+  if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
+        spend_cycle();
 }
 
 /*
@@ -145,17 +154,12 @@ ADC_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
   Word Absolute = FetchWord (bus, memory, cpu);
   Word NewAddress = Absolute + cpu->Y;
 
-  if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
-    {
-      
-      spend_cycle ();
-    }
-
   cpu_read (bus, memory, NewAddress);
-  Byte Before = cpu->A;
-  cpu->A += bus->data + cpu->Flag.C;
-  ADCSetStatus (cpu, Before, bus->data);
+  ADC(cpu, bus->data);
   spend_cycles (4);
+
+  if ((NewAddress & 0xFF00) != (Absolute & 0xFF00))
+        spend_cycle();
 }
 
 /*
@@ -169,19 +173,21 @@ ADC_ABSY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 static inline void
 ADC_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zp = FetchByte (bus, memory, cpu);
-  zp += cpu->X; // zero-page wrap
-  Byte lo = memory->Data[zp];
-  Byte hi = memory->Data[(Byte)(zp + 1)];
-  Word addr = (hi << 8) | lo;
+  Byte operand = FetchByte(bus, memory, cpu);
+  Byte pointer = (Byte)(operand + cpu->X);
 
-  cpu_read (bus, memory, addr);
-  Byte Value = bus->data;
-  Byte Before = cpu->A;
+  cpu_read(bus, memory, pointer);
+  Byte low = bus->data;
 
-  cpu->A += Value + cpu->Flag.C;
-  ADCSetStatus (cpu, Before, Value);
-  spend_cycles (6);
+  cpu_read(bus, memory, (Byte)(pointer + 1));
+  Byte high = bus->data;
+
+  Word address = ((Word)high << 8) | low;
+
+  cpu_read(bus, memory, address);
+  ADC(cpu, bus->data);
+
+  spend_cycles(6);
 }
 
 /*
@@ -193,27 +199,26 @@ ADC_INDX (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 */
 
 static inline void
-ADC_INDY (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
+ADC_INDY(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 {
-  Byte zp = FetchByte (bus, memory, cpu);
-  Byte lo = memory->Data[zp];
-  Byte hi = memory->Data[(Byte)(zp + 1)];
-  Word base = (hi << 8) | lo;
-  Word addr = base + cpu->Y;
+    Byte pointer = FetchByte(bus, memory, cpu);
 
-  if ((base & 0xFF00) != (addr & 0xFF00)) // page boundary crossed
-    {
-      
-      spend_cycle ();
-    }
+    cpu_read(bus, memory, pointer);
+    Byte low = bus->data;
 
-  cpu_read (bus, memory, addr);
-  Byte Value = bus->data;
-  Byte Before = cpu->A;
+    cpu_read(bus, memory, (Byte)(pointer + 1));
+    Byte high = bus->data;
 
-  cpu->A += Value + cpu->Flag.C;
-  ADCSetStatus (cpu, Before, Value);
-  spend_cycles (5);
+    Word base_address = ((Word)high << 8) | low;
+    Word address = (Word)(base_address + cpu->Y);
+
+    cpu_read(bus, memory, address);
+    ADC(cpu, bus->data);
+
+    spend_cycles(5);
+
+    if ((base_address & 0xFF00) != (address & 0xFF00))
+        spend_cycle();
 }
 
 #endif // ADC_H
