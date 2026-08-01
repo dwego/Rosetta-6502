@@ -123,11 +123,15 @@ resetCPU(CPU6502 *cpu, MEM6502 *memory)
     cpu->A = 0;
     cpu->X = 0;
     cpu->Y = 0;
+
     cpu->SP = 0xFD;
 
     cpu->PS = 0;
     cpu->Flag.I = 1;
     cpu->Flag.Unused = 1;
+
+    cpu->irq_line = false;
+    cpu->nmi_pending = false;
 
     Byte lo = memory->Data[0xFFFC];
     Byte hi = memory->Data[0xFFFD];
