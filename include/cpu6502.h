@@ -147,4 +147,13 @@ Word PopWordFromStack (Bus6502 *bus, MEM6502 *memory,
 Byte PopByteFromStack (Bus6502 *bus, MEM6502 *memory,
                        CPU6502 *cpu);
 
+void cpu_set_irq(CPU6502 *cpu, bool active);
+void cpu_pulse_nmi(CPU6502 *cpu);
+
+bool cpu_handle_pending_interrupt(
+    Bus6502 *bus,
+    MEM6502 *memory,
+    CPU6502 *cpu
+);
+
 #endif // CPU6502_H

@@ -222,3 +222,15 @@ PopByteFromStack(Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
     cpu_read(bus, memory, SPToAddress(cpu));
     return bus->data;
 }
+
+void
+cpu_set_irq(CPU6502 *cpu, bool active)
+{
+    cpu->irq_line = active;
+}
+
+void
+cpu_pulse_nmi(CPU6502 *cpu)
+{
+    cpu->nmi_pending = true;
+}
