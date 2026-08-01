@@ -396,6 +396,9 @@ run_cpu_instruction (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
     case INS_BVS:
       BVS (bus, memory, cpu);
       break;
+    case INS_BEQ:
+      BEQ(bus, memory, cpu);
+      break;
 
     /*──────────────────────────────────
       STATUS FLAG CHANGES
@@ -414,6 +417,9 @@ run_cpu_instruction (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       break;
     case INS_SEI:
       SEI (cpu);
+      break;
+    case INS_SED:
+      SED (cpu);
       break;
     case INS_CLV:
       CLV (cpu);

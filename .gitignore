@@ -10,6 +10,9 @@ tests/compile_commands.json
 
 *.bin
 *.o
+*.cfg
+*.asm
+
 
 # Binary and object files
 main
