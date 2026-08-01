@@ -609,9 +609,11 @@ run_cpu_instruction (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
       DEFAULT
       ──────────────────────────────────*/
     default:
-      printf ("Instruction not handled 0x%02X\n", Ins);
-      break;
-    }
+      fprintf(stderr,
+              "Illegal or unimplemented opcode %02X at %04X\n",
+              Ins,
+              cpu->PC - 1);
+      return false;
     
     // do NOT clear MMIO access
     // leave accessType as-is
