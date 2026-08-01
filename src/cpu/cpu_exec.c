@@ -621,4 +621,5 @@ run_cpu_instruction (Bus6502 *bus, MEM6502 *memory, CPU6502 *cpu)
 
     
     return true;
+  }
 }
