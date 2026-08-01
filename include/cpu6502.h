@@ -66,6 +66,8 @@ typedef struct CPU6502
   };
 
   AccessType CurrentAccess; // Current access type (RAM, ROM, MMIO)
+  bool irq_line;
+  bool nmi_pending;
 } CPU6502;
 
 /*

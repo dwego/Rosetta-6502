@@ -2,6 +2,7 @@
 #include "config.h"
 #include "mem6502.h"
 #include "cpu6502.h"
+#include "cpu_vectors.h"
 
 /*
    CPU6502 - MOS Technology 6502 CPU Emulator
@@ -120,17 +121,23 @@ spend_cycles(Word cycles) {
 void
 resetCPU(CPU6502 *cpu, MEM6502 *memory)
 {
-    cpu->A = cpu->X = cpu->Y = 0;
+    cpu->A = 0;
+    cpu->X = 0;
+    cpu->Y = 0;
+
     cpu->SP = 0xFD;
 
-    cpu->Flag.C = cpu->Flag.Z = cpu->Flag.I = cpu->Flag.D =
-    cpu->Flag.B = cpu->Flag.V = cpu->Flag.N = 0;
+    cpu->PS = 0;
+    cpu->Flag.I = 1;
+    cpu->Flag.Unused = 1;
+
+    cpu->irq_line = false;
+    cpu->nmi_pending = false;
 
     Byte lo = memory->Data[0xFFFC];
     Byte hi = memory->Data[0xFFFD];
-    cpu->PC = ((Word)hi << 8) | lo;
-    printf("RESET PC = %04X\n", cpu->PC);
 
+    cpu->PC = ((Word)hi << 8) | lo;
 }
 
 // Fetch a byte from memory at the current program counter (PC),
